@@ -3,6 +3,7 @@ var
 	express=require('express'),
 	UUID=require('node-uuid'),
 	path=require('path'),
+	mysql=require('mysql'),
 	app = express();
 
 app.configure(function(){
@@ -24,15 +25,25 @@ sio.sockets.on('connection', function(socket){
 	socket.userid = UUID();
 
 	socket.on('message', function(){
-		console.log('client just sent something');
-		game_server.onMessage(socket, m);
+		console.log('client connected');
 	});
 
-	//initialise the game room
-	game_server.connectClient(socket);
+	socket.on('login', function(data){
+		console.log('client sent login');
+		console.log(data.username);
+		
+		socket.emit('onconnected', socket.userid);
 
-	
-	socket.on('room connection type', function(connection_type){
-		socket.emit('OK', {hello2: 'world2'});
+		game_server.createPlayer(socket, data.username, socket.userid);
+	});
+
+	socket.on('createGameRoom', function(data){
+		game_server.createGameRoom(data.roomname, socket.userid);
+		console.log('client created new game');
+	});
+
+	socket.on('joinGameRoom', function(data){
+		game_server.joinGameRoom(data.roomname, socket);
+		console.log('join game room');
 	});
 });

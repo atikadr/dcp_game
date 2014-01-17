@@ -1,27 +1,42 @@
+var UUID = require('node-uuid');
+var game_server = module.exports = {player_array : {}, player_count : 0, gameroom_array : {}, room_count : 0};
+
+//var player_count = 0;
+//var player_array = {};
+
+require('./game.player.js');
 require('./game.room.js');
 
-var game_server = module.exports = {games: {}, game_count:0};
+game_server.createPlayer = function(socket, username, userid){
+	this.player_array[userid] = new game_player();
+	this.player_array[userid].uuid = userid;
+	this.player_array[userid].socket = socket;
+	this.player_array[userid].username = username;
+	this.player_count++;
 
+	console.log(this.player_count);
 
-game_server.connectClient = function(client){
-	client.emit('room connection type?', {hello: 'world'});
-	client.on('room connection type', function(connection_type){
-		console.log("client just sent room connection type ");
-	});
+	//console.log(this.player_array[userid].uuid);
 }
 
-game_server.createGame = function(player) {
-	var thegame = {
-		player1: player,
-		player2: null,
-		player_count:1
-	};
-}
-
-game_server.onMessage = function(client, message){
-	console.log(message);
+game_server.createGameRoom = function(roomname, userid){
+	var gameroom = new game_room(roomname);
+	gameroom.players.player1 = this.player_array[userid];
+	gameroom.player_count++;
 	
+	this.gameroom_array[roomname] = gameroom;
 
-	//console.log("server is sending");
-	//client.send("world!");
+	console.log(roomname);
+}
+
+game_server.joinGameRoom = function(roomname, client){
+	var gameroom = this.gameroom_array[roomname];
+
+	if (gameroom.player_count == 1) {
+		gameroom.players.player2 = this.player_array[client.userid];
+		gameroom.player_count++;
+
+		client.emit('player type', {player_type: 2});
+		console.log(gameroom.player_count);
+	}
 }
