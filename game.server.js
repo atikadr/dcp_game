@@ -3,6 +3,7 @@ var game_server = module.exports = {player_array : {}, player_count : 0, gameroo
 
 require('./game.player.js');
 require('./game.room.js');
+var io=require('socket.io');
 
 
 game_server.createPlayer = function(socket, username, userid){
@@ -30,7 +31,7 @@ game_server.createGameRoom = function(roomname, client){
 	console.log(roomname);
 }
 
-game_server.joinGameRoom = function(roomname, client){
+game_server.joinGameRoom = function(roomname, client, sio){
 	var gameroom = this.gameroom_array[roomname];
 	
 	//send gameroom info to client
@@ -40,5 +41,8 @@ game_server.joinGameRoom = function(roomname, client){
 	gameroom.players[gameroom.players.length] = this.player_array[client.userid];
 	this.gameroom_array[roomname] = gameroom;
 
-	//
+	//add client to game room
+	client.join(roomname);
+
+	sio.sockets.in(roomname).emit('gameroom info 2', {game: gameroom.players.length});
 }

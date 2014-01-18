@@ -38,12 +38,12 @@ sio.sockets.on('connection', function(socket){
 	});
 
 	socket.on('createGameRoom', function(data){
-		game_server.createGameRoom(data.roomname, socket.userid);
+		game_server.createGameRoom(data.roomname, socket);
 		console.log('client created new game');
 	});
 
 	socket.on('joinGameRoom', function(data){
-		game_server.joinGameRoom(data.roomname, socket);
+		game_server.joinGameRoom(data.roomname, socket, sio);
 		console.log('join game room');
 	});
 });

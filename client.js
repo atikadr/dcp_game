@@ -16,11 +16,14 @@ socket.on('gameroom info', function(data){
 	document.getElementById("debugger").innerHTML = "joined room";
 
 	var number_of_players = data.game;
-	//my_game.players[number_of_players] = my_player;
+	my_game.players[number_of_players] = my_player;
 
 	document.getElementById("debugger").innerHTML = "I'm player " + (number_of_players + 1);
 });
 
+socket.on('gameroom info 2', function(data){
+	document.getElementById("debugger2").innerHTML = "Currently " + (data.game) + "players are connected";
+});
 
 
 /*
