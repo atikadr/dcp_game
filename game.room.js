@@ -3,10 +3,8 @@
 
 var game_room = function(roomname){
 	this.room_name = roomname;
-	this.players = {
-		player1 : null,
-		player2 : null
-	};
+
+	this.players = new Array();
 	this.player_count = 0;
 }
 
