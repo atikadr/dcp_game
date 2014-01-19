@@ -1,0 +1,32 @@
+#roomInstructions{
+	top: 10%;
+	left: 5%;
+	position: absolute;
+}
+
+#roomList{
+	top: 13%;
+	width: 40%;
+	left: 5%;
+	height: 200px;
+	border: 1px solid black;
+	position: absolute;
+}
+
+#createRoom{
+	left: 60%;
+	top: 10%;
+	position: absolute;
+}
+
+#gameroomText{
+	top: 13%;
+	left: 60%;
+	position: absolute;
+}
+
+#createButton{
+	top: 20%;
+	left: 60%;
+	position: absolute;
+}

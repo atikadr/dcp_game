@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="../js/game.player.js"></script>
+	<script type="text/javascript" src="../js/game.room.js"></script>
+	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../js/client.js"></script>
+	<link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css"/>
+	<link rel="stylesheet" href="../css/gameroom.css" type="text/css"/>
+</head>
+
+<body>
+	<div id="header">
+		<a id="menuButton">Menu</a>&nbsp;&nbsp;&nbsp;
+		<a id="manageButton">Manage my hero's stat</a>&nbsp;&nbsp;&nbsp;
+		<a id="profileButton">View Profile</a>&nbsp;&nbsp;&nbsp;
+		<a id="logoutButton">Log out</a>
+	</div>
+	<h3 id="roomName">Room Name</h3>
+	<div id="roomplayers">
+
+	</div>
+	<h3 id="statsInstructions">Player Stats</h3>
+	<div id="statsBox"></div>
+	<button id="startButton" type="button" class="btn btn-success">Start Game</button>
+</body>
+</html>
