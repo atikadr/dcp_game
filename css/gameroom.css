@@ -1,0 +1,26 @@
+#roomName{
+	position: absolute;
+	top: 10%;
+	left: 5%;
+}
+
+#roomplayers{
+	position: absolute;
+	top: 17%;
+	left: 5%;
+	width: 40%;
+	height: 200px;
+	border: 2px solid black;
+}
+
+#statsInstructions{
+	position: absolute;
+	top: 10%;
+	left: 60%;
+}
+
+#startButton{
+	position: absolute;
+	top: 50%;
+	left: 6%;
+}
