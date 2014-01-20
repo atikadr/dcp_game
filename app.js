@@ -19,7 +19,7 @@ app.get('/', function(req, res){
 	res.sendfile('/index.html', {root:__dirname});
 });
 
-game_server = require('./game.server.js');
+game_server = require('./server/game.server.js');
 
 sio.sockets.on('connection', function(socket){
 	socket.userid = UUID();
