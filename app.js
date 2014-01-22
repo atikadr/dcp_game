@@ -7,8 +7,6 @@ var
 	app = express();
 
 app.configure(function(){
-	//app.use(express.logger('dev'));
-
 	app.use(express.static(path.join(__dirname,'')));
 });
 
@@ -20,6 +18,8 @@ app.get('/', function(req, res){
 });
 
 game_server = require('./server/game.server.js');
+
+console.log("listening");
 
 sio.sockets.on('connection', function(socket){
 	socket.userid = UUID();
@@ -37,8 +37,12 @@ sio.sockets.on('connection', function(socket){
 		game_server.createPlayer(socket, data.username, socket.userid);
 	});
 
+	socket.on('myRoomName?', function(data){
+		game_server.sendRoomName(socket);
+	});
+
 	socket.on('createGameRoom', function(data){
-		game_server.createGameRoom(data.roomname, socket);
+		game_server.createGameRoom(data.roomName, socket);
 		console.log('client created new game');
 	});
 
