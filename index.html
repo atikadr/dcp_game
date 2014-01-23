@@ -5,6 +5,8 @@
 	<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
 	<link rel="stylesheet" href="css/index.css" type="text/css"/>
 	<script src="/socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="../js/client.js"></script>
+	<script type="text/javascript" src="../js/game.player.js"></script>
 	<script type="text/javascript" src="../js/client.index.js"></script>
 </head>
 
@@ -28,6 +30,7 @@
 <div id="createRoom">CREATE A NEW GAME ROOM</div>
 <div id="gameroomText">Game room name: <input id="gameroomName"/></div>
 <button type="button" class="btn btn-primary" id="createButton" onclick="createGameRoom()">Create game room</button>
+<button type="button" class="btn btn-primary" id="joinButton" onclick="joinGameRoom()">Join game room</button>
 
 </body>
 

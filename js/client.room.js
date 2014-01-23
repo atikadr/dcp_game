@@ -1,30 +1,17 @@
-var socket = io.connect();
-var my_player;
-var my_game;
-var temp_string;
+var my_game = new game_room(location.hash);
 
 /*
 MESSAGE-HANDLING FUNCTIONS
 */
 
-socket.on('onconnected', function(data){
-	my_player = new game_player();
-	my_player.uuid = data;
-	//document.getElementById("debugger").innerHTML = my_player.uuid;
-});
-
-socket.on('createdGameRoom', function(data){
-	roomname = data.roomName;
-	document.getElementById("roomName").innerHTML = roomname;
-});
-
 socket.on('gameroom info', function(data){
-	document.getElementById("debugger").innerHTML = "joined room";
+	var players = data.players;
+	var string = "";
+	for (var i = 0 ; i < players.length ; i++){
+		string += players[i] + "<br>";
+	}
 
-	var number_of_players = data.game;
-	my_game.players[number_of_players] = my_player;
-
-	document.getElementById("debugger").innerHTML = "I'm player " + (number_of_players + 1);
+	document.getElementById("statsInstructions").innerHTML = string;
 });
 
 socket.on('gameroom info 2', function(data){
@@ -37,5 +24,10 @@ CLIENT SIDE FUNCTIONS
 */
 
 window.onload = function(){
-	document.getElementById("roomName").innerHTML = location.hash;
+	document.getElementById("roomName").innerHTML = location.hash.split('#')[1];
+	requestGameRoomInfo(location.hash.split('#')[1]);
+}
+
+function requestGameRoomInfo(roomname){
+	socket.emit('requestGameRoomInfo', {roomName : roomname});
 }

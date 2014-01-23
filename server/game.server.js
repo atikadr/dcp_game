@@ -13,7 +13,7 @@ game_server.createPlayer = function(socket, username, userid){
 	this.player_array[userid].username = username;
 	this.player_count++;
 
-	console.log(this.player_count);
+	console.log(this.player_array);
 }
 
 game_server.createGameRoom = function(roomname, client){
@@ -27,22 +27,47 @@ game_server.createGameRoom = function(roomname, client){
 
 	//add client to game room
 	client.join(roomname);
-
-	console.log(roomname);
+	
+	console.log(this.gameroom_array);
 }
 
 game_server.joinGameRoom = function(roomname, client, sio){
 	var gameroom = this.gameroom_array[roomname];
 	
-	//send gameroom info to client
-	client.emit('gameroom info', {game: gameroom.players.length});
-
 	//edit gameroom to add this new client as a player
 	gameroom.players[gameroom.players.length] = this.player_array[client.userid];
 	this.gameroom_array[roomname] = gameroom;
 
 	//add client to game room
 	client.join(roomname);
+	console.log(this.gameroom_array);
 
-	sio.sockets.in(roomname).emit('gameroom info 2', {game: gameroom.players.length});
+	//sio.sockets.in(roomname).emit('gameroom info 2', {game: gameroom.players.length});
+}
+
+game_server.sendRoomInfo = function(socket, roomname){
+	var gameroom = this.gameroom_array[roomname];
+	var array = new Array();
+	for(var i = 0 ; i < gameroom.players.length ; i++){
+		array[i] = gameroom.players[i].username;
+	}
+	socket.emit('gameroom info', {players: array})
+
+}
+
+game_server.sendRooms = function(socket){
+	var array = new Array();
+
+	for (var key in this.gameroom_array){
+		console.log(this.gameroom_array[key]);
+		array.push(this.gameroom_array[key].room_name);
+	}
+	
+/*
+	this.gameroom_array.forEach(function(entry){
+		console.log(entry.roomname);
+		array.push(entry.roomname);
+	});
+*/
+	socket.emit('getRooms', {rooms: array});
 }

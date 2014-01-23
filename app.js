@@ -6,6 +6,9 @@ var
 	mysql=require('mysql'),
 	app = express();
 
+game_server = require('./server/game.server.js');
+
+
 app.configure(function(){
 	app.use(express.static(path.join(__dirname,'')));
 });
@@ -13,11 +16,12 @@ app.configure(function(){
 var server = require('http').createServer(app).listen(8080);
 sio = io.listen(server);
 
+
 app.get('/', function(req, res){
 	res.sendfile('/index.html', {root:__dirname});
+	console.log(game_server.gameroom_array);
+	//res.json(game_server.gameroom_array);
 });
-
-game_server = require('./server/game.server.js');
 
 console.log("listening");
 
@@ -37,17 +41,21 @@ sio.sockets.on('connection', function(socket){
 		game_server.createPlayer(socket, data.username, socket.userid);
 	});
 
-	socket.on('myRoomName?', function(data){
-		game_server.sendRoomName(socket);
-	});
-
 	socket.on('createGameRoom', function(data){
 		game_server.createGameRoom(data.roomName, socket);
 		console.log('client created new game');
 	});
 
 	socket.on('joinGameRoom', function(data){
-		game_server.joinGameRoom(data.roomname, socket, sio);
-		console.log('join game room');
+		game_server.joinGameRoom(data.roomName, socket, sio);
+		console.log('client join game room');
+	});
+
+	socket.on('requestGameRoomInfo', function(data){
+		game_server.sendRoomInfo(socket, data.roomName);
+	});
+
+	socket.on('getRooms', function(){
+		game_server.sendRooms(socket);
 	});
 });
