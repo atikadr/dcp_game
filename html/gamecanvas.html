@@ -1,10 +1,19 @@
 <!DOCTYPE HTML>
 <html>
-	<head>
-		<title>Circle Chain Cocos2d HTML5 version</title>
-		<script src="../js/cocos2d.js"></script>
-	</head>
-	<body style="padding:0px;margin:0px;background-color:white">
-		<canvas id="gameCanvas" width="500" height="500"></canvas>
-	</body>
+<head>
+	<title>Circle Chain Cocos2d HTML5 version</title>
+	<script src="../js/jquery-1.11.0.min.js"></script>
+	<script src="../js/jquery.fullscreen-min.js"></script>
+	<script src="../js/gameCanvasScript.js"></script>
+	<script src="../js/cocos2d.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		initGameCanvas();
+	});
+	</script>
+</head>
+<body style="padding:0px;margin:0px;background-color:white">
+	<canvas id="gameCanvas" width="1366" height="768"></canvas>
+	<button id="fullScreenButton">Full Screen</button>
+</body>
 </html>
