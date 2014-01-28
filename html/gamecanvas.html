@@ -1,11 +1,12 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title>Circle Chain Cocos2d HTML5 version</title>
+	<title>DCP game</title>
 	<script src="../js/jquery-1.11.0.min.js"></script>
 	<script src="../js/jquery.fullscreen-min.js"></script>
 	<script src="../js/gameCanvasScript.js"></script>
 	<script src="../js/cocos2d.js"></script>
+	<link rel="stylesheet" href="../css/gamecanvas.css" type="text/css"/>
 	<script type="text/javascript">
 	$(document).ready(function(){
 		initGameCanvas();
@@ -13,7 +14,8 @@
 	</script>
 </head>
 <body style="padding:0px;margin:0px;background-color:white">
-	<canvas id="gameCanvas" width="1366" height="768"></canvas>
+	<audio id="testSound" src="../sounds/test.mp3"></audio>
+	<canvas id="gameCanvas" width="400" height="800"></canvas>
 	<button id="fullScreenButton">Full Screen</button>
 </body>
 </html>
