@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+	<link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css"/>
+	<link rel="stylesheet" href="../css/index.css" type="text/css"/>
+	<script src="../socket.io/socket.io.js"></script>
+	<script type="text/javascript" src="../js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="../js/client.js"></script>
+	<script type="text/javascript" src="../js/game.player.js"></script>
+	<script type="text/javascript" src="../js/client.index.js"></script>
+</head>
+
+<body>
+	<!--
+	<form action='gameroom.html'><input type="submit" value="CREATE ROOM" id="btnCreateRoom"></form>
+	<a href='html/gameroom.html'>Game Room</a>
+	<button id="btnJoinGame" class="btn right">JOIN ROOM</button>
+-->
+
+<div id="header">
+	<a id="menuButton">Menu</a>&nbsp;&nbsp;&nbsp;
+	<a id="manageButton">Manage my hero's stat</a>&nbsp;&nbsp;&nbsp;
+	<a id="profileButton">View Profile</a>&nbsp;&nbsp;&nbsp;
+	<a id="logoutButton">Log out</a>
+</div>
+
+<div id="roomInstructions">List of available game rooms</div>
+<div id="roomList"></div>
+
+<div id="createRoom">CREATE A NEW GAME ROOM</div>
+<div id="gameroomText">Game room name: <input id="gameroomName"/></div>
+<button type="button" class="btn btn-primary" id="createButton" onclick="createGameRoom()">Create game room</button>
+<!--<button type="button" class="btn btn-primary" id="joinButton" onclick="joinGameRoom()">Join game room</button>-->
+
+</body>
+
+</html>

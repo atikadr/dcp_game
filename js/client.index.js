@@ -16,10 +16,16 @@ socket.on('getRooms', function(data){
 	var rooms = data.rooms;
 
 	for (var i = 0 ; i < rooms.length ; i++){
-		string += rooms[i] + "<br>";
+		//string += rooms[i] + "<br>";
+		var roomDiv = $(document.createElement('div')).attr('class','roomDiv');
+		roomDiv.text(rooms[i]);
+		roomDiv.click(function(){
+			joinGameRoom($(this).text());
+		});
+		$("#roomList").append(roomDiv);
 	}
 
-	document.getElementById("roomList").innerHTML = string;
+	//document.getElementById("roomList").innerHTML = string;
 });
 
 
@@ -45,8 +51,8 @@ function createGameRoom(){
 	location.href= '/html/gameroom.html#' + roomname;
 }
 
-function joinGameRoom(){
-	var roomname = document.getElementById("gameroomName").value;
+function joinGameRoom(roomname){
+	//var roomname = document.getElementById("gameroomName").value;
 	socket.emit('joinGameRoom', {roomName : roomname});
 	location.href= '/html/gameroom.html#' + roomname;
 }

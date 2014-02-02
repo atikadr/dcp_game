@@ -30,3 +30,9 @@
 	left: 60%;
 	position: absolute;
 }
+
+.roomDiv{
+	cursor: pointer;
+	font-size: 1.2em;
+	display: block;
+}
