@@ -1,76 +1,53 @@
-var UUID = require('node-uuid');
-var game_server = module.exports = {player_array : {}, player_count : 0, gameroom_array : {}, room_count : 0};
-
-require('../js/game.player.js');
-require('../js/game.room.js');
+var game_server = module.exports;
 var io=require('socket.io');
+require('./game.core.js');
+
+var player_array = [], gameArray = [];
 
 
-game_server.createPlayer = function(socket, username, userid){
-	this.player_array[userid] = new game_player();
-	this.player_array[userid].uuid = userid;
-	this.player_array[userid].socket = socket;
-	this.player_array[userid].username = username;
-	this.player_count++;
+game_server.addPlayer = function(socket, username){
+	socket.username = username;
 
-	console.log(this.player_array);
-}
-
-game_server.createGameRoom = function(roomname, client){
-	//create a new game room and initialise this client as the first player
-	var gameroom = new game_room(roomname);
-	gameroom.players[0] = this.player_array[client.userid];
-	gameroom.player_count++;
-
-	//add the new gameroom to array of gamerooms
-	this.gameroom_array[roomname] = gameroom;
-
-	//add client to game room
-	client.join(roomname);
-	client.emit('your uuid', {uuid: client.userid});
+	socket.emit('get players', {players: server.player_array});
 	
-	console.log(this.gameroom_array);
+	this.player_array[username] = socket;
 }
 
-game_server.joinGameRoom = function(roomname, client, sio){
-	var gameroom = this.gameroom_array[roomname];
+game_server.challenge = function(challenger, challenged){
+	var socket = this.player_array[challenged];
+	socket.emit('new challenger', {username: challenger});
+}
+
+game_server.acceptChallenge = function(challenger, challenged, gameID){
+	var socket = this.player_array[challenger];
+	socket.emit('challenge accepted', {username: challenged});
+	socket.emit('your game id', {game_id: game});
+
+	newGame(challenger, challenged, gameID);
+}
+
+game_server.newGame = function(challenger, challenged, gameID){
+	var newGame = new game_core(gameID);
+	gameArray[gameID] = newGame;
+}
+
+game_server.joinGame = function(socket, username, gameID){
+	socket.username = username;
+	var game_instance = gameArray[gameID];
 	
-	//edit gameroom to add this new client as a player
-	gameroom.players[gameroom.players.length] = this.player_array[client.userid];
-	this.gameroom_array[roomname] = gameroom;
-
-	//add client to game room
-	client.join(roomname);
-	console.log(this.gameroom_array);
-
-	//sio.sockets.in(roomname).emit('gameroom info 2', {new_player: this.player_array[client.userid].username, number_of_players: gameroom.players.length});
-
-	//client.broadcast.to(roomname).emit('gameroom info 2');
-}
-
-game_server.sendRoomInfo = function(socket, roomname){
-	var gameroom = this.gameroom_array[roomname];
-	var array = new Array();
-	for(var i = 0 ; i < gameroom.players.length ; i++){
-		array[i] = gameroom.players[i].username;
+	if (game_instance.players.player1 == null){
+		socket.set(gameID + ' player1');
+		game_instance.players.player1 = socket;
 	}
-	socket.emit('gameroom info', {players: array});
+	else {
+		socket.set(gameID + ' player2');
+		game_instance.players.player2 = socket;
+		sio.sockets.in(gameID).emit('players connected');
+	}
 
+	gameArray[gameID] = game_instance;
 }
 
-game_server.sendRooms = function(socket){
-	var array = new Array();
-
-	for (var key in this.gameroom_array){
-		console.log(this.gameroom_array[key]);
-		array.push(this.gameroom_array[key].room_name);
-	}
-	
-/*
-	this.gameroom_array.forEach(function(entry){
-		console.log(entry.roomname);
-		array.push(entry.roomname);
-	});
-*/
-	socket.emit('getRooms', {rooms: array});
+game_server.disconnect = function(socket){
+	delete this.player_array[socket.username];
 }
