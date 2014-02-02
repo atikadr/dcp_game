@@ -27,6 +27,7 @@ game_server.createGameRoom = function(roomname, client){
 
 	//add client to game room
 	client.join(roomname);
+	client.emit('your uuid', {uuid: client.userid});
 	
 	console.log(this.gameroom_array);
 }
@@ -42,7 +43,9 @@ game_server.joinGameRoom = function(roomname, client, sio){
 	client.join(roomname);
 	console.log(this.gameroom_array);
 
-	//sio.sockets.in(roomname).emit('gameroom info 2', {game: gameroom.players.length});
+	//sio.sockets.in(roomname).emit('gameroom info 2', {new_player: this.player_array[client.userid].username, number_of_players: gameroom.players.length});
+
+	//client.broadcast.to(roomname).emit('gameroom info 2');
 }
 
 game_server.sendRoomInfo = function(socket, roomname){
@@ -51,7 +54,7 @@ game_server.sendRoomInfo = function(socket, roomname){
 	for(var i = 0 ; i < gameroom.players.length ; i++){
 		array[i] = gameroom.players[i].username;
 	}
-	socket.emit('gameroom info', {players: array})
+	socket.emit('gameroom info', {players: array});
 
 }
 

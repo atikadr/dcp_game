@@ -13,15 +13,23 @@ app.configure(function(){
 	app.use(express.static(path.join(__dirname,'')));
 });
 
+/*
+app.get('/index.html', function(req, res){
+	res.sendfile('/index.html', {root: __dirname});
+	
+	var file = req.params[0];
+	res.sendfile(__dirname+'/'+file);
+	console.log('asked for index');
+});
+
+app.get('/*', function(req, res, next){
+	var file = req.params[0];
+	res.sendfile(__dirname+'/'+file);
+});
+*/
+
 var server = require('http').createServer(app).listen(8080);
 sio = io.listen(server);
-
-
-app.get('/', function(req, res){
-	res.sendfile('/index.html', {root:__dirname});
-	console.log(game_server.gameroom_array);
-	//res.json(game_server.gameroom_array);
-});
 
 console.log("listening");
 
@@ -57,5 +65,9 @@ sio.sockets.on('connection', function(socket){
 
 	socket.on('getRooms', function(){
 		game_server.sendRooms(socket);
+	});
+
+	socket.on('my uuid', function(){
+		console.log("this client asked for uuid " + socket.userid);
 	});
 });
