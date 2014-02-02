@@ -1,13 +1,15 @@
 var 
-	io=require('socket.io'),
-	express=require('express'),
-	UUID=require('node-uuid'),
-	path=require('path'),
-	mysql=require('mysql'),
-	app = express();
+io=require('socket.io'),
+express=require('express'),
+UUID=require('node-uuid'),
+path=require('path'),
+mysql=require('mysql'),
+fs = require('fs'),
+app = express();
 
 game_server = require('./server/game.server.js');
 
+app.use(express.bodyParser());
 
 app.configure(function(){
 	app.use(express.static(path.join(__dirname,'')));
@@ -21,6 +23,26 @@ app.get('/', function(req, res){
 	res.sendfile('/index.html', {root:__dirname});
 	console.log(game_server.gameroom_array);
 	//res.json(game_server.gameroom_array);
+});
+
+app.post('/saveTrack',function(req,res){
+	var musicArray = req.body.musicArray;
+	var writeString = "";
+	for(var i = 0 ; i < musicArray.length ; i++){
+		writeString += musicArray[i].type+","+musicArray[i].timing+"\n";
+	}
+	console.log(writeString);
+	fs.writeFile('beats/test.txt', writeString, function (err) {
+		if (err) return console.log(err);
+	});
+});
+
+app.get('/getTrack',function(req,res){
+	fs.readFile('beats/test.txt','utf8',function(err,data){
+		console.log(data);
+		res.write(data);
+		res.end();
+	});
 });
 
 console.log("listening");

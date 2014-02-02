@@ -20,7 +20,7 @@ var greenSquare;
 
 var gameSpeed = 10;
 
-function setupGame(){
+function setupGameGen(){
 	var playButton = cc.Sprite.create("../images/play.png");
 	playButton.setPosition(new cc.Point(200,400));
 	playButton.tag = "playButton";
@@ -46,104 +46,294 @@ function setupGame(){
 
 var counter = 0;
 
+var scoreLabel;
+
 var musicArray = new Array();
 
-function startMusic(){
+function saveTrack(){
+	musicArray = {musicArray:musicArray};
+	$.ajax({
+		url: "/saveTrack",
+		data: musicArray,
+		type: "POST",
+		success:function(data){
+			console.log(data);
+		}
+	});
+}
+
+function startMusicGen(){
 	$("#testSound").get(0).play();
 	$("#testSound").bind("ended",function(){
-		console.log(musicArray);
+		saveTrack();
 	});
 	gameLayer.schedule(function(){
-		//console.log(counter);
 		counter++;
 	});
 }
 
+function startMusicPlay(){
+	console.log(musicArray);
+	$("#testSound").bind("ended",function(){
+		console.log(beatsArray);
+	});	
+	$("#testSound").get(0).play();
+	gameLayer.schedule(function(){
+		counter++;
+	});
+	for(var i = 0 ; i < musicArray.length ; i++){
+		var notePath = "../images/"+musicArray[i].type+"Note.png";
+		var note = cc.Sprite.create(notePath);
+		var notePosition;
+		if(musicArray[i].type == "red"){
+			notePosition = new cc.Point(50,canvasHeight+10);
+		}
+		if(musicArray[i].type == "blue"){
+			notePosition = new cc.Point(150,canvasHeight+10);
+		}
+		if(musicArray[i].type == "purple"){
+			notePosition = new cc.Point(250,canvasHeight+10);
+		}
+		if(musicArray[i].type == "green"){
+			notePosition = new cc.Point(350,canvasHeight+10);
+		}
+		note.setPosition(notePosition);
+		note.counterTiming = musicArray[i].timing;
+		note.type = musicArray[i].type;
+		gameLayer.addChild(note);
+		note.noteIndex = i;
+		beatsArray.push(note);
+		note.schedule(function(){
+			if(this.counterTiming <= counter){
+				this.setPosition(new cc.Point(this.getPosition().x,this.getPosition().y-gameSpeed));
+			}
+			if(this.getPosition().y <= 0){
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(beatsArray[i].noteIndex == this.noteIndex){
+						beatsArray.splice(i,1);
+					}
+				}
+				gameLayer.removeChild(this);
+			}
+		});
+	}
+}
+
+function getMusicArray(){
+	$.ajax({
+		url: "/getTrack",
+		type: "GET",
+		success:function(data){
+			var tempArray = data.split("\n");
+			for(var i = 0 ; i < tempArray.length-1 ; i++){
+				var tempObject = {type:tempArray[i].split(",")[0],timing:tempArray[i].split(",")[1]};
+				musicArray.push(tempObject);
+			}
+		}
+	});
+}
+
+function setupGamePlay(){
+	var playButton = cc.Sprite.create("../images/play.png");
+	playButton.setPosition(new cc.Point(200,400));
+	playButton.tag = "playButton";
+	gameSpritesArray.push(playButton);
+	gameLayer.addChild(playButton);
+
+	redSquare = cc.Sprite.create("../images/redSquare.png");
+	redSquare.setPosition(new cc.Point(50,50));
+	gameLayer.addChild(redSquare);
+
+	blueSquare = cc.Sprite.create("../images/blueSquare.png");
+	blueSquare.setPosition(new cc.Point(150,50));
+	gameLayer.addChild(blueSquare);
+
+	purpleSquare = cc.Sprite.create("../images/purpleSquare.png");
+	purpleSquare.setPosition(new cc.Point(250,50));
+	gameLayer.addChild(purpleSquare);
+
+	greenSquare = cc.Sprite.create("../images/greenSquare.png");
+	greenSquare.setPosition(new cc.Point(350,50));
+	gameLayer.addChild(greenSquare);
+
+	scoreLabel = cc.LabelTTF.create("TEST");
+	scoreLabel.setString(score);
+	scoreLabel.setFontSize(24);
+	scoreLabel.setPosition(new cc.Point(canvasWidth-40,canvasHeight-25));
+	gameLayer.addChild(scoreLabel);
+
+	getMusicArray();
+}
+
+var gameMode;
+var canvasWidth, canvasHeight;
+var score = 0;
+
 var gamesceneGame = cc.Layer.extend({
 	init:function(){
-		var canvasWidth = parseInt($("#gameCanvas").css("width"));
-		var canvasHeight = parseInt($("#gameCanvas").css("height"));
+		console.log(window.location.href);
+		if(window.location.href.indexOf("gameGen")!=-1){ // is gameGen
+			gameMode = "generator";
+		}
+		else{ // is gamePlay
+			gameMode = "play";
+		}
+		canvasWidth = parseInt($("#gameCanvas").css("width"));
+		canvasHeight = parseInt($("#gameCanvas").css("height"));
 		this._super();
 		this.setMouseEnabled(true);
 		this.setKeyboardEnabled(true);
 		gameLayer = cc.LayerColor.create(new cc.Color4B(0, 51, 102, 255), canvasWidth, canvasHeight);
 		this.addChild(gameLayer);
-		setupGame();
+		if(gameMode == "generator"){
+			setupGameGen();
+		}
+		else{
+			setupGamePlay();
+		}
 		return true;
 	},
 	onMouseDown:function(event){
 		var location = event.getLocation();
 		var mousePoint = new cc.Point(location.x,location.y);
-		for(var i = 0 ; i < gameSpritesArray.length ; i++){
-			if(cc.Rect.CCRectContainsPoint(gameSpritesArray[i].getBoundingBox(),mousePoint) === true){
-				if(gameSpritesArray[i].tag == "playButton"){
-					gameLayer.removeChild(gameSpritesArray[i]);
-					startMusic();
+		if(gameMode == "generator"){
+			for(var i = 0 ; i < gameSpritesArray.length ; i++){
+				if(cc.Rect.CCRectContainsPoint(gameSpritesArray[i].getBoundingBox(),mousePoint) === true){
+					if(gameSpritesArray[i].tag == "playButton"){
+						gameLayer.removeChild(gameSpritesArray[i]);
+						startMusicGen();
+					}
+				}
+			}
+		}
+		else{
+			for(var i = 0 ; i < gameSpritesArray.length ; i++){
+				if(cc.Rect.CCRectContainsPoint(gameSpritesArray[i].getBoundingBox(),mousePoint) === true){
+					if(gameSpritesArray[i].tag == "playButton"){
+						gameLayer.removeChild(gameSpritesArray[i]);
+						startMusicPlay();
+					}
 				}
 			}
 		}
 	},
 	onKeyDown:function(event){
-		console.log(event);
-		if(event == 90){ // z
-			var newRedSquare = cc.Sprite.create("../images/redSquare.png");
-			newRedSquare.setPosition(new cc.Point(50,50));
-			newRedSquare.ySpeed = gameSpeed;
-			newRedSquare.xSpeed = 0;
-			newRedSquare.schedule(function(){
-				this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
-				if(this.getPosition().y > 800){
-					musicArray.push({type:"red",timing:counter});
-					gameLayer.removeChild(this);
-				}
-			});
-			beatsArray.push(newRedSquare);
-			gameLayer.addChild(newRedSquare);
+		if(gameMode == "generator"){
+			if(event == 90){ 
+				var newRedSquare = cc.Sprite.create("../images/redNote.png");
+				newRedSquare.setPosition(new cc.Point(50,50));
+				newRedSquare.ySpeed = gameSpeed;
+				newRedSquare.xSpeed = 0;
+				newRedSquare.schedule(function(){
+					this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
+					if(this.getPosition().y > 800){
+						gameLayer.removeChild(this);
+					}
+				});
+				musicArray.push({type:"red",timing:counter});
+				beatsArray.push(newRedSquare);
+				gameLayer.addChild(newRedSquare);
+			}
+			if(event == 88){ 
+				var newBlueSquare = cc.Sprite.create("../images/blueNote.png");
+				newBlueSquare.setPosition(new cc.Point(150,50));
+				newBlueSquare.ySpeed = gameSpeed;
+				newBlueSquare.xSpeed = 0;
+				newBlueSquare.schedule(function(){
+					this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
+					if(this.getPosition().y > 800){
+						gameLayer.removeChild(this);
+					}
+				});
+				musicArray.push({type:"blue",timing:counter});
+				beatsArray.push(newBlueSquare);
+				gameLayer.addChild(newBlueSquare);
+			}
+			if(event == 188){ 
+				var newPurpleSquare = cc.Sprite.create("../images/purpleNote.png");
+				newPurpleSquare.setPosition(new cc.Point(250,50));
+				newPurpleSquare.ySpeed = gameSpeed;
+				newPurpleSquare.xSpeed = 0;
+				newPurpleSquare.schedule(function(){
+					this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
+					if(this.getPosition().y > 800){
+						gameLayer.removeChild(this);
+					}
+				});
+				musicArray.push({type:"purple",timing:counter});
+				beatsArray.push(newPurpleSquare);
+				gameLayer.addChild(newPurpleSquare);
+			}
+			if(event == 190){ 
+				var newGreenSquare = cc.Sprite.create("../images/greenNote.png");
+				newGreenSquare.setPosition(new cc.Point(350,50));
+				newGreenSquare.ySpeed = gameSpeed;
+				newGreenSquare.xSpeed = 0;
+				newGreenSquare.schedule(function(){
+					this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
+					if(this.getPosition().y > 800){
+						gameLayer.removeChild(this);
+					}
+				});
+				musicArray.push({type:"green",timing:counter});
+				beatsArray.push(newGreenSquare);
+				gameLayer.addChild(newGreenSquare);
+			}
 		}
-		if(event == 88){ // x
-			var newBlueSquare = cc.Sprite.create("../images/blueSquare.png");
-			newBlueSquare.setPosition(new cc.Point(150,50));
-			newBlueSquare.ySpeed = gameSpeed;
-			newBlueSquare.xSpeed = 0;
-			newBlueSquare.schedule(function(){
-				this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
-				if(this.getPosition().y > 800){
-					musicArray.push({type:"blue",timing:counter});
-					gameLayer.removeChild(this);
+		else{
+			if(event == 90){
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),redSquare.getBoundingBox()) === true){
+						if(beatsArray[i].type == "red"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							scoreLabel.setString(score);
+
+						}
+					}
 				}
-			});
-			beatsArray.push(newBlueSquare);
-			gameLayer.addChild(newBlueSquare);
-		}
-		if(event == 188){ // ,
-			var newPurpleSquare = cc.Sprite.create("../images/purpleSquare.png");
-			newPurpleSquare.setPosition(new cc.Point(250,50));
-			newPurpleSquare.ySpeed = gameSpeed;
-			newPurpleSquare.xSpeed = 0;
-			newPurpleSquare.schedule(function(){
-				this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
-				if(this.getPosition().y > 800){
-					musicArray.push({type:"purple",timing:counter});
-					gameLayer.removeChild(this);
+			}
+			if(event == 88){
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),blueSquare.getBoundingBox()) === true){
+						if(beatsArray[i].type == "blue"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							scoreLabel.setString(score);
+
+						}
+					}
 				}
-			});
-			beatsArray.push(newPurpleSquare);
-			gameLayer.addChild(newPurpleSquare);
-		}
-		if(event == 190){ // .
-			var newGreenSquare = cc.Sprite.create("../images/greenSquare.png");
-			newGreenSquare.setPosition(new cc.Point(350,50));
-			newGreenSquare.ySpeed = gameSpeed;
-			newGreenSquare.xSpeed = 0;
-			newGreenSquare.schedule(function(){
-				this.setPosition(new cc.Point(this.getPosition().x+this.xSpeed,this.getPosition().y+this.ySpeed));
-				if(this.getPosition().y > 800){
-					musicArray.push({type:"green",timing:counter});
-					gameLayer.removeChild(this);
+			}
+			if(event == 188){
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),purpleSquare.getBoundingBox()) === true){
+						if(beatsArray[i].type == "purple"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							scoreLabel.setString(score);
+
+						}
+					}
 				}
-			});
-			beatsArray.push(newGreenSquare);
-			gameLayer.addChild(newGreenSquare);
+			}
+			if(event == 190){
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),greenSquare.getBoundingBox()) === true){
+						if(beatsArray[i].type == "green"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							scoreLabel.setString(score);
+
+						}
+					}
+				}
+			}
+
 		}
 	}
 });
