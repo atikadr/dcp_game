@@ -9,7 +9,7 @@ app = express();
 
 var game_server = require('./server/game.server.js');
 //var game_core = require('./game.core.js');
-var room_players = require('./routes/players');
+//var room_players = require('./routes/players');
 
 app.use(express.bodyParser());
 
