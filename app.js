@@ -12,7 +12,6 @@ var PORT = 3306;
 var MYSQL_USER = 'root';
 var MYSQL_PASS = '';
 var DATABASE = 'dcp_game';
-//var TABLE = 'gadgets';
 
 var mysql = _mysql.createConnection({
     host: HOST,
@@ -50,6 +49,23 @@ app.post('/saveTrack',function(req,res){
 	});
 });
 
+app.post('/saveTrack/:id', function(req,res){
+	var song = req.params.id;
+	var musicArray = req.body.musicArray;
+	var writeString = "";
+	for(var i = 0 ; i < musicArray.length ; i++){
+		writeString += musicArray[i].type+","+musicArray[i].timing+"\n";
+	}
+	console.log(writeString);
+
+	var newsongid = UUID();
+	mysql.query('insert into Song (songid, song, beats) values ("' + newsongid + '","' + song + '","' + writeString + '")', 
+		function(err, results, fields){
+		if (err) throw err;
+		else res.send('song stored in database');
+	});
+});
+
 app.get('/getTrack',function(req,res){
 	fs.readFile('beats/test.txt','utf8',function(err,data){
 		console.log(data);
@@ -57,6 +73,20 @@ app.get('/getTrack',function(req,res){
 		res.end();
 	});
 });
+
+app.get('/getTrack/:id',function(req,res){
+	var song = req.params.id;
+	mysql.query('select * from Song where song = "' + song + '"', 
+		function(err, result, fields){
+			if (err) throw err;
+			else{
+				for (var i in result){
+					res.send(result[i].beats);
+				}
+			}
+		});
+});
+
 
 console.log("listening");
 
