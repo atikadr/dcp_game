@@ -3,9 +3,25 @@ io=require('socket.io'),
 express=require('express'),
 UUID=require('node-uuid'),
 path=require('path'),
-mysql=require('mysql'),
+_mysql=require('mysql'),
 fs = require('fs'),
 app = express();
+
+var HOST = 'localhost';
+var PORT = 3306;
+var MYSQL_USER = 'nodehacker';
+var MYSQL_PASS = 'lulwut';
+var DATABASE = 'nodedb';
+var TABLE = 'gadgets';
+
+var mysql = _mysql.createClient({
+    host: HOST,
+    port: PORT,
+    user: MYSQL_USER,
+    password: MYSQL_PASS
+});
+
+mysql.query('use ' + DATABASE);
 
 var game_server = require('./server/game.server.js');
 //var game_core = require('./game.core.js');
