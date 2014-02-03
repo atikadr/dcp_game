@@ -9,17 +9,19 @@ app = express();
 
 var HOST = 'localhost';
 var PORT = 3306;
-var MYSQL_USER = 'nodehacker';
-var MYSQL_PASS = 'lulwut';
-var DATABASE = 'nodedb';
-var TABLE = 'gadgets';
+var MYSQL_USER = 'root';
+var MYSQL_PASS = '';
+var DATABASE = 'dcp_game';
+//var TABLE = 'gadgets';
 
-var mysql = _mysql.createClient({
+var mysql = _mysql.createConnection({
     host: HOST,
     port: PORT,
     user: MYSQL_USER,
     password: MYSQL_PASS
 });
+
+mysql.connect();
 
 mysql.query('use ' + DATABASE);
 
