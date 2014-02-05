@@ -31,7 +31,7 @@ game_server.newGame = function(sio, gameID){
 	gameArray[gameID] = newGame;
 }
 
-game_server.joinGame = function(socket, username, gameID){
+game_server.joinGame = function(sio, socket, username, gameID){
 	socket.username = username;
 	var game_instance = gameArray[gameID];
 	
@@ -42,7 +42,7 @@ game_server.joinGame = function(socket, username, gameID){
 	else {
 		socket.set(gameID + ' player2');
 		game_instance.players.player2 = socket;
-		io.sockets.in(gameID).emit('players connected');
+		sio.sockets.in(gameID).emit('players connected');
 	}
 
 	gameArray[gameID] = game_instance;

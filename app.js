@@ -140,7 +140,7 @@ sio.sockets.on('connection', function(socket){
 	//function broadcasts 'players connected' when both players are connected
 	socket.on('setup game', function(data){
 		socket.join(data.game_id);
-		game_server.joinGame(socket, data.username, data.game_id);
+		game_server.joinGame(sio, socket, data.username, data.game_id);
 	});
 /*
 	socket.on('disconnect', function(){
