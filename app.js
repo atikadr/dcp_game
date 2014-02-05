@@ -134,13 +134,13 @@ sio.sockets.on('connection', function(socket){
 		socket.join(data.game_id);
 		game_server.joinGame(socket, data.username, data.game_id);
 	});
-
+/*
 	socket.on('disconnect', function(){
 		//check if this user is part of gameroom
 		game_server.disconnect(socket);
 	});
-
-	socket.on('test', function(){
-		socket.emit('test reply', {message: "Hello Benjy"});
+*/
+	socket.on('test', function(data){
+		socket.emit('test reply', {message: data});
 	});
 });

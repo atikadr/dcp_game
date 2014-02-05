@@ -3,6 +3,7 @@
 <head>
 	<title>DCP game</title>
 	<script src="../js/jquery-1.11.0.min.js"></script>
+	<script src="../socket.io/socket.io.js"></script>
 	<script src="../js/jquery.fullscreen-min.js"></script>
 	<script src="../js/gameCanvasScript.js"></script>
 	<script src="../js/cocos2d.js"></script>
@@ -11,7 +12,6 @@
 	$(document).ready(function(){
 		var gameHeight = -$("#gameCanvas").height()/2;
 		var gameWidth = -$("#gameCanvas").width()/2;
-		console.log(gameWidth);
 		$("#Cocos2dGameContainer").css({
 			"position":"absolute",
 			"left":"50%",
