@@ -1,6 +1,6 @@
 var game_server = module.exports;
 var io=require('socket.io');
-require('./game.core.js');
+var gc = require('./game.core.js');
 
 var player_array = [], gameArray = [];
 
@@ -26,15 +26,23 @@ game_server.acceptChallenge = function(sio, challenger, challenged, gameID){
 	newGame(sio, gameID);
 }
 
-game_server.newGame = function(sio, gameID){
-	var newGame = new game_core(sio, gameID);
+game_server.newGame = function(gameID){
+	/*
+	var newGame = new gc.game_core(sio, gameID);
+	gameArray[gameID] = newGame;
+	*/
+
+	var newGame = new gc.mock_game(gameID);
 	gameArray[gameID] = newGame;
 }
 
 game_server.joinGame = function(sio, socket, username, gameID){
+	
 	socket.username = username;
 	var game_instance = gameArray[gameID];
 	
+
+	/*
 	if (game_instance.players.player1 == null){
 		socket.set(gameID + ' player1');
 		game_instance.players.player1 = socket;
@@ -46,6 +54,23 @@ game_server.joinGame = function(sio, socket, username, gameID){
 	}
 
 	gameArray[gameID] = game_instance;
+	*/
+
+	if (game_instance.player1 == null){
+		socket.set(gameID + ' player1');
+		game_instance.player1 = socket;
+		gameArray[gameID] = game_instance;
+	}
+	else {
+		socket.set(gameID + ' player2');
+		var newGame = new gc.game_core(sio, gameID, game_instance.player1, socket);
+		delete game_instance; delete gameArray[gameID];
+		gameArray[gameID] = newGame;
+
+
+		sio.sockets.in(gameID).emit('players connected');
+	}
+
 }
 
 game_server.setSong = function(socket, username, song){
@@ -55,3 +80,5 @@ game_server.setSong = function(socket, username, song){
 game_server.disconnect = function(socket){
 	delete player_array[socket.username];
 }
+
+

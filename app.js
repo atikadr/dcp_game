@@ -92,7 +92,7 @@ app.get('/getTrack/:id',function(req,res){
 /*
 BRUTE FORCE TESTING CODE
 */
-game_server.newGame(sio, 'testingGame';
+game_server.newGame(sio, 'testingGame');
 
 
 
@@ -148,6 +148,7 @@ sio.sockets.on('connection', function(socket){
 		game_server.disconnect(socket);
 	});
 */
+
 	socket.on('test', function(data){
 		console.log(data.beat);
 		socket.emit('test reply', {message: data});
