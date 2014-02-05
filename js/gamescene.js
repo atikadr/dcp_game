@@ -20,6 +20,12 @@ var greenSquare;
 
 var gameSpeed = 7;
 
+var socket = io.connect();
+
+socket.on('test reply',function(data){
+	console.log(data.message.beat);
+});
+
 function setupGameGen(){
 	var playButton = cc.Sprite.create("../images/play.png");
 	playButton.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
@@ -342,6 +348,7 @@ var gamesceneGame = cc.Layer.extend({
 		}
 		else{
 			if(event == 90){
+				socket.emit('test',{beat:"red"});
 				redSquare.setOpacity(200);
 				whitebox1.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
@@ -360,6 +367,7 @@ var gamesceneGame = cc.Layer.extend({
 				}
 			}
 			if(event == 88){
+				socket.emit('test',{beat:"blue"});
 				blueSquare.setOpacity(200);
 				whitebox2.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
@@ -378,6 +386,7 @@ var gamesceneGame = cc.Layer.extend({
 				}
 			}
 			if(event == 188){
+				socket.emit('test',{beat:"purple"});
 				purpleSquare.setOpacity(200);
 				whitebox3.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
@@ -396,6 +405,7 @@ var gamesceneGame = cc.Layer.extend({
 				}
 			}
 			if(event == 190){
+				socket.emit('test',{beat:"green"});
 				greenSquare.setOpacity(200);
 				whitebox4.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
