@@ -9,13 +9,23 @@
 	<link rel="stylesheet" href="../css/gamecanvas.css" type="text/css"/>
 	<script type="text/javascript">
 	$(document).ready(function(){
+		var gameHeight = -$("#gameCanvas").height()/2;
+		var gameWidth = -$("#gameCanvas").width()/2;
+		console.log(gameWidth);
+		$("#Cocos2dGameContainer").css({
+			"position":"absolute",
+			"left":"50%",
+			"top":"50%",
+			"margin-left": gameWidth+"px",
+			"margin-top": gameHeight+"px"
+		});
 		initGameCanvas();
 	});
 	</script>
 </head>
 <body style="padding:0px;margin:0px;background-color:white">
 	<audio id="testSound" src="../sounds/test.mp3"></audio>
-	<canvas id="gameCanvas" width="400" height="800"></canvas>
+	<canvas id="gameCanvas" width="1200" height="800"></canvas>
 	<button id="fullScreenButton">Full Screen</button>
 </body>
 </html>
