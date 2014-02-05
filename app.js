@@ -139,4 +139,8 @@ sio.sockets.on('connection', function(socket){
 		//check if this user is part of gameroom
 		game_server.disconnect(socket);
 	});
+
+	socket.on('test', function(){
+		socket.emit('test reply', {message: "Hello Benjy"});
+	});
 });
