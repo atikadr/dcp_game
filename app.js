@@ -124,7 +124,7 @@ sio.sockets.on('connection', function(socket){
 	//call when a player changes his music
 	//player must emit {username: my username, song: choice of music}
 	socket.on('set song', function(data){
-		game_server.setSong(socket, data.song);
+		game_server.setSong(socket, data.username, data.song);
 	});
 
 	//call after player loads the game page
