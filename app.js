@@ -10,7 +10,7 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'a';
+var MYSQL_PASS = 'bubumint';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
@@ -88,6 +88,14 @@ app.get('/getTrack/:id',function(req,res){
 });
 
 
+
+/*
+BRUTE FORCE TESTING CODE
+*/
+game_server.newGame(sio, 'testingGame';
+
+
+
 console.log("listening");
 
 sio.sockets.on('connection', function(socket){
@@ -117,7 +125,7 @@ sio.sockets.on('connection', function(socket){
 	//in the future, game id will be stored in a cookie
 	socket.on('accept challenge', function(data){
 		var gameID = UUID();
-		game_server.acceptChallenge(data.challenger, data.challenged, gameID);
+		game_server.acceptChallenge(sio, data.challenger, data.challenged, gameID);
 		socket.emit('your game id', {game_id: game});
 	});
 
@@ -141,6 +149,12 @@ sio.sockets.on('connection', function(socket){
 	});
 */
 	socket.on('test', function(data){
+		console.log(data.beat);
 		socket.emit('test reply', {message: data});
+	});
+
+	socket.on('test join', function(data){
+		socket.join('testingGame');
+		game_server.joinGame(socket, 'testing username', 'testingGame');
 	});
 });

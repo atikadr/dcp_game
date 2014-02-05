@@ -18,16 +18,16 @@ game_server.challenge = function(challenger, challenged){
 	socket.emit('new challenger', {username: challenger});
 }
 
-game_server.acceptChallenge = function(challenger, challenged, gameID){
+game_server.acceptChallenge = function(sio, challenger, challenged, gameID){
 	var socket = this.player_array[challenger];
 	socket.emit('challenge accepted', {username: challenged});
 	socket.emit('your game id', {game_id: game});
 
-	newGame(challenger, challenged, gameID);
+	newGame(sio, gameID);
 }
 
-game_server.newGame = function(challenger, challenged, gameID){
-	var newGame = new game_core(gameID);
+game_server.newGame = function(sio, gameID){
+	var newGame = new game_core(sio, gameID);
 	gameArray[gameID] = newGame;
 }
 
@@ -42,7 +42,7 @@ game_server.joinGame = function(socket, username, gameID){
 	else {
 		socket.set(gameID + ' player2');
 		game_instance.players.player2 = socket;
-		sio.sockets.in(gameID).emit('players connected');
+		io.sockets.in(gameID).emit('players connected');
 	}
 
 	gameArray[gameID] = game_instance;
