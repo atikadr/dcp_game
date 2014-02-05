@@ -8,9 +8,9 @@ var player_array = [], gameArray = [];
 game_server.addPlayer = function(socket, username){
 	socket.username = username;
 
-	socket.emit('get players', {players: server.player_array});
+	socket.emit('get players', {players: player_array});
 	
-	this.player_array[username] = socket;
+	player_array[username] = socket;
 }
 
 game_server.challenge = function(challenger, challenged){
@@ -48,6 +48,10 @@ game_server.joinGame = function(socket, username, gameID){
 	gameArray[gameID] = game_instance;
 }
 
+game_server.setSong = function(socket, username, song){
+	player_array[username].song = song;
+}
+
 game_server.disconnect = function(socket){
-	delete this.player_array[socket.username];
+	delete player_array[socket.username];
 }
