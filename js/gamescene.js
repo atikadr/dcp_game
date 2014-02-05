@@ -12,47 +12,122 @@ var gameLayer;
 var gameSpritesArray = new Array();
 
 var beatsArray = new Array();
+var beatsArrayOpp = new Array();
 
 var redSquare;
 var blueSquare;
 var purpleSquare;
 var greenSquare;
 
+var redSquareOpp;
+var blueSquareOpp;
+var purpleSquareOpp;
+var greenSquareOpp;
+
 var gameSpeed = 7;
 
 var socket = io.connect();
 
-socket.on('test reply',function(data){
+socket.on('game start',function(data){
 	console.log(data.message.beat);
+	startMusicPlay();
+});
+
+socket.on('beat',function(data){
+	var notePath = "../images/"+data+"Note.png";
+	var note = cc.Sprite.create(notePath);
+	var notePosition;
+	if(data == "red"){
+		notePosition = new cc.Point(canvasWidth/2-350-150,canvasHeight);
+	}
+	if(data == "blue"){
+		notePosition = new cc.Point(canvasWidth/2-350-50,canvasHeight);
+	}
+	if(data == "purple"){
+		notePosition = new cc.Point(canvasWidth/2-350+50,canvasHeight);
+	}
+	if(data == "green"){
+		notePosition = new cc.Point(canvasWidth/2-350+150,canvasHeight);
+	}
+	note.setPosition(notePosition);
+	note.type = data;
+	gameLayer.addChild(note);
+	note.noteIndex = i;
+	beatsArray.push(note);
+	note.schedule(function(){
+		this.setPosition(new cc.Point(this.getPosition().x,this.getPosition().y-gameSpeed));
+		if(this.getPosition().y <= 0){
+			totalCombo = 0;
+			comboLabel.setString(totalCombo);
+			for(var i = 0 ; i < beatsArray.length ; i++){
+				if(beatsArray[i].noteIndex == this.noteIndex){
+					beatsArray.splice(i,1);
+				}
+			}
+			gameLayer.removeChild(this); 
+		}
+	});
+
+	var noteOpp = cc.Sprite.create(notePath);
+	if(data == "red"){
+		notePosition = new cc.Point(canvasWidth/2+350-150,canvasHeight);
+	}
+	if(data == "blue"){
+		notePosition = new cc.Point(canvasWidth/2+350-50,canvasHeight);
+	}
+	if(data == "purple"){
+		notePosition = new cc.Point(canvasWidth/2+350+50,canvasHeight);
+	}
+	if(data == "green"){
+		notePosition = new cc.Point(canvasWidth/2+350+150,canvasHeight);
+	}
+	noteOpp.setPosition(notePosition);
+	noteOpp.type = data;
+	gameLayer.addChild(noteOpp);
+	noteOpp.noteIndex = i;
+	beatsArrayOpp.push(noteOpp);
+	noteOpp.schedule(function(){
+		this.setPosition(new cc.Point(this.getPosition().x,this.getPosition().y-gameSpeed));
+		if(this.getPosition().y <= 0){
+			totalCombo = 0;
+			comboLabel.setString(totalCombo);
+			for(var i = 0 ; i < beatsArray.length ; i++){
+				if(beatsArrayOpp[i].noteIndex == this.noteIndex){
+					beatsArrayOpp.splice(i,1);
+				}
+			}
+			gameLayer.removeChild(this); 
+		}
+	});
 });
 
 function setupGameGen(){
 	var playButton = cc.Sprite.create("../images/play.png");
-	playButton.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
+	playButton.setPosition(new cc.Point(canvasWidth/2-350,canvasHeight/2));
 	playButton.tag = "playButton";
 	gameSpritesArray.push(playButton);
 	gameLayer.addChild(playButton);
 
 	redSquare = cc.Sprite.create("../images/redSquare.png");
-	redSquare.setPosition(new cc.Point(canvasWidth/2-150,50));
+	redSquare.setPosition(new cc.Point(canvasWidth/2-350-150,50));
 	gameLayer.addChild(redSquare);
 
 	blueSquare = cc.Sprite.create("../images/blueSquare.png");
-	blueSquare.setPosition(new cc.Point(canvasWidth/2-50,50));
+	blueSquare.setPosition(new cc.Point(canvasWidth/2-350-50,50));
 	gameLayer.addChild(blueSquare);
 
 	purpleSquare = cc.Sprite.create("../images/purpleSquare.png");
-	purpleSquare.setPosition(new cc.Point(canvasWidth/2+50,50));
+	purpleSquare.setPosition(new cc.Point(canvasWidth/2-350+50,50));
 	gameLayer.addChild(purpleSquare);
 
 	greenSquare = cc.Sprite.create("../images/greenSquare.png");
-	greenSquare.setPosition(new cc.Point(canvasWidth/2+150,50));
+	greenSquare.setPosition(new cc.Point(canvasWidth/2-350+150,50));
 	gameLayer.addChild(greenSquare);
 }
 
 var counter = 0;
 
-var scoreLabel;
+var scoreLabelOpp;
 
 var musicArray = new Array();
 
@@ -78,12 +153,68 @@ function startMusicGen(){
 	});
 }
 
+function makeSecondPlayer(){
+	whitebox1Opp = cc.Sprite.create("../images/whitebox.png");
+	whitebox1Opp.setPosition(canvasWidth/2+350-150,50);
+	gameLayer.addChild(whitebox1Opp);
+	whitebox1Opp.setOpacity(0);
+
+	whitebox2Opp = cc.Sprite.create("../images/whitebox.png");
+	whitebox2Opp.setPosition(canvasWidth/2+350-50,50);
+	whitebox2Opp.setOpacity(0);
+	gameLayer.addChild(whitebox2Opp);
+
+	whitebox3Opp = cc.Sprite.create("../images/whitebox.png");
+	whitebox3Opp.setPosition(canvasWidth/2+350+50,50);
+	whitebox3Opp.setOpacity(0);
+	gameLayer.addChild(whitebox3Opp);
+
+	whitebox4Opp = cc.Sprite.create("../images/whitebox.png");
+	whitebox4Opp.setPosition(canvasWidth/2+350+150,50);
+	whitebox4Opp.setOpacity(0);
+	gameLayer.addChild(whitebox4Opp);
+
+	redSquareOpp = cc.Sprite.create("../images/redSquare.png");
+	redSquareOpp.setPosition(new cc.Point(canvasWidth/2+350-150,50));
+	gameLayer.addChild(redSquareOpp);
+
+	blueSquareOpp = cc.Sprite.create("../images/blueSquare.png");
+	blueSquareOpp.setPosition(new cc.Point(canvasWidth/2+350-50,50));
+	gameLayer.addChild(blueSquareOpp);
+
+	purpleSquareOpp = cc.Sprite.create("../images/purpleSquare.png");
+	purpleSquareOpp.setPosition(new cc.Point(canvasWidth/2+350+50,50));
+	gameLayer.addChild(purpleSquareOpp);
+
+	greenSquareOpp = cc.Sprite.create("../images/greenSquare.png");
+	greenSquareOpp.setPosition(new cc.Point(canvasWidth/2+350+150,50));
+	gameLayer.addChild(greenSquareOpp);
+
+	scoreLabelOpp = cc.LabelTTF.create("TEST","HelveticaNeue-Light");
+	scoreLabelOpp.setString(score);
+	scoreLabelOpp.setFontSize(24);
+	scoreLabelOpp.setPosition(new cc.Point(canvasWidth - 40,canvasHeight-25));
+	gameLayer.addChild(scoreLabelOpp);
+
+	comboLabelOpp = cc.LabelTTF.create("combo","HelveticaNeue-Light");
+	comboLabelOpp.setString(totalComboOpp);
+	comboLabelOpp.setFontSize(50);
+	comboLabelOpp.setPosition(new cc.Point(canvasWidth/2-350,canvasHeight/2));
+	gameLayer.addChild(comboLabelOpp);
+
+	comboLabelOpp.schedule(function(){
+		if(this.getOpacity() > 0){
+			this.setOpacity(this.getOpacity()-5);
+		}
+	});
+}
+
 function startMusicPlay(){
-	console.log(musicArray);
 	$("#testSound").bind("ended",function(){
 		console.log(beatsArray);
 	});	
 	$("#testSound").get(0).play();
+	/*
 	gameLayer.schedule(function(){
 		counter++;
 	});
@@ -92,16 +223,16 @@ function startMusicPlay(){
 		var note = cc.Sprite.create(notePath);
 		var notePosition;
 		if(musicArray[i].type == "red"){
-			notePosition = new cc.Point(canvasWidth/2-150,canvasHeight);
+			notePosition = new cc.Point(canvasWidth/2-350-150,canvasHeight);
 		}
 		if(musicArray[i].type == "blue"){
-			notePosition = new cc.Point(canvasWidth/2-50,canvasHeight);
+			notePosition = new cc.Point(canvasWidth/2-350-50,canvasHeight);
 		}
 		if(musicArray[i].type == "purple"){
-			notePosition = new cc.Point(canvasWidth/2+50,canvasHeight);
+			notePosition = new cc.Point(canvasWidth/2-350+50,canvasHeight);
 		}
 		if(musicArray[i].type == "green"){
-			notePosition = new cc.Point(canvasWidth/2+150,canvasHeight);
+			notePosition = new cc.Point(canvasWidth/2-350+150,canvasHeight);
 		}
 		note.setPosition(notePosition);
 		note.counterTiming = musicArray[i].timing;
@@ -125,9 +256,12 @@ function startMusicPlay(){
 			}
 		});
 	}
+	*/
 }
 
 var totalCombo = 0;
+var totalComboOpp = 0;
+var comboLabelOpp;
 var comboLabel;
 
 function getMusicArray(){
@@ -152,51 +286,51 @@ function setupGamePlay(){
 	gameLayer.addChild(playButton);
 
 	whitebox1 = cc.Sprite.create("../images/whitebox.png");
-	whitebox1.setPosition(canvasWidth/2-150,50);
+	whitebox1.setPosition(canvasWidth/2-350-150,50);
 	gameLayer.addChild(whitebox1);
 	whitebox1.setOpacity(0);
 
 	whitebox2 = cc.Sprite.create("../images/whitebox.png");
-	whitebox2.setPosition(canvasWidth/2-50,50);
+	whitebox2.setPosition(canvasWidth/2-350-50,50);
 	whitebox2.setOpacity(0);
 	gameLayer.addChild(whitebox2);
 
 	whitebox3 = cc.Sprite.create("../images/whitebox.png");
-	whitebox3.setPosition(canvasWidth/2+50,50);
+	whitebox3.setPosition(canvasWidth/2-350+50,50);
 	whitebox3.setOpacity(0);
 	gameLayer.addChild(whitebox3);
 
 	whitebox4 = cc.Sprite.create("../images/whitebox.png");
-	whitebox4.setPosition(canvasWidth/2+150,50);
+	whitebox4.setPosition(canvasWidth/2-350+150,50);
 	whitebox4.setOpacity(0);
 	gameLayer.addChild(whitebox4);
 
 	redSquare = cc.Sprite.create("../images/redSquare.png");
-	redSquare.setPosition(new cc.Point(canvasWidth/2-150,50));
+	redSquare.setPosition(new cc.Point(canvasWidth/2-350-150,50));
 	gameLayer.addChild(redSquare);
 
 	blueSquare = cc.Sprite.create("../images/blueSquare.png");
-	blueSquare.setPosition(new cc.Point(canvasWidth/2-50,50));
+	blueSquare.setPosition(new cc.Point(canvasWidth/2-350-50,50));
 	gameLayer.addChild(blueSquare);
 
 	purpleSquare = cc.Sprite.create("../images/purpleSquare.png");
-	purpleSquare.setPosition(new cc.Point(canvasWidth/2+50,50));
+	purpleSquare.setPosition(new cc.Point(canvasWidth/2-350+50,50));
 	gameLayer.addChild(purpleSquare);
 
 	greenSquare = cc.Sprite.create("../images/greenSquare.png");
-	greenSquare.setPosition(new cc.Point(canvasWidth/2+150,50));
+	greenSquare.setPosition(new cc.Point(canvasWidth/2-350+150,50));
 	gameLayer.addChild(greenSquare);
 
 	scoreLabel = cc.LabelTTF.create("TEST","HelveticaNeue-Light");
 	scoreLabel.setString(score);
 	scoreLabel.setFontSize(24);
-	scoreLabel.setPosition(new cc.Point(canvasWidth-40,canvasHeight-25));
+	scoreLabel.setPosition(new cc.Point(40,canvasHeight-25));
 	gameLayer.addChild(scoreLabel);
 
 	comboLabel = cc.LabelTTF.create("combo","HelveticaNeue-Light");
 	comboLabel.setString(totalCombo);
 	comboLabel.setFontSize(50);
-	comboLabel.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
+	comboLabel.setPosition(new cc.Point(canvasWidth/2-350,canvasHeight/2));
 	gameLayer.addChild(comboLabel);
 
 	comboLabel.schedule(function(){
@@ -204,18 +338,18 @@ function setupGamePlay(){
 			this.setOpacity(this.getOpacity()-5);
 		}
 	});
-
-	getMusicArray();
+	makeSecondPlayer();
+	//getMusicArray();
 }
 
 var gameMode;
 var canvasWidth, canvasHeight;
 var score = 0;
 
-var whitebox1;
-var whitebox2;
-var whitebox3;
-var whitebox4;
+var whitebox1Opp;
+var whitebox2Opp;
+var whitebox3Opp;
+var whitebox4Opp;
 
 var gamesceneGame = cc.Layer.extend({
 	init:function(){
@@ -259,7 +393,8 @@ var gamesceneGame = cc.Layer.extend({
 				if(cc.Rect.CCRectContainsPoint(gameSpritesArray[i].getBoundingBox(),mousePoint) === true){
 					if(gameSpritesArray[i].tag == "playButton"){
 						gameLayer.removeChild(gameSpritesArray[i]);
-						startMusicPlay();
+						socket.emit('game ready');
+						//startMusicPlay();
 					}
 				}
 			}
@@ -287,7 +422,7 @@ var gamesceneGame = cc.Layer.extend({
 		if(gameMode == "generator"){
 			if(event == 90){ 
 				var newRedSquare = cc.Sprite.create("../images/redNote.png");
-				newRedSquare.setPosition(new cc.Point(canvasWidth/2-150,50));
+				newRedSquare.setPosition(new cc.Point(canvasWidth/2-350-150,50));
 				newRedSquare.ySpeed = gameSpeed;
 				newRedSquare.xSpeed = 0;
 				newRedSquare.schedule(function(){
@@ -302,7 +437,7 @@ var gamesceneGame = cc.Layer.extend({
 			}
 			if(event == 88){ 
 				var newBlueSquare = cc.Sprite.create("../images/blueNote.png");
-				newBlueSquare.setPosition(new cc.Point(canvasWidth/2-50,50));
+				newBlueSquare.setPosition(new cc.Point(canvasWidth/2-350-50,50));
 				newBlueSquare.ySpeed = gameSpeed;
 				newBlueSquare.xSpeed = 0;
 				newBlueSquare.schedule(function(){
@@ -317,7 +452,7 @@ var gamesceneGame = cc.Layer.extend({
 			}
 			if(event == 188){ 
 				var newPurpleSquare = cc.Sprite.create("../images/purpleNote.png");
-				newPurpleSquare.setPosition(new cc.Point(canvasWidth/2+50,50));
+				newPurpleSquare.setPosition(new cc.Point(canvasWidth/2-350+50,50));
 				newPurpleSquare.ySpeed = gameSpeed;
 				newPurpleSquare.xSpeed = 0;
 				newPurpleSquare.schedule(function(){
@@ -332,7 +467,7 @@ var gamesceneGame = cc.Layer.extend({
 			}
 			if(event == 190){ 
 				var newGreenSquare = cc.Sprite.create("../images/greenNote.png");
-				newGreenSquare.setPosition(new cc.Point(canvasWidth/2+150,50));
+				newGreenSquare.setPosition(new cc.Point(canvasWidth/2-350+150,50));
 				newGreenSquare.ySpeed = gameSpeed;
 				newGreenSquare.xSpeed = 0;
 				newGreenSquare.schedule(function(){
