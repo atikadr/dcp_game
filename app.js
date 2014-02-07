@@ -10,14 +10,14 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'bubumint';
+var MYSQL_PASS = 'a';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
-    host: HOST,
-    port: PORT,
-    user: MYSQL_USER,
-    password: MYSQL_PASS
+	host: HOST,
+	port: PORT,
+	user: MYSQL_USER,
+	password: MYSQL_PASS
 });
 
 mysql.connect();
@@ -61,9 +61,9 @@ app.post('/saveTrack/:id', function(req,res){
 	var newsongid = UUID();
 	mysql.query('insert into Song (songid, song, beats) values ("' + newsongid + '","' + song + '","' + writeString + '")', 
 		function(err, results, fields){
-		if (err) throw err;
-		else res.send('song stored in database');
-	});
+			if (err) throw err;
+			else res.send('song stored in database');
+		});
 });
 
 app.get('/getTrack',function(req,res){
@@ -97,6 +97,9 @@ game_server.newGame(sio, 'testingGame');
 
 
 console.log("listening");
+
+var playerCount = 0;
+var gameTimer;
 
 sio.sockets.on('connection', function(socket){
 
@@ -149,13 +152,41 @@ sio.sockets.on('connection', function(socket){
 	});
 */
 
-	socket.on('test', function(data){
-		console.log(data.beat);
-		socket.emit('test reply', {message: data});
-	});
+socket.on('disconnect',function(){
+	playerCount = 0;
+	clearInterval(gameTimer);
+})
 
-	socket.on('test join', function(data){
-		socket.join('testingGame');
-		game_server.joinGame(socket, 'testing username', 'testingGame');
-	});
+socket.on('test', function(data){
+	socket.broadcast.emit('test reply', {message: data});
+});
+
+socket.on('test join', function(data){
+	socket.join('testingGame');
+	game_server.joinGame(socket, 'testing username', 'testingGame');
+});
+
+socket.on('game ready',function(data){
+	playerCount++;
+	console.log(playerCount);
+	if(playerCount == 2){
+		//sio.sockets.emit('startGame');
+		var trackData = new Array();
+		fs.readFile('beats/test.txt','utf8',function(err,data){
+			trackData = data.split("\n");
+		});
+		var counter = 0;
+		gameTimer = setInterval(function(){
+			counter++;
+			//console.log(counter);
+			var beat = trackData[0].split(",")[1];
+			while(parseInt(beat) == counter){
+				//console.log(trackData[0].split(",")[0]);
+				sio.sockets.emit('beat',trackData[0].split(",")[0]);
+				trackData.splice(0,1);
+				beat = trackData[0].split(",")[1];
+			}
+		},50/3);
+	}
+});
 });
