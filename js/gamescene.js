@@ -49,7 +49,7 @@ socket.on('test reply',function(data){
 	totalComboOpp = data.message.totalCombo;
 	scoreOpp = data.message.score;
 	comboLabelOpp.setString(totalComboOpp);
-	scoreLabelOpp.setString(scoreOpp);
+	scoreLabelOpp.setString("Score: " + scoreOpp);
 	comboLabelOpp.setOpacity(255);
 	if(beat == "red"){
 		redSquareOpp.setOpacity(200);
@@ -64,7 +64,7 @@ socket.on('test reply',function(data){
 					//totalComboOpp++;
 					//comboLabelOpp.setString(totalComboOpp);
 					//comboLabelOpp.setOpacity(255);
-					//scoreLabelOpp.setString(scoreOpp);
+					//scoreLabelOpp.setString("Score: " + scoreOpp);
 
 				}
 			}
@@ -83,7 +83,7 @@ socket.on('test reply',function(data){
 					//totalComboOpp++;
 					//comboLabelOpp.setString(totalComboOpp);
 					//comboLabelOpp.setOpacity(255);
-					//scoreLabelOpp.setString(scoreOpp);
+					//scoreLabelOpp.setString("Score: " + scoreOpp);
 
 				}
 			}
@@ -102,7 +102,7 @@ socket.on('test reply',function(data){
 					//totalComboOpp++;
 					//comboLabelOpp.setString(totalComboOpp);
 					//comboLabelOpp.setOpacity(255);
-					//scoreLabelOpp.setString(scoreOpp);
+					//scoreLabelOpp.setString("Score: " + scoreOpp);
 
 				}
 			}
@@ -121,7 +121,7 @@ socket.on('test reply',function(data){
 					//totalComboOpp++;
 					//comboLabelOpp.setString(totalComboOpp);
 					//comboLabelOpp.setOpacity(255);
-					//scoreLabelOpp.setString(scoreOpp);
+					//scoreLabelOpp.setString("Score: " + scoreOpp);
 
 				}
 			}
@@ -327,15 +327,16 @@ function makeSecondPlayer(){
 	hitBoxOpp4.setPosition(canvasWidth/2+350+150,240);
 	gameLayer.addChild(hitBoxOpp4);
 
-	scoreLabelOpp = cc.LabelTTF.create("TEST","HelveticaNeue-Light");
-	scoreLabelOpp.setString(scoreOpp);
-	scoreLabelOpp.setFontSize(24);
-	scoreLabelOpp.setPosition(new cc.Point(canvasWidth - 40,canvasHeight-25));
+	scoreLabelOpp = cc.LabelTTF.create("TEST","HelveticaNeue-UltraLight",36,cc.size(250,36),cc.kCCTextAlignmentLeft);
+	scoreLabelOpp.setString("Score: " + scoreOpp);
+	scoreLabelOpp.setPosition(new cc.Point(canvasWidth/2 + 280,canvasHeight-50));
 	gameLayer.addChild(scoreLabelOpp);
+
+	console.log(scoreLabelOpp);
 
 	comboLabelOpp = cc.LabelTTF.create("combo","HelveticaNeue-Light");
 	comboLabelOpp.setString(totalComboOpp);
-	comboLabelOpp.setFontSize(50);
+	comboLabelOpp.setFontSize(64);
 	comboLabelOpp.setPosition(new cc.Point(canvasWidth/2+350,canvasHeight/2));
 	gameLayer.addChild(comboLabelOpp);
 
@@ -467,16 +468,15 @@ function setupGamePlay(){
 	hitBox4.setPosition(canvasWidth/2-350+150,240);
 	gameLayer.addChild(hitBox4);
 
-
-	scoreLabel = cc.LabelTTF.create("TEST","HelveticaNeue-Light");
-	scoreLabel.setString(score);
-	scoreLabel.setFontSize(24);
-	scoreLabel.setPosition(new cc.Point(40,canvasHeight-25));
+	scoreLabel = cc.LabelTTF.create("TEST","HelveticaNeue-UltraLight",36,cc.size(250,36),cc.kCCTextAlignmentLeft);
+	scoreLabel.setString("Score: " + score);
+	scoreLabel.setPosition(new cc.Point(180,canvasHeight-50));
+	console.log(scoreLabel);
 	gameLayer.addChild(scoreLabel);
 
 	comboLabel = cc.LabelTTF.create("combo","HelveticaNeue-Light");
 	comboLabel.setString(totalCombo);
-	comboLabel.setFontSize(50);
+	comboLabel.setFontSize(64);
 	comboLabel.setPosition(new cc.Point(canvasWidth/2-350,canvasHeight/2));
 	gameLayer.addChild(comboLabel);
 
@@ -527,6 +527,7 @@ var gamesceneGame = cc.Layer.extend({
 		}
 		return true;
 	},
+	/*
 	onMouseDown:function(event){
 		hitBox1.setOpacity(0);
 		hitBox2.setOpacity(0);
@@ -560,6 +561,7 @@ var gamesceneGame = cc.Layer.extend({
 			}
 		}
 	},
+	*/
 	onKeyUp:function(event){
 		if(event == 90){
 			socket.emit('test',{beat:"redUp",totalCombo:totalCombo,score:score});
@@ -650,6 +652,15 @@ var gamesceneGame = cc.Layer.extend({
 			}
 		}
 		else{
+			if(event == 32){ 
+				for(var i = 0 ; i < gameSpritesArray.length ; i++){
+					if(gameSpritesArray[i].tag == "playButton"){
+						gameLayer.removeChild(gameSpritesArray[i]);
+						socket.emit('game ready');
+						startMusicPlay();
+					}
+				}
+			}
 			if(event == 90){
 				//redSquare.setOpacity(200);
 				//whitebox1.setOpacity(255);
@@ -663,7 +674,7 @@ var gamesceneGame = cc.Layer.extend({
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
-							scoreLabel.setString(score);
+							scoreLabel.setString("Score: " + score);
 
 						}
 					}
@@ -683,7 +694,7 @@ var gamesceneGame = cc.Layer.extend({
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
-							scoreLabel.setString(score);
+							scoreLabel.setString("Score: " + score);
 
 						}
 					}
@@ -703,7 +714,7 @@ var gamesceneGame = cc.Layer.extend({
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
-							scoreLabel.setString(score);
+							scoreLabel.setString("Score: " + score);
 
 						}
 					}
@@ -723,7 +734,7 @@ var gamesceneGame = cc.Layer.extend({
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
-							scoreLabel.setString(score);
+							scoreLabel.setString("Score: " + score);
 
 						}
 					}
