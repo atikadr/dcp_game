@@ -24,6 +24,17 @@ var blueSquareOpp;
 var purpleSquareOpp;
 var greenSquareOpp;
 
+var hitBox1;
+var hitBox2;
+var hitBox3;
+var hitBox4;
+
+var hitBoxOpp1;
+var hitBoxOpp2;
+var hitBoxOpp3;
+var hitBoxOpp4;
+
+
 var gameSpeed = 7;
 
 var socket = io.connect();
@@ -42,7 +53,8 @@ socket.on('test reply',function(data){
 	comboLabelOpp.setOpacity(255);
 	if(beat == "red"){
 		redSquareOpp.setOpacity(200);
-		whitebox1Opp.setOpacity(255);
+		//whitebox1Opp.setOpacity(255);
+		hitBoxOpp1.setOpacity(255);
 		for(var i = 0 ; i < beatsArrayOpp.length ; i++){
 			if(cc.Rect.CCRectIntersectsRect(beatsArrayOpp[i].getBoundingBox(),whitebox1Opp.getBoundingBox()) === true){
 				if(beatsArrayOpp[i].type == "red"){
@@ -60,7 +72,8 @@ socket.on('test reply',function(data){
 	}
 	if(beat == "blue"){
 		blueSquareOpp.setOpacity(200);
-		whitebox2Opp.setOpacity(255);
+		//whitebox2Opp.setOpacity(255);
+		hitBoxOpp2.setOpacity(255);
 		for(var i = 0 ; i < beatsArrayOpp.length ; i++){
 			if(cc.Rect.CCRectIntersectsRect(beatsArrayOpp[i].getBoundingBox(),whitebox2Opp.getBoundingBox()) === true){
 				if(beatsArrayOpp[i].type == "blue"){
@@ -78,7 +91,8 @@ socket.on('test reply',function(data){
 	}
 	if(beat == "purple"){
 		purpleSquareOpp.setOpacity(200);
-		whitebox3Opp.setOpacity(255);
+		//whitebox3Opp.setOpacity(255);
+		hitBoxOpp3.setOpacity(255);
 		for(var i = 0 ; i < beatsArrayOpp.length ; i++){
 			if(cc.Rect.CCRectIntersectsRect(beatsArrayOpp[i].getBoundingBox(),whitebox3Opp.getBoundingBox()) === true){
 				if(beatsArrayOpp[i].type == "purple"){
@@ -96,7 +110,8 @@ socket.on('test reply',function(data){
 	}
 	if(beat == "green"){
 		greenSquareOpp.setOpacity(200);
-		whitebox4Opp.setOpacity(255);
+		//whitebox4Opp.setOpacity(255);
+		hitBoxOpp4.setOpacity(255);
 		for(var i = 0 ; i < beatsArrayOpp.length ; i++){
 			if(cc.Rect.CCRectIntersectsRect(beatsArrayOpp[i].getBoundingBox(),whitebox4Opp.getBoundingBox()) === true){
 				if(beatsArrayOpp[i].type == "green"){
@@ -114,19 +129,23 @@ socket.on('test reply',function(data){
 	}
 	if(beat == "redUp"){
 		redSquareOpp.setOpacity(255);
-		whitebox1Opp.setOpacity(0);
+		hitBoxOpp1.setOpacity(0);
+		//whitebox1Opp.setOpacity(0);
 	}
 	if(beat == "blueUp"){
 		blueSquareOpp.setOpacity(255);
-		whitebox2Opp.setOpacity(0);
+		hitBoxOpp2.setOpacity(0);
+		//whitebox2Opp.setOpacity(0);
 	}
 	if(beat == "purpleUp"){
 		purpleSquareOpp.setOpacity(255);
-		whitebox3Opp.setOpacity(0);
+		hitBoxOpp3.setOpacity(0);
+		//whitebox3Opp.setOpacity(0);
 	}
 	if(beat == "greenUp"){
 		greenSquareOpp.setOpacity(255);
-		whitebox4Opp.setOpacity(0);
+		hitBoxOpp4.setOpacity(0);
+		//whitebox4Opp.setOpacity(0);
 	}
 });
 
@@ -141,7 +160,8 @@ socket.on('beat',function(data){
 		console.log("here");
 		$("#testSound").get(0).play();
 	}
-	var notePath = "../images/"+data+"Note.png";
+	//var notePath = "../images/"+data+"Note.png";
+	var notePath = "../images/note.png";
 	var note = cc.Sprite.create(notePath);
 	var notePosition;
 	if(data == "red"){
@@ -265,38 +285,47 @@ function makeSecondPlayer(){
 	whitebox1Opp = cc.Sprite.create("../images/whitebox.png");
 	whitebox1Opp.setPosition(canvasWidth/2+350-150,50);
 	gameLayer.addChild(whitebox1Opp);
-	whitebox1Opp.setOpacity(0);
 
 	whitebox2Opp = cc.Sprite.create("../images/whitebox.png");
 	whitebox2Opp.setPosition(canvasWidth/2+350-50,50);
-	whitebox2Opp.setOpacity(0);
 	gameLayer.addChild(whitebox2Opp);
 
 	whitebox3Opp = cc.Sprite.create("../images/whitebox.png");
 	whitebox3Opp.setPosition(canvasWidth/2+350+50,50);
-	whitebox3Opp.setOpacity(0);
 	gameLayer.addChild(whitebox3Opp);
 
 	whitebox4Opp = cc.Sprite.create("../images/whitebox.png");
 	whitebox4Opp.setPosition(canvasWidth/2+350+150,50);
-	whitebox4Opp.setOpacity(0);
 	gameLayer.addChild(whitebox4Opp);
 
-	redSquareOpp = cc.Sprite.create("../images/redSquare.png");
+	redSquareOpp = cc.Sprite.create("../images/beat.png");
 	redSquareOpp.setPosition(new cc.Point(canvasWidth/2+350-150,50));
 	gameLayer.addChild(redSquareOpp);
 
-	blueSquareOpp = cc.Sprite.create("../images/blueSquare.png");
+	blueSquareOpp = cc.Sprite.create("../images/beat.png");
 	blueSquareOpp.setPosition(new cc.Point(canvasWidth/2+350-50,50));
 	gameLayer.addChild(blueSquareOpp);
 
-	purpleSquareOpp = cc.Sprite.create("../images/purpleSquare.png");
+	purpleSquareOpp = cc.Sprite.create("../images/beat.png");
 	purpleSquareOpp.setPosition(new cc.Point(canvasWidth/2+350+50,50));
 	gameLayer.addChild(purpleSquareOpp);
 
-	greenSquareOpp = cc.Sprite.create("../images/greenSquare.png");
+	greenSquareOpp = cc.Sprite.create("../images/beat.png");
 	greenSquareOpp.setPosition(new cc.Point(canvasWidth/2+350+150,50));
 	gameLayer.addChild(greenSquareOpp);
+
+	hitBoxOpp1 = cc.Sprite.create("../images/animation.png");
+	hitBoxOpp1.setPosition(canvasWidth/2+350-150,240);
+	gameLayer.addChild(hitBoxOpp1);
+	hitBoxOpp2 = cc.Sprite.create("../images/animation.png");
+	hitBoxOpp2.setPosition(canvasWidth/2+350-50,240);
+	gameLayer.addChild(hitBoxOpp2);
+	hitBoxOpp3 = cc.Sprite.create("../images/animation.png");
+	hitBoxOpp3.setPosition(canvasWidth/2+350+50,240);
+	gameLayer.addChild(hitBoxOpp3);
+	hitBoxOpp4 = cc.Sprite.create("../images/animation.png");
+	hitBoxOpp4.setPosition(canvasWidth/2+350+150,240);
+	gameLayer.addChild(hitBoxOpp4);
 
 	scoreLabelOpp = cc.LabelTTF.create("TEST","HelveticaNeue-Light");
 	scoreLabelOpp.setString(scoreOpp);
@@ -396,38 +425,48 @@ function setupGamePlay(){
 	whitebox1 = cc.Sprite.create("../images/whitebox.png");
 	whitebox1.setPosition(canvasWidth/2-350-150,50);
 	gameLayer.addChild(whitebox1);
-	whitebox1.setOpacity(0);
 
 	whitebox2 = cc.Sprite.create("../images/whitebox.png");
 	whitebox2.setPosition(canvasWidth/2-350-50,50);
-	whitebox2.setOpacity(0);
 	gameLayer.addChild(whitebox2);
 
 	whitebox3 = cc.Sprite.create("../images/whitebox.png");
 	whitebox3.setPosition(canvasWidth/2-350+50,50);
-	whitebox3.setOpacity(0);
 	gameLayer.addChild(whitebox3);
 
 	whitebox4 = cc.Sprite.create("../images/whitebox.png");
 	whitebox4.setPosition(canvasWidth/2-350+150,50);
-	whitebox4.setOpacity(0);
 	gameLayer.addChild(whitebox4);
 
-	redSquare = cc.Sprite.create("../images/redSquare.png");
+	redSquare = cc.Sprite.create("../images/beat.png");
 	redSquare.setPosition(new cc.Point(canvasWidth/2-350-150,50));
 	gameLayer.addChild(redSquare);
 
-	blueSquare = cc.Sprite.create("../images/blueSquare.png");
+	blueSquare = cc.Sprite.create("../images/beat.png");
 	blueSquare.setPosition(new cc.Point(canvasWidth/2-350-50,50));
 	gameLayer.addChild(blueSquare);
 
-	purpleSquare = cc.Sprite.create("../images/purpleSquare.png");
+	purpleSquare = cc.Sprite.create("../images/beat.png");
 	purpleSquare.setPosition(new cc.Point(canvasWidth/2-350+50,50));
 	gameLayer.addChild(purpleSquare);
 
-	greenSquare = cc.Sprite.create("../images/greenSquare.png");
+	greenSquare = cc.Sprite.create("../images/beat.png");
 	greenSquare.setPosition(new cc.Point(canvasWidth/2-350+150,50));
 	gameLayer.addChild(greenSquare);
+
+	hitBox1 = cc.Sprite.create("../images/animation.png");
+	hitBox1.setPosition(canvasWidth/2-350-150,240);
+	gameLayer.addChild(hitBox1);
+	hitBox2 = cc.Sprite.create("../images/animation.png");
+	hitBox2.setPosition(canvasWidth/2-350-50,240);
+	gameLayer.addChild(hitBox2);
+	hitBox3 = cc.Sprite.create("../images/animation.png");
+	hitBox3.setPosition(canvasWidth/2-350+50,240);
+	gameLayer.addChild(hitBox3);
+	hitBox4 = cc.Sprite.create("../images/animation.png");
+	hitBox4.setPosition(canvasWidth/2-350+150,240);
+	gameLayer.addChild(hitBox4);
+
 
 	scoreLabel = cc.LabelTTF.create("TEST","HelveticaNeue-Light");
 	scoreLabel.setString(score);
@@ -447,6 +486,7 @@ function setupGamePlay(){
 		}
 	});
 	makeSecondPlayer();
+
 	//getMusicArray();
 }
 
@@ -475,6 +515,9 @@ var gamesceneGame = cc.Layer.extend({
 		this.setMouseEnabled(true);
 		this.setKeyboardEnabled(true);
 		gameLayer = cc.LayerColor.create(new cc.Color4B(0, 51, 102, 255), canvasWidth, canvasHeight);
+		var backgroundImage = cc.Sprite.create('../images/background.jpg');
+		gameLayer.addChild(backgroundImage);
+		backgroundImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
 		this.addChild(gameLayer);
 		if(gameMode == "generator"){
 			setupGameGen();
@@ -485,6 +528,14 @@ var gamesceneGame = cc.Layer.extend({
 		return true;
 	},
 	onMouseDown:function(event){
+		hitBox1.setOpacity(0);
+		hitBox2.setOpacity(0);
+		hitBox3.setOpacity(0);
+		hitBox4.setOpacity(0);
+		hitBoxOpp1.setOpacity(0);
+		hitBoxOpp2.setOpacity(0);
+		hitBoxOpp3.setOpacity(0);
+		hitBoxOpp4.setOpacity(0);
 		var location = event.getLocation();
 		var mousePoint = new cc.Point(location.x,location.y);
 		if(gameMode == "generator"){
@@ -512,23 +563,27 @@ var gamesceneGame = cc.Layer.extend({
 	onKeyUp:function(event){
 		if(event == 90){
 			socket.emit('test',{beat:"redUp",totalCombo:totalCombo,score:score});
-			redSquare.setOpacity(255);
-			whitebox1.setOpacity(0);
+			//redSquare.setOpacity(255);
+			//whitebox1.setOpacity(0);
+			hitBox1.setOpacity(0);
 		}
 		if(event == 88){
 			socket.emit('test',{beat:"blueUp",totalCombo:totalCombo,score:score});
-			blueSquare.setOpacity(255);
-			whitebox2.setOpacity(0);
+			//blueSquare.setOpacity(255);
+			//whitebox2.setOpacity(0);
+			hitBox2.setOpacity(0);
 		}
 		if(event == 188){
 			socket.emit('test',{beat:"purpleUp",totalCombo:totalCombo,score:score});
-			purpleSquare.setOpacity(255);
-			whitebox3.setOpacity(0);
+			//purpleSquare.setOpacity(255);
+			//whitebox3.setOpacity(0);
+			hitBox3.setOpacity(0);
 		}
 		if(event == 190){
 			socket.emit('test',{beat:"greenUp",totalCombo:totalCombo,score:score});
-			greenSquare.setOpacity(255);
-			whitebox4.setOpacity(0);
+			//greenSquare.setOpacity(255);
+			//whitebox4.setOpacity(0);
+			hitBox4.setOpacity(0);
 		}
 	},
 	onKeyDown:function(event){
@@ -596,8 +651,9 @@ var gamesceneGame = cc.Layer.extend({
 		}
 		else{
 			if(event == 90){
-				redSquare.setOpacity(200);
-				whitebox1.setOpacity(255);
+				//redSquare.setOpacity(200);
+				//whitebox1.setOpacity(255);
+				hitBox1.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
 					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox1.getBoundingBox()) === true){
 						if(beatsArray[i].type == "red"){
@@ -615,8 +671,9 @@ var gamesceneGame = cc.Layer.extend({
 				socket.emit('test',{beat:"red",totalCombo:totalCombo,score:score});
 			}
 			if(event == 88){
-				blueSquare.setOpacity(200);
-				whitebox2.setOpacity(255);
+				//blueSquare.setOpacity(200);
+				//whitebox2.setOpacity(255);
+				hitBox2.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
 					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox2.getBoundingBox()) === true){
 						if(beatsArray[i].type == "blue"){
@@ -634,8 +691,9 @@ var gamesceneGame = cc.Layer.extend({
 				socket.emit('test',{beat:"blue",totalCombo:totalCombo,score:score});
 			}
 			if(event == 188){
-				purpleSquare.setOpacity(200);
-				whitebox3.setOpacity(255);
+				//purpleSquare.setOpacity(200);
+				//whitebox3.setOpacity(255);
+				hitBox3.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
 					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox3.getBoundingBox()) === true){
 						if(beatsArray[i].type == "purple"){
@@ -653,8 +711,9 @@ var gamesceneGame = cc.Layer.extend({
 				socket.emit('test',{beat:"purple",totalCombo:totalCombo,score:score});
 			}
 			if(event == 190){
-				greenSquare.setOpacity(200);
-				whitebox4.setOpacity(255);
+				//greenSquare.setOpacity(200);
+				//whitebox4.setOpacity(255);
+				hitBox4.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
 					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox4.getBoundingBox()) === true){
 						if(beatsArray[i].type == "green"){
