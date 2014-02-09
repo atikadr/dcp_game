@@ -1,3 +1,14 @@
+function clearScreen(){
+	var childrenArray = gameLayer.getChildren();
+	while(childrenArray.length > 1){
+		console.log(childrenArray[1]);
+		gameLayer.removeChild(childrenArray[1]);
+	}
+	console.log(childrenArray);
+}
+
+var gameScene = "startScreen";
+
 var gamescene = cc.Scene.extend({
 	onEnter:function(){
 		this._super();
@@ -22,11 +33,13 @@ var gamesceneGame = cc.Layer.extend({
 		this.setMouseEnabled(true);
 		this.setKeyboardEnabled(true);
 		gameLayer = cc.LayerColor.create(new cc.Color4B(0, 51, 102, 255), canvasWidth, canvasHeight);
-		backgroundImage = cc.Sprite.create('../images/background.jpg');
+		backgroundImage = cc.Sprite.create('../images/background.png');
+		backgroundImage.tag = "backgroundImage";
 		gameLayer.addChild(backgroundImage);
 		backgroundImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
 		this.addChild(gameLayer);
-		setupGamePlay();
+		//setupGamePlay();
+		setupStartScreen();
 		return true;
 	},
 	onKeyUp:function(event){
@@ -48,86 +61,126 @@ var gamesceneGame = cc.Layer.extend({
 		}
 	},
 	onKeyDown:function(event){
-		if(event == 32){ 
-			for(var i = 0 ; i < gameSpritesArray.length ; i++){
-				if(gameSpritesArray[i].tag == "playButton"){
-					gameLayer.removeChild(gameSpritesArray[i]);
-					socket.emit('game ready');
-					startMusicPlay();
-				}
-			}
-		}
-		if(event == 90){
-			hitBox1.setOpacity(255);
-			for(var i = 0 ; i < beatsArray.length ; i++){
-				if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox1.getBoundingBox()) === true){
-					if(beatsArray[i].type == "red"){
-						gameLayer.removeChild(beatsArray[i]);
-						beatsArray.splice(i,1);
-						score += 100;
-						totalCombo++;
-						comboLabel.setString(totalCombo);
-						comboLabel.setOpacity(255);
-						scoreLabel.setString("Score: " + score);
-
+		if(gameScene == "multiplayer"){
+			if(event == 32){ 
+				for(var i = 0 ; i < gameSpritesArray.length ; i++){
+					if(gameSpritesArray[i].tag == "playButton"){
+						gameLayer.removeChild(gameSpritesArray[i]);
+						socket.emit('game ready');
+						startMusicPlay();
 					}
 				}
 			}
-			socket.emit('test',{beat:"red",totalCombo:totalCombo,score:score});
-		}
-		if(event == 88){
-			hitBox2.setOpacity(255);
-			for(var i = 0 ; i < beatsArray.length ; i++){
-				if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox2.getBoundingBox()) === true){
-					if(beatsArray[i].type == "blue"){
-						gameLayer.removeChild(beatsArray[i]);
-						beatsArray.splice(i,1);
-						score += 100;
-						totalCombo++;
-						comboLabel.setString(totalCombo);
-						comboLabel.setOpacity(255);
-						scoreLabel.setString("Score: " + score);
+			if(event == 90){
+				hitBox1.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox1.getBoundingBox()) === true){
+						if(beatsArray[i].type == "red"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
 
+						}
 					}
 				}
+				socket.emit('test',{beat:"red",totalCombo:totalCombo,score:score});
 			}
-			socket.emit('test',{beat:"blue",totalCombo:totalCombo,score:score});
-		}
-		if(event == 188){
-			hitBox3.setOpacity(255);
-			for(var i = 0 ; i < beatsArray.length ; i++){
-				if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox3.getBoundingBox()) === true){
-					if(beatsArray[i].type == "purple"){
-						gameLayer.removeChild(beatsArray[i]);
-						beatsArray.splice(i,1);
-						score += 100;
-						totalCombo++;
-						comboLabel.setString(totalCombo);
-						comboLabel.setOpacity(255);
-						scoreLabel.setString("Score: " + score);
+			if(event == 88){
+				hitBox2.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox2.getBoundingBox()) === true){
+						if(beatsArray[i].type == "blue"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
 
+						}
 					}
 				}
+				socket.emit('test',{beat:"blue",totalCombo:totalCombo,score:score});
 			}
-			socket.emit('test',{beat:"purple",totalCombo:totalCombo,score:score});
-		}
-		if(event == 190){
-			hitBox4.setOpacity(255);
-			for(var i = 0 ; i < beatsArray.length ; i++){
-				if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox4.getBoundingBox()) === true){
-					if(beatsArray[i].type == "green"){
-						gameLayer.removeChild(beatsArray[i]);
-						beatsArray.splice(i,1);
-						score += 100;
-						totalCombo++;
-						comboLabel.setString(totalCombo);
-						comboLabel.setOpacity(255);
-						scoreLabel.setString("Score: " + score);
+			if(event == 188){
+				hitBox3.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox3.getBoundingBox()) === true){
+						if(beatsArray[i].type == "purple"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
 
+						}
 					}
 				}
+				socket.emit('test',{beat:"purple",totalCombo:totalCombo,score:score});
 			}
-			socket.emit('test',{beat:"green",totalCombo:totalCombo,score:score});
+			if(event == 190){
+				hitBox4.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox4.getBoundingBox()) === true){
+						if(beatsArray[i].type == "green"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
+
+						}
+					}
+				}
+				socket.emit('test',{beat:"green",totalCombo:totalCombo,score:score});
+			}
+		}
+		if(gameScene == "startScreen"){
+			console.log(event);
+			if(event == 38){
+				switch(modeSelected){
+					case "multiplayer":
+					modeSelected = "singleplayer";
+					break;
+					case "jamsession":
+					modeSelected = "multiplayer";
+					break;
+					case "settings":
+					modeSelected = "jamsession";
+					default:
+					break;
+				}
+			}
+			if(event == 40){
+				switch(modeSelected){
+					case "singleplayer":
+					modeSelected = "multiplayer";
+					break;
+					case "multiplayer":
+					modeSelected = "jamsession";
+					break;
+					case "jamsession":
+					modeSelected = "settings";
+					default:
+					break;
+				}
+			}
+			if(event == 32){
+				if(modeSelected == "multiplayer"){
+					gameScene = "multiplayer";
+					setupGamePlay()
+				}
+			}
+			repositionDot();
 		}
 	}
 });

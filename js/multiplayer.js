@@ -43,20 +43,17 @@ var totalComboOpp = 0;
 var comboLabelOpp;
 var comboLabel;
 
-var counter = 0;
-
 var scoreLabelOpp;
 
 var musicArray = new Array();
 
-var gameSpeed = 7;
+var gameSpeed = 10;
 
 var socket = io.connect();
 
 var noteCount = 0;
 
 socket.on('game start',function(data){
-	console.log(data.message.beat);
 	startMusicPlay();
 });
 
@@ -140,96 +137,97 @@ socket.on('startGame',function(){
 socket.on('beat',function(data){
 	if(noteCount == 0){
 		$("#testSound").get(0).play();
-	}
-	var notePath = "../images/note.png";
-	var note = cc.Sprite.create(notePath);
-	var notePosition;
-	if(data == "red"){
-		notePosition = new cc.Point(canvasWidth/2-350-150,canvasHeight);
-	}
-	if(data == "blue"){
-		notePosition = new cc.Point(canvasWidth/2-350-50,canvasHeight);
-	}
-	if(data == "purple"){
-		notePosition = new cc.Point(canvasWidth/2-350+50,canvasHeight);
-	}
-	if(data == "green"){
-		notePosition = new cc.Point(canvasWidth/2-350+150,canvasHeight);
-	}
-	note.setPosition(notePosition);
-	note.type = data;
-	gameLayer.addChild(note);
-	note.noteIndex = noteCount;
-	noteCount++;
-	beatsArray.push(note);
-	note.schedule(function(){
-		this.setPosition(new cc.Point(this.getPosition().x,this.getPosition().y-gameSpeed));
-		if(this.getPosition().y <= 0){
-			totalCombo = 0;
-			comboLabel.setString(totalCombo);
-			for(var i = 0 ; i < beatsArray.length ; i++){
-				if(beatsArray[i].noteIndex == this.noteIndex){
-					beatsArray.splice(i,1);
+		gameLayer.schedule(function(){
+			var removeArray = new Array();
+			$.each(beatsArray,function(index,value){
+				value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
+				if(value.getPosition().y <= 0){
+					totalCombo = 0;
+					comboLabel.setString(totalCombo);
+					for(var i = 0 ; i < beatsArray.length ; i++){
+						if(beatsArray[i].noteIndex == value.noteIndex){
+							removeArray.push(value.noteIndex);
+						}
+					}
+					gameLayer.removeChild(value); 
+				}
+			});
+			for(var i = 0 ; i < removeArray.length ; i++){
+				for(var j = 0 ; j < beatsArray.length ; j++){
+					if(beatsArray[j].noteIndex == removeArray[i]){
+						beatsArray.splice(j,1);
+					}
 				}
 			}
-			gameLayer.removeChild(this); 
-		}
-	});
 
-	var noteOpp = cc.Sprite.create(notePath);
-	if(data == "red"){
-		notePosition = new cc.Point(canvasWidth/2+350-150,canvasHeight);
-	}
-	if(data == "blue"){
-		notePosition = new cc.Point(canvasWidth/2+350-50,canvasHeight);
-	}
-	if(data == "purple"){
-		notePosition = new cc.Point(canvasWidth/2+350+50,canvasHeight);
-	}
-	if(data == "green"){
-		notePosition = new cc.Point(canvasWidth/2+350+150,canvasHeight);
-	}
-	noteOpp.setPosition(notePosition);
-	noteOpp.type = data;
-	gameLayer.addChild(noteOpp);
-	noteOpp.noteIndex = noteCount;
-	beatsArrayOpp.push(noteOpp);
-	noteOpp.schedule(function(){
-		this.setPosition(new cc.Point(this.getPosition().x,this.getPosition().y-gameSpeed));
-		if(this.getPosition().y <= 0){
-			totalComboOpp = 0;
-			comboLabelOpp.setString(totalComboOpp);
-			for(var i = 0 ; i < beatsArrayOpp.length ; i++){
-				if(beatsArrayOpp[i].noteIndex == this.noteIndex){
-					beatsArrayOpp.splice(i,1);
+			var removeArrayOpp = new Array();
+			$.each(beatsArrayOpp,function(index,value){
+				value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
+				if(value.getPosition().y <= 0){
+					totalComboOpp = 0;
+					comboLabelOpp.setString(totalComboOpp);
+					for(var i = 0 ; i < beatsArrayOpp.length ; i++){
+						if(beatsArrayOpp[i].noteIndex == value.noteIndex){
+							removeArrayOpp.push(value.noteIndex);
+						}
+					}
+					gameLayer.removeChild(value); 
+				}
+			});
+			for(var i = 0 ; i < removeArrayOpp.length ; i++){
+				for(var j = 0 ; j < beatsArrayOpp.length ; j++){
+					if(beatsArrayOpp[j].noteIndex == removeArrayOpp[i]){
+						beatsArrayOpp.splice(j,1);
+					}
 				}
 			}
-			gameLayer.removeChild(this); 
-		}
-	});
+		});
+}
+var notePath = "../images/note.png";
+var note = cc.Sprite.create(notePath);
+var notePosition;
+
+if(data == "red"){
+	notePosition = new cc.Point(canvasWidth/2-350-150,canvasHeight);
+}
+if(data == "blue"){
+	notePosition = new cc.Point(canvasWidth/2-350-50,canvasHeight);
+}
+if(data == "purple"){
+	notePosition = new cc.Point(canvasWidth/2-350+50,canvasHeight);
+}
+if(data == "green"){
+	notePosition = new cc.Point(canvasWidth/2-350+150,canvasHeight);
+}
+note.setPosition(notePosition);
+note.type = data;
+gameLayer.addChild(note);
+note.noteIndex = noteCount;
+beatsArray.push(note);
+
+var noteOpp = cc.Sprite.create(notePath);
+var noteOppPosition;
+if(data == "red"){
+	noteOppPosition = new cc.Point(canvasWidth/2+350-150,canvasHeight);
+}
+if(data == "blue"){
+	noteOppPosition = new cc.Point(canvasWidth/2+350-50,canvasHeight);
+}
+if(data == "purple"){
+	noteOppPosition = new cc.Point(canvasWidth/2+350+50,canvasHeight);
+}
+if(data == "green"){
+	noteOppPosition = new cc.Point(canvasWidth/2+350+150,canvasHeight);
+}
+noteOpp.setPosition(noteOppPosition);
+noteOpp.type = data;
+gameLayer.addChild(noteOpp);
+noteOpp.noteIndex = noteCount;
+beatsArrayOpp.push(noteOpp);
+
+noteCount++;
 });
 
-function saveTrack(){
-	musicArray = {musicArray:musicArray};
-	$.ajax({
-		url: "/saveTrack",
-		data: musicArray,
-		type: "POST",
-		success:function(data){
-			console.log(data);
-		}
-	});
-}
-
-function startMusicGen(){
-	$("#testSound").get(0).play();
-	$("#testSound").bind("ended",function(){
-		saveTrack();
-	});
-	gameLayer.schedule(function(){
-		counter++;
-	});
-}
 
 function makeSecondPlayer(){
 	whitebox1Opp = cc.Sprite.create("../images/whitebox.png");
@@ -277,12 +275,15 @@ function makeSecondPlayer(){
 	hitBoxOpp4.setPosition(canvasWidth/2+350+150,240);
 	gameLayer.addChild(hitBoxOpp4);
 
+	hitBoxOpp1.setOpacity(0);
+	hitBoxOpp2.setOpacity(0);
+	hitBoxOpp3.setOpacity(0);
+	hitBoxOpp4.setOpacity(0);
+
 	scoreLabelOpp = cc.LabelTTF.create("TEST","HelveticaNeue-UltraLight",36,cc.size(250,36),cc.kCCTextAlignmentLeft);
 	scoreLabelOpp.setString("Score: " + scoreOpp);
 	scoreLabelOpp.setPosition(new cc.Point(canvasWidth/2 + 280,canvasHeight-50));
 	gameLayer.addChild(scoreLabelOpp);
-
-	console.log(scoreLabelOpp);
 
 	comboLabelOpp = cc.LabelTTF.create("combo","HelveticaNeue-Light");
 	comboLabelOpp.setString(totalComboOpp);
@@ -302,6 +303,12 @@ function startMusicPlay(){
 }
 
 function setupGamePlay(){
+	clearScreen();
+
+	var separator = cc.Sprite.create("../images/separator.png");
+	separator.setPosition(new cc.Point(canvasWidth/2, 415));
+	gameLayer.addChild(separator);
+
 	var playButton = cc.Sprite.create("../images/play.png");
 	playButton.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
 	playButton.tag = "playButton";
@@ -353,10 +360,14 @@ function setupGamePlay(){
 	hitBox4.setPosition(canvasWidth/2-350+150,240);
 	gameLayer.addChild(hitBox4);
 
+	hitBox1.setOpacity(0);
+	hitBox2.setOpacity(0);
+	hitBox3.setOpacity(0);
+	hitBox4.setOpacity(0);
+
 	scoreLabel = cc.LabelTTF.create("TEST","HelveticaNeue-UltraLight",36,cc.size(250,36),cc.kCCTextAlignmentLeft);
 	scoreLabel.setString("Score: " + score);
 	scoreLabel.setPosition(new cc.Point(180,canvasHeight-50));
-	console.log(scoreLabel);
 	gameLayer.addChild(scoreLabel);
 
 	comboLabel = cc.LabelTTF.create("combo","HelveticaNeue-Light");
