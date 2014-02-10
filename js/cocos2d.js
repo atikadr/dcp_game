@@ -2,10 +2,10 @@
 	var d = document;
 	var c = {
 		menuType:"canvas",
-        	COCOS2D_DEBUG:2, // full debug mode
+        COCOS2D_DEBUG:0, // full debug mode
 		box2d:false, // no physics in this game
 		chipmunk: false, // no chipmunk engine
-		showFPS:true, // let's show the FPS meter
+		showFPS:false, // let's show the FPS meter
 		frameRate:60, // 60 frames per second
 		tag:"gameCanvas", // id of the canvas element
 		engineDir:"../cocos2d/", // path to your cocos2d installation

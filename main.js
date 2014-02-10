@@ -7,12 +7,23 @@ var cocos2dApp = cc.Application.extend({
         	cc.initDebugSetting();
 		cc.setup(this.config["tag"]);
 		cc.Loader.getInstance().onloading = function () {
-			cc.LoaderScene.shareLoaderScene().draw();
+			//cc.LoaderScene.shareLoaderScene().draw();
 		};
 		cc.Loader.getInstance().onload = function () {
 			cc.AppController.shareAppController().didFinishLaunchingWithOptions();
 		};
 		cc.Loader.getInstance().preload([
+			{type:"image",src:"../images/singlePlayer.png"},
+			{type:"image",src:"../images/multiplayer.png"},
+			{type:"image",src:"../images/jamSession.png"},
+			{type:"image",src:"../images/settings.png"},
+			{type:"image",src:"../images/instructions.png"},
+			{type:"image",src:"../images/dot.png"},
+			{type:"image",src:"../images/note.png"},
+			{type:"image",src:"../images/whitebox.png"},
+			{type:"image",src:"../images/beat.png"},
+			{type:"image",src:"../images/animation.png"},
+			{type:"image",src:"../images/play.png"}
 		]);
 	},
 	applicationDidFinishLaunching:function () {

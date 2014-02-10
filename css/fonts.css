@@ -1,0 +1,14 @@
+@font-face{
+	font-family: HelveticaNeue-Light;
+	src:url('../fonts/HelveticaNeue-Light.ttf') format('truetype');
+}
+
+@font-face{
+	font-family: HelveticaNeue-Bold;
+	src:url('../fonts/HelveticaNeue-Bold.ttf') format('truetype');
+}
+
+@font-face{
+	font-family: SegoeUI;
+	src:url('../fonts/segoesc.ttf') format('truetype');
+}
