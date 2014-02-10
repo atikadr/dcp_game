@@ -92,7 +92,8 @@ app.get('/getTrack/:id',function(req,res){
 /*
 BRUTE FORCE TESTING CODE
 */
-game_server.newGame(sio, 'testingGame');
+
+game_server.newGame('testingGame');
 
 
 
@@ -155,6 +156,7 @@ sio.sockets.on('connection', function(socket){
 	});
 
 	socket.on('test join', function(data){
+		console.log('client joined');
 		socket.join('testingGame');
 		game_server.joinGame(socket, 'testing username', 'testingGame');
 	});

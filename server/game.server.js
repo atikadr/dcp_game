@@ -1,4 +1,4 @@
-var game_server = module.exports;
+var game_server = module.exports; //= {gameArray: {}};
 var io=require('socket.io');
 var gc = require('./game.core.js');
 
@@ -32,15 +32,19 @@ game_server.newGame = function(gameID){
 	gameArray[gameID] = newGame;
 	*/
 
+
+
 	var newGame = new gc.mock_game(gameID);
 	gameArray[gameID] = newGame;
+
+	console.log('new game created');
 }
 
-game_server.joinGame = function(sio, socket, username, gameID){
+game_server.joinGame = function(socket, username, gameID){
 	
 	socket.username = username;
 	var game_instance = gameArray[gameID];
-	
+
 
 	/*
 	if (game_instance.players.player1 == null){
@@ -66,6 +70,8 @@ game_server.joinGame = function(sio, socket, username, gameID){
 		var newGame = new gc.game_core(sio, gameID, game_instance.player1, socket);
 		delete game_instance; delete gameArray[gameID];
 		gameArray[gameID] = newGame;
+
+		console.log(newGame);
 
 
 		sio.sockets.in(gameID).emit('players connected');
