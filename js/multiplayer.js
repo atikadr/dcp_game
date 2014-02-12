@@ -47,7 +47,7 @@ var scoreLabelOpp;
 
 var musicArray = new Array();
 
-var gameSpeed = 10;
+var gameSpeed = 7;
 
 var socket = io.connect();
 
