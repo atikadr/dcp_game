@@ -6,8 +6,6 @@ var player_array = [], gameArray = [];
 
 
 game_server.addPlayer = function(socket, username){
-	socket.username = username;
-
 	socket.emit('get players', {players: player_array});
 	
 	player_array[username] = socket;
@@ -45,28 +43,15 @@ game_server.joinGame = function(socket, username, gameID){
 	socket.username = username;
 	var game_instance = gameArray[gameID];
 
-
-	/*
-	if (game_instance.players.player1 == null){
-		socket.set(gameID + ' player1');
-		game_instance.players.player1 = socket;
-	}
-	else {
-		socket.set(gameID + ' player2');
-		game_instance.players.player2 = socket;
-		sio.sockets.in(gameID).emit('players connected');
-	}
-
-	gameArray[gameID] = game_instance;
-	*/
-
 	if (game_instance.player1 == null){
 		socket.set(gameID + ' player1');
+		socket.player = 'player1';
 		game_instance.player1 = socket;
 		gameArray[gameID] = game_instance;
 	}
 	else {
 		socket.set(gameID + ' player2');
+		socket.player = 'player2';
 		var newGame = new gc.game_core(sio, gameID, game_instance.player1, socket);
 		delete game_instance; delete gameArray[gameID];
 		gameArray[gameID] = newGame;
@@ -79,8 +64,14 @@ game_server.joinGame = function(socket, username, gameID){
 
 }
 
-game_server.setSong = function(socket, username, song){
-	player_array[username].song = song;
+game_server.setSong = function(gameID, song){
+	var game_instance = gameArray[gameID];	
+	if (game_instance.songs.first_song == null){
+		game_instance.songs.first_song = song;
+	}
+	else{
+		game_instance.songs.second_song = song;
+	}
 }
 
 game_server.disconnect = function(socket){

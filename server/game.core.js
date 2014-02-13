@@ -24,23 +24,12 @@ var game_core = function(sio, gameID, player1x, player2x){
 	this.players = {
 		player1 : player1x,
 		player2 : player2x
-	}
+	};
 
-//	this.players.player1.on('load game', loadGame);
-
-	//this.players.player1.socket.on('game ready', playerReady);
-	//this.players.player2.socket.on('game ready', playerReady);
-
-	this.gameBeats = [];
-
-	fs.readFile('beats/test.txt','utf8',function(err,data){
-		tempArray = data.split("\n");
-		for(var i = 0 ; i < tempArray.length-1 ; i++){
-				var tempObject = {type:tempArray[i].split(",")[0],timing:parseInt(tempArray[i].split(",")[1])};
-				this.gameBeats.push(tempObject);
-			}
-	});
-
+	this.songs = {
+		first_song : null,
+		second_song : null
+	};
 }
 
 function playerReady(){

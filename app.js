@@ -102,6 +102,7 @@ console.log("listening");
 var playerCount = 0;
 var gameTimer;
 
+
 sio.sockets.on('connection', function(socket){
 
 	//call after player loads the gameroom
@@ -111,6 +112,7 @@ sio.sockets.on('connection', function(socket){
 	//not implemented with REST API becuase it is hard to detect users that disconnect?
 	socket.on('join room', function(data){
 		socket.join('gameroom');
+		socket.username = data.username;
 		game_server.addPlayer(socket, data.username);
 		sio.sockets.in('gameroom').emit('new player joined room', {player: data.username});
 	});
@@ -133,19 +135,24 @@ sio.sockets.on('connection', function(socket){
 		socket.emit('your game id', {game_id: game});
 	});
 
-	//call when a player changes his music
-	//player must emit {username: my username, song: choice of music}
-	socket.on('set song', function(data){
-		game_server.setSong(socket, data.username, data.song);
-	});
-
 	//call after player loads the game page
 	//player must emit {username: my username, game_id: the given game id}
 	//function broadcasts 'players connected' when both players are connected
 	socket.on('setup game', function(data){
 		socket.join(data.game_id);
+		socket.game_id = data.game_id;
 		game_server.joinGame(sio, socket, data.username, data.game_id);
 	});
+
+
+	//call when a player changes his music
+	//player must emit {username: my username, song: choice of music}
+	socket.on('set song', function(data){
+		var game_id = socket.game_id;
+		game_server.setSong(game_id, data.song);
+		sio.sockets.in(game_id).emit('player set song', {player: data.username});
+	});
+
 /*
 	socket.on('disconnect', function(){
 		//check if this user is part of gameroom
@@ -171,15 +178,31 @@ socket.on('game ready',function(data){
 	playerCount++;
 	console.log(playerCount);
 	if(playerCount == 2){
-		//sio.sockets.emit('startGame');
 		var trackData = new Array();
+
+		//sio.sockets.emit('startGame');
+		/*
+		mysql.query('select * from Song where song = "let it go"', 
+			function(err, result, fields){
+				if (err) throw err;
+				else{
+					for (var i in result){
+						trackData = result[i].beats.split(";"); 
+					}
+				}
+			});
+*/
+
+		
 		fs.readFile('beats/test.txt','utf8',function(err,data){
 			trackData = data.split("\n");
+			console.log(trackData);
 		});
+		
 		var counter = 0;
 		gameTimer = setInterval(function(){
 			counter++;
-			//console.log(counter);
+			
 			var beat = trackData[0].split(",")[1];
 			while(parseInt(beat) == counter){
 				//console.log(trackData[0].split(",")[0]);
