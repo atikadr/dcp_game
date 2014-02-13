@@ -2,13 +2,13 @@ var game_server = module.exports; //= {gameArray: {}};
 var io=require('socket.io');
 var gc = require('./game.core.js');
 
-var player_array = [], gameArray = [];
+var player_array = {}, gameArray = [];
 
 
 game_server.addPlayer = function(socket, username){
 	var toSend = [];
-	for (var player in player_array){
-		toSend.push(player.username);
+	for (var key in player_array){
+		toSend.push(player_array[key].username);
 	}
 	socket.emit('get players', {players: toSend});
 	
