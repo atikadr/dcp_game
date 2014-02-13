@@ -10,7 +10,7 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'bubumint';
+var MYSQL_PASS = 'a';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
@@ -219,24 +219,28 @@ socket.on('game ready',function(data){
 			});
 */
 
-		
-		fs.readFile('beats/test.txt','utf8',function(err,data){
-			trackData = data.split("\n");
-			console.log(trackData);
-		});
-		
-		var counter = 0;
-		gameTimer = setInterval(function(){
-			counter++;
-			
-			var beat = trackData[0].split(",")[1];
-			while(parseInt(beat) == counter){
-				//console.log(trackData[0].split(",")[0]);
-				sio.sockets.emit('beat',trackData[0].split(",")[0]);
-				trackData.splice(0,1);
-				beat = trackData[0].split(",")[1];
-			}
-		},50/3);
-	}
-	});
+
+fs.readFile('beats/test.txt','utf8',function(err,data){
+	trackData = data.split("\n");
+	console.log(trackData);
 });
+
+var counter = 0;
+gameTimer = setInterval(function(){
+	counter++;
+
+	var beat = trackData[0].split(",")[1];
+	while(parseInt(beat) == counter){
+		sio.sockets.emit('beat',trackData[0].split(",")[0]);
+		trackData.splice(0,1);
+		beat = trackData[0].split(",")[1];
+	}
+},50/3);
+}
+});
+
+socket.on('playerSelectSong',function(data){
+	socket.broadcast.emit('song selected',data);
+});
+});
+
