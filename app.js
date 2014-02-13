@@ -87,7 +87,22 @@ app.get('/getTrack/:id',function(req,res){
 		});
 });
 
-
+app.get('/songList', function(req,res){
+	mysql.query('select song, stars from Song', 
+		function(err, result, fields){
+			if (err) throw err;
+			else {
+				var toSend = new Array();
+				var songName, stars;
+				for (var i in result){
+					songName = result[i].song;
+					stars = result[i].stars;
+					toSend.push({song: songName, number_of_stars: stars});
+				}
+				res.send(toSend);
+			}
+		});
+});
 
 /*
 BRUTE FORCE TESTING CODE
