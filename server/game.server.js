@@ -6,7 +6,11 @@ var player_array = [], gameArray = [];
 
 
 game_server.addPlayer = function(socket, username){
-	socket.emit('get players', {players: player_array});
+	var toSend = [];
+	for (var player in player_array){
+		toSend.push(player.username);
+	}
+	socket.emit('get players', {players: toSend});
 	
 	player_array[username] = socket;
 }
@@ -22,6 +26,11 @@ game_server.acceptChallenge = function(sio, challenger, challenged, gameID){
 	socket.emit('your game id', {game_id: game});
 
 	newGame(sio, gameID);
+}
+
+game_server.declineChallenge = function(challenger, challenged){
+	var socket = this.player_array[challenger];
+	socket.emit('challenge not accepted', {username: challenged});
 }
 
 game_server.newGame = function(gameID){

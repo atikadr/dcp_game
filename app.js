@@ -111,7 +111,6 @@ BRUTE FORCE TESTING CODE
 game_server.newGame('testingGame');
 
 
-
 console.log("listening");
 
 var playerCount = 0;
@@ -150,6 +149,13 @@ sio.sockets.on('connection', function(socket){
 		socket.emit('your game id', {game_id: game});
 	});
 
+	//call when a player accepts the challenge
+	//player must emit {challenger: the other's username, challenged: my username}
+	//function emits 'challenge not accepted' to challenger
+	socket.on('decline challenge', function(data){
+		game_server.declineChallenge(data.challenger, data.challenged);
+	});
+
 	//call after player loads the game page
 	//player must emit {username: my username, game_id: the given game id}
 	//function broadcasts 'players connected' when both players are connected
@@ -160,12 +166,17 @@ sio.sockets.on('connection', function(socket){
 	});
 
 
-	//call when a player changes his music
+	//call when a player chooses his song
 	//player must emit {username: my username, song: choice of music}
 	socket.on('set song', function(data){
 		var game_id = socket.game_id;
 		game_server.setSong(game_id, data.song);
 		sio.sockets.in(game_id).emit('player set song', {player: data.username});
+	});
+
+	//
+	socket.on('roulette', function(data){
+		game_server.roulette(socket, data);
 	});
 
 /*
