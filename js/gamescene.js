@@ -232,7 +232,32 @@ var gamesceneGame = cc.Layer.extend({
 			}
 		}
 		if(gameScene == "gameRoom"){
-
+			if(event == 39){ // right
+				currentPlayer += 5;
+				if(currentPlayer >= playersArray.length){
+					currentPlayer = playersArray.length - 1;
+				}
+				displayPlayers(currentPlayer);
+			}
+			if(event == 37){ // left
+				currentPlayer -= 5;
+				if(currentPlayer < 0){
+					currentPlayer = 0;
+				}
+				displayPlayers(currentPlayer);
+			}
+			if(event == 38){ // up
+				if(currentPlayer > 0){
+					currentPlayer--;
+				}
+				displayPlayers(currentPlayer);
+			}
+			if(event == 40){ // down
+				if(currentPlayer < (playersArray.length-1)){
+					currentPlayer++;
+				}
+				displayPlayers(currentPlayer);
+			}
 		}
 	}
 });
