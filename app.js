@@ -135,7 +135,10 @@ sio.sockets.on('connection', function(socket){
 	//player must emit {challenger: my username, challenged: the other's username}
 	//function emits 'new challenger' to challenged
 	socket.on('challenge', function(data){
-		game_server.challenge(data.challenger, data.challenged);
+		game_server.challenge(sio, socket, data.challenger, data.challenged);
+		//challenge must be sent first before disconnection
+		game_server.disconnect(data.challenger, sio);
+		game_server.disconnect(data.challenged, sio);
 	});
 
 	//call when a player accepts the challenge
@@ -143,9 +146,7 @@ sio.sockets.on('connection', function(socket){
 	//function emits 'challenge accepted' to challenger
 	//function emits 'your game id' {game_id: the id} to both
 	//in the future, game id will be stored in a cookie
-	socket.on('accept challenge', function(data){
-		var gameID = UUID();
-		game_server.acceptChallenge(sio, data.challenger, data.challenged, gameID);
+	socket.on('accept challenge', function(){
 		socket.emit('your game id', {game_id: game});
 	});
 
@@ -179,17 +180,18 @@ sio.sockets.on('connection', function(socket){
 		game_server.roulette(socket, data);
 	});
 
-/*
+
 	socket.on('disconnect', function(){
 		//check if this user is part of gameroom
-		game_server.disconnect(socket);
+		game_server.disconnect(socket.username, sio);
+	});
+
+/*
+	socket.on('disconnect',function(){
+		playerCount = 0;
+		clearInterval(gameTimer);
 	});
 */
-
-socket.on('disconnect',function(){
-	playerCount = 0;
-	clearInterval(gameTimer);
-})
 
 socket.on('test', function(data){
 	socket.broadcast.emit('test reply', {message: data});

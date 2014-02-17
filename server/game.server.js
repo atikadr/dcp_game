@@ -2,6 +2,8 @@ var game_server = module.exports; //= {gameArray: {}};
 var io=require('socket.io');
 var gc = require('./game.core.js');
 
+var UUID=require('node-uuid'),
+
 var player_array = {}, gameArray = [];
 
 
@@ -15,13 +17,20 @@ game_server.addPlayer = function(socket, username){
 	player_array[username] = socket;
 }
 
-game_server.challenge = function(challenger, challenged){
-	var socket = this.player_array[challenged];
-	socket.emit('new challenger', {username: challenger});
+game_server.challenge = function(sio, challengerSocket, challenger, challenged){
+	var challengedSocket = player_array[challenged];
+	challengedSocket.emit('new challenger', {username: challenger});
+
+	var gameID = UUID();
+	var newGame = new gc.game_core(sio, gameID, challengerSocket, challengedSocket);
+	gameArray[gameID] = newGame;
+
+	console.log('new game created ' + gameID);
+
 }
 
 game_server.acceptChallenge = function(sio, challenger, challenged, gameID){
-	var socket = this.player_array[challenger];
+	var socket = player_array[challenger];
 	socket.emit('challenge accepted', {username: challenged});
 	socket.emit('your game id', {game_id: game});
 
@@ -29,8 +38,9 @@ game_server.acceptChallenge = function(sio, challenger, challenged, gameID){
 }
 
 game_server.declineChallenge = function(challenger, challenged){
-	var socket = this.player_array[challenger];
+	var socket = player_array[challenger];
 	socket.emit('challenge not accepted', {username: challenged});
+
 }
 
 game_server.newGame = function(gameID){
@@ -41,10 +51,6 @@ game_server.newGame = function(gameID){
 
 
 
-	var newGame = new gc.mock_game(gameID);
-	gameArray[gameID] = newGame;
-
-	console.log('new game created');
 }
 
 game_server.joinGame = function(socket, username, gameID){
@@ -83,8 +89,7 @@ game_server.setSong = function(gameID, song){
 	}
 }
 
-game_server.disconnect = function(socket){
-	delete player_array[socket.username];
+game_server.disconnect = function(username, sio){
+	delete player_array[username];
+	sio.sockets.in('gameroom').emit('player left room', {player: username});
 }
-
-
