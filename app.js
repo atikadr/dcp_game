@@ -10,7 +10,7 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'a';
+var MYSQL_PASS = 'bubumint';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
@@ -108,7 +108,7 @@ app.get('/songList', function(req,res){
 BRUTE FORCE TESTING CODE
 */
 
-game_server.newGame('testingGame');
+//game_server.newGame('testingGame');
 
 
 console.log("listening");
@@ -125,10 +125,7 @@ sio.sockets.on('connection', function(socket){
 	//function broadcasts 'new player joined room' {player: username}
 	//not implemented with REST API becuase it is hard to detect users that disconnect?
 	socket.on('join room', function(data){
-		socket.join('gameroom');
-		socket.username = data.username;
-		game_server.addPlayer(socket, data.username);
-		sio.sockets.in('gameroom').emit('new player joined room', {player: data.username});
+		game_server.addPlayer(sio, socket, data.username);
 	});
 
 	//call when a player clicks to challenge another in the gameroom
@@ -151,10 +148,10 @@ sio.sockets.on('connection', function(socket){
 	});
 
 	//call when a player accepts the challenge
-	//player must emit {challenger: the other's username, challenged: my username}
+	//player must emit {game_id: gameID}
 	//function emits 'challenge not accepted' to challenger
 	socket.on('decline challenge', function(data){
-		game_server.declineChallenge(data.challenger, data.challenged);
+		game_server.declineChallenge(sio, data.game_id);;
 	});
 
 	//call after player loads the game page
@@ -183,7 +180,7 @@ sio.sockets.on('connection', function(socket){
 
 	socket.on('disconnect', function(){
 		//check if this user is part of gameroom
-		game_server.disconnect(socket.username, sio);
+		game_server.disconnect(socket, socket.username, sio);
 	});
 
 /*
