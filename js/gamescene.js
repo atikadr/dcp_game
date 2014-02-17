@@ -1,3 +1,9 @@
+socket.on('new challenger',function(data){
+	console.log(data);
+	socket.emit('accept challenge'); // if accept
+	//socket.emit('decline challenge') // if decline
+});
+
 function clearScreen(){
 	var childrenArray = gameLayer.getChildren();
 	while(childrenArray.length > 1){
@@ -7,7 +13,7 @@ function clearScreen(){
 	console.log(childrenArray);
 }
 
-var gameScene = "startScreen";
+var gameScene = "gameRoom";
 
 var gamescene = cc.Scene.extend({
 	onEnter:function(){
@@ -39,7 +45,9 @@ var gamesceneGame = cc.Layer.extend({
 		backgroundImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
 		this.addChild(gameLayer);
 		//setupGamePlay();
-		setupStartScreen();
+		//setupStartScreen();
+		//setupSongSelection();
+		setupGameRoom();
 		return true;
 	},
 	onKeyUp:function(event){
@@ -61,6 +69,7 @@ var gamesceneGame = cc.Layer.extend({
 		}
 	},
 	onKeyDown:function(event){
+		console.log(event);
 		if(gameScene == "multiplayer"){
 			if(event == 32){ 
 				for(var i = 0 ; i < gameSpritesArray.length ; i++){
@@ -181,6 +190,74 @@ var gamesceneGame = cc.Layer.extend({
 				}
 			}
 			repositionDot();
+		}
+		if(gameScene == "songSelection"){
+			if(event == 40 && selected == false){
+				myCurrentSelection = (myCurrentSelection+1)%songsArray.length;
+				slot1.setString(songsArray[myCurrentSelection].song+"\n"+songsArray[myCurrentSelection].number_of_stars);
+				slot2.setString(songsArray[(myCurrentSelection+1)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+1)%songsArray.length].number_of_stars);
+				slot3.setString(songsArray[(myCurrentSelection+2)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+2)%songsArray.length].number_of_stars);
+				slot4.setString(songsArray[(myCurrentSelection+3)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+3)%songsArray.length].number_of_stars);
+				slot5.setString(songsArray[(myCurrentSelection+4)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+4)%songsArray.length].number_of_stars);
+
+				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:null});
+			}
+			if(event == 38 && selected == false){
+				myCurrentSelection--;
+				if(myCurrentSelection < 0){
+					myCurrentSelection = songsArray.length-1;
+				}
+				slot1.setString(songsArray[myCurrentSelection].song+"\n"+songsArray[myCurrentSelection].number_of_stars);
+				slot2.setString(songsArray[(myCurrentSelection+1)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+1)%songsArray.length].number_of_stars);
+				slot3.setString(songsArray[(myCurrentSelection+2)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+2)%songsArray.length].number_of_stars);
+				slot4.setString(songsArray[(myCurrentSelection+3)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+3)%songsArray.length].number_of_stars);
+				slot5.setString(songsArray[(myCurrentSelection+4)%songsArray.length].song+"\n"+songsArray[(myCurrentSelection+4)%songsArray.length].number_of_stars);
+
+				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:null});
+			}
+			if(event == 32){
+				selected = true;
+				var selection = (myCurrentSelection+2)%songsArray.length;
+				selectedText.setString(songsArray[selection].song);
+
+				slot1.setColor(new cc.Color4B(172,172,172,255));
+				slot2.setColor(new cc.Color4B(172,172,172,255));
+				slot3.setColor(new cc.Color4B(172,172,172,255));
+				slot4.setColor(new cc.Color4B(172,172,172,255));
+				slot5.setColor(new cc.Color4B(172,172,172,255));
+
+				gameLayer.removeChild(mySelection);
+
+				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:selection});
+			}
+		}
+		if(gameScene == "gameRoom"){
+			if(event == 39){ // right
+				currentPlayer += 5;
+				if(currentPlayer >= playersArray.length){
+					currentPlayer = playersArray.length - 1;
+				}
+				displayPlayers(currentPlayer);
+			}
+			if(event == 37){ // left
+				currentPlayer -= 5;
+				if(currentPlayer < 0){
+					currentPlayer = 0;
+				}
+				displayPlayers(currentPlayer);
+			}
+			if(event == 38){ // up
+				if(currentPlayer > 0){
+					currentPlayer--;
+				}
+				displayPlayers(currentPlayer);
+			}
+			if(event == 40){ // down
+				if(currentPlayer < (playersArray.length-1)){
+					currentPlayer++;
+				}
+				displayPlayers(currentPlayer);
+			}
 		}
 	}
 });

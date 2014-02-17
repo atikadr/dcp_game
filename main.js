@@ -23,7 +23,9 @@ var cocos2dApp = cc.Application.extend({
 			{type:"image",src:"../images/whitebox.png"},
 			{type:"image",src:"../images/beat.png"},
 			{type:"image",src:"../images/animation.png"},
-			{type:"image",src:"../images/play.png"}
+			{type:"image",src:"../images/play.png"},
+			{type:"image",src:"../images/gameRoomBox.png"},
+			{type:"image",src:"../images/boxBackground.png"}
 		]);
 	},
 	applicationDidFinishLaunching:function () {
