@@ -154,22 +154,13 @@ sio.sockets.on('connection', function(socket){
 		game_server.declineChallenge(sio, data.game_id);;
 	});
 
-	//call after player loads the game page
-	//player must emit {username: my username, game_id: the given game id}
-	//function broadcasts 'players connected' when both players are connected
-	socket.on('setup game', function(data){
-		socket.join(data.game_id);
-		socket.game_id = data.game_id;
-		game_server.joinGame(sio, socket, data.username, data.game_id);
-	});
-
-
 	//call when a player chooses his song
-	//player must emit {username: my username, song: choice of music}
+	//player must emit {song: choice of music}
 	socket.on('set song', function(data){
 		var game_id = socket.game_id;
-		game_server.setSong(game_id, data.song);
-		sio.sockets.in(game_id).emit('player set song', {player: data.username});
+		var player = socket.player;
+		game_server.setSong(game_id, player, data.song);
+		sio.sockets.in(game_id).emit('player set song', {player: socket.username, song: data.song});
 	});
 
 	//

@@ -87,13 +87,12 @@ game_server.joinGame = function(socket, username, gameID){
 
 }
 
-game_server.setSong = function(gameID, song){
-	var game_instance = gameArray[gameID];	
-	if (game_instance.songs.first_song == null){
-		game_instance.songs.first_song = song;
+game_server.setSong = function(gameID, player, song){
+	if (player == 'player1'){
+		gameArray[gameID].songs.first_song = song;
 	}
 	else{
-		game_instance.songs.second_song = song;
+		gameArray[gameID].songs.second_song = song;
 	}
 }
 
