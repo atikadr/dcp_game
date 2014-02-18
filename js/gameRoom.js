@@ -12,6 +12,7 @@ var pageNumber;
 var isChallenged;
 
 function setupGameRoom(){
+	gameScene = "gameRoom";
 	isChallenged = false;
 	playerNamesArray.splice(0,playerNamesArray.length);
 	playerBoxArray.splice(0,playerBoxArray.length);
@@ -171,6 +172,7 @@ socket.on('new challenger',function(data){
 });
 
 socket.on('your game id',function(data){
+	console.log("your game id");
 	gameID = data.game_id;
 	setupSongSelection();
 });

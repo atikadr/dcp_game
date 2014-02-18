@@ -22,6 +22,7 @@ function repositionDot(){
 }
 
 function setupStartScreen(){
+	gameScene = "startScreen";
 	clearScreen();
 	var titleImage = cc.Sprite.create("../images/title.png");
 	titleImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight - 180));

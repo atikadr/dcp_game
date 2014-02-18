@@ -52,6 +52,7 @@ socket.on('song selected',function(data){
 });
 
 function setupSongSelection(){
+	gameScene = "songSelection";
 	clearScreen();
 
 	selected = false;

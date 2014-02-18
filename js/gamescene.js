@@ -1,21 +1,15 @@
 var playerName = Math.floor(Math.random()*10000); // for testing only
 
-socket.on('new challenger',function(data){
-	console.log(data);
-	socket.emit('accept challenge'); // if accept
-	//socket.emit('decline challenge') // if decline
-});
 
 function clearScreen(){
 	var childrenArray = gameLayer.getChildren();
 	while(childrenArray.length > 1){
-		console.log(childrenArray[1]);
 		gameLayer.removeChild(childrenArray[1]);
 	}
 	console.log(childrenArray);
 }
 
-var gameScene = "gameRoom";
+var gameScene = "startScreen";
 
 var gamescene = cc.Scene.extend({
 	onEnter:function(){
@@ -48,9 +42,9 @@ var gamesceneGame = cc.Layer.extend({
 		backgroundImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
 		this.addChild(gameLayer);
 		//setupGamePlay();
-		//setupStartScreen();
+		setupStartScreen();
 		//setupSongSelection();
-		setupGameRoom();
+		//setupGameRoom();
 		return true;
 	},
 	onKeyUp:function(event){

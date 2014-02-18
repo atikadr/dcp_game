@@ -303,6 +303,7 @@ function startMusicPlay(){
 }
 
 function setupGamePlay(){
+	gameScene = "multiplayer";
 	clearScreen();
 
 	var separator = cc.Sprite.create("../images/separator.png");
