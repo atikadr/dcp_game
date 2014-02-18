@@ -18,7 +18,7 @@ game_server.addPlayer = function(sio, socket, username){
 	
 	player_array[username] = socket;
 
-	sio.sockets.in('gameroom').emit('new player joined room', {player: data.username});
+	sio.sockets.in('gameroom').emit('new player joined room', {player: username});
 	socket.join('gameroom');
 }
 
