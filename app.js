@@ -144,7 +144,7 @@ sio.sockets.on('connection', function(socket){
 	//function emits 'your game id' {game_id: the id} to both
 	//in the future, game id will be stored in a cookie
 	socket.on('accept challenge', function(){
-		socket.emit('your game id', {game_id: game});
+		game_server.acceptChallenge(socket.game_id);
 	});
 
 	//call when a player accepts the challenge

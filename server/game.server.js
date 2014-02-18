@@ -44,11 +44,9 @@ game_server.challenge = function(sio, challengerSocket, challenger, challenged){
 	console.log('new game created ' + gameID);
 }
 
-game_server.acceptChallenge = function(sio, challenger, challenged, gameID){
+game_server.acceptChallenge = function(gameID){
 	var challengerSocket = gameArray[gameID].players.player1;
-	challengerSocket.emit('challenge not accepted');
-
-	socket.emit('challenge accepted');
+	challengerSocket.emit('challenge accepted');
 }
 
 game_server.declineChallenge = function(sio, gameID){
