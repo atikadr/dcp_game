@@ -53,8 +53,8 @@ game_server.declineChallenge = function(sio, gameID){
 	var challengerSocket = gameArray[gameID].players.player1;
 	var challengedSocket = gameArray[gameID].players.player2;
 	challengerSocket.emit('challenge not accepted');
-	challengerSocket.leave(gameID);
-	challengedSocket.leave(gameID);
+	//challengerSocket.leave(gameID);
+	//challengedSocket.leave(gameID);
 	addPlayer(sio, challengerSocket, challengerSocket.username);
 	addPlayer(sio, challengedSocket, challengedSocket.username);
 
@@ -108,6 +108,6 @@ game_server.setSong = function(gameID, player, song){
 
 game_server.disconnect = function(socket, username, sio){
 	delete player_array[username];
-	socket.leave('gameroom');
+	//socket.leave('gameroom');
 	sio.sockets.in('gameroom').emit('player left room', {player: username});
 }
