@@ -154,6 +154,10 @@ sio.sockets.on('connection', function(socket){
 		game_server.declineChallenge(sio, socket.game_id);;
 	});
 
+	socket.on('get opponent name', function(){
+		game_server.sendOpponentName(socket, socket.game_id, socket.player);
+	});
+
 	//call when a player chooses his song
 	//player must emit {song: choice of music}
 	socket.on('set song', function(data){
