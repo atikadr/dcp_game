@@ -63,10 +63,10 @@ game_server.declineChallenge = function(sio, gameID){
 
 game_server.sendOpponentName = function(socket, gameID, thisPlayer){
 	if (thisPlayer == 'player1'){
-		socket.emit('game players', {gameArray[gameID].players.player2.username});	
+		socket.emit('get opponent name', {opponentName: gameArray[gameID].players.player2.username});	
 	}
 	else{
-		socket.emit('game players', {gameArray[gameID].players.player1.username});
+		socket.emit('get opponent name', {opponentName: gameArray[gameID].players.player1.username});
 	}
 	
 }
