@@ -1,4 +1,3 @@
-var playerName = Math.floor(Math.random()*10000); // for testing only
 var playersArray;
 
 var box1, box2, box3, box4, box5;
@@ -10,7 +9,10 @@ var playerBoxArray = new Array();
 var selectedPlayer;
 var pageNumber;
 
+var isChallenged;
+
 function setupGameRoom(){
+	isChallenged = false;
 	playerNamesArray.splice(0,playerNamesArray.length);
 	playerBoxArray.splice(0,playerBoxArray.length);
 	currentPlayer = 0;
@@ -92,7 +94,6 @@ function joinRoom(){
 function updateSelectedPlayer(){
 	console.log(currentPlayer);
 	var selectedPosition = currentPlayer%5;
-	console.log(playerNamesArray[selectedPosition]);
 	for(var i = 0 ; i < playerNamesArray.length ; i++){
 		playerNamesArray[i].setColor(new cc.Color4B(255,255,255,255));
 	}
@@ -130,6 +131,19 @@ function displayPlayers(startIndex){
 	updateSelectedPlayer();
 }
 
+socket.on('player left room',function(data){
+	console.log(data);
+	for(var i = 0 ; i < playersArray.length ; i++){
+		if(playersArray[i] == data.player){
+			if(playersArray[currentPlayer] == data.player && playersArray.length > 1){
+				currentPlayer--;
+			}
+			playersArray.splice(i,1);
+			displayPlayers(currentPlayer);
+		}
+	}
+});
+
 socket.on('get players',function(data){
 	playersArray = data.players;
 	displayPlayers(currentPlayer);
@@ -142,14 +156,26 @@ socket.on('new player joined room',function(data){
 	displayPlayers(currentPlayer);
 });
 
-socket.on('challenge accepted',function(data){
-	console.log(data); // game ID
-});
-
 socket.on('challenge not accepted',function(data){
-	console.log("You have no friends");
+	console.log("You have no friends :(");
 });
 
-function challengePlayer(username){
-	socket.emit('challenge',{challenger:playerName,challenged:username});
+socket.on('new challenger',function(data){
+	var challengerName = data.username;
+	// for testing purposes
+	isChallenged = true;
+	var tempLabel = cc.LabelTTF.create("Press y","HelveticaNeue-UltraLight",40,cc.size(250,36),cc.kCCTextAlignmentLeft);
+	tempLabel.setPosition(new cc.Point(300,300));
+	tempLabel.setString("You have been challenged by " + challengerName + ". Press Y to accept");
+	gameLayer.addChild(tempLabel);
+});
+
+socket.on('your game id',function(data){
+	gameID = data.game_id;
+	setupSongSelection();
+});
+
+function challengePlayer(){
+	console.log(currentPlayer);
+	socket.emit('challenge',{challenger:playerName,challenged:playersArray[currentPlayer]});
 }

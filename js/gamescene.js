@@ -1,3 +1,5 @@
+var playerName = Math.floor(Math.random()*10000); // for testing only
+
 socket.on('new challenger',function(data){
 	console.log(data);
 	socket.emit('accept challenge'); // if accept
@@ -29,6 +31,7 @@ var gameLayer;
 
 var backgroundImage;
 
+var gameID;
 
 var gamesceneGame = cc.Layer.extend({
 	init:function(){
@@ -186,7 +189,7 @@ var gamesceneGame = cc.Layer.extend({
 			if(event == 32){
 				if(modeSelected == "multiplayer"){
 					gameScene = "multiplayer";
-					setupGamePlay()
+					setupGameRoom()
 				}
 			}
 			repositionDot();
@@ -257,6 +260,13 @@ var gamesceneGame = cc.Layer.extend({
 					currentPlayer++;
 				}
 				displayPlayers(currentPlayer);
+			}
+			if(event == 89 && isChallenged){
+				isChallenged = false;
+				socket.emit('accept challenge');
+			}
+			if(event == 32){
+				challengePlayer();
 			}
 		}
 	}

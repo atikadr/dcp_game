@@ -113,6 +113,11 @@ function setupSongSelection(){
 	loadSongList();
 }
 
+socket.on('get opponent name',function(data){
+	smallPlayer.setString(playerName);
+	smallOpponent.setString(data.opponentName);
+});
+
 function loadSongList(){
 	$.ajax({
 		url:"/songList",
