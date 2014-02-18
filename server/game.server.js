@@ -38,15 +38,15 @@ game_server.challenge = function(sio, challengerSocket, challenger, challenged){
 	challengedSocket.game_id = gameID;
 
 	challengedSocket.join(gameID);
-	challengerSocket.join(gameID);
-	sio.sockets.in(gameID).emit('your game id', {game_id: game});	
+	challengerSocket.join(gameID);	
 
 	console.log('new game created ' + gameID);
 }
 
-game_server.acceptChallenge = function(gameID){
-	var challengerSocket = gameArray[gameID].players.player1;
-	challengerSocket.emit('challenge accepted');
+game_server.acceptChallenge = function(sio, gameID){
+	//var challengerSocket = gameArray[gameID].players.player1;
+	//challengerSocket.emit('challenge accepted');
+	sio.sockets.in(gameID).emit('your game id', {game_id: gameID});
 }
 
 game_server.declineChallenge = function(sio, gameID){

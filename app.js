@@ -144,14 +144,14 @@ sio.sockets.on('connection', function(socket){
 	//function emits 'your game id' {game_id: the id} to both
 	//in the future, game id will be stored in a cookie
 	socket.on('accept challenge', function(){
-		game_server.acceptChallenge(socket.game_id);
+		game_server.acceptChallenge(sio, socket.game_id);
 	});
 
 	//call when a player accepts the challenge
 	//player must emit {game_id: gameID}
 	//function emits 'challenge not accepted' to challenger
-	socket.on('decline challenge', function(data){
-		game_server.declineChallenge(sio, data.game_id);;
+	socket.on('decline challenge', function(){
+		game_server.declineChallenge(sio, socket.game_id);;
 	});
 
 	//call when a player chooses his song
