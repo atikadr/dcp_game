@@ -134,8 +134,6 @@ sio.sockets.on('connection', function(socket){
 	socket.on('challenge', function(data){
 		game_server.challenge(sio, socket, data.challenger, data.challenged);
 		//challenge must be sent first before disconnection
-		game_server.disconnect(data.challenger, sio);
-		game_server.disconnect(data.challenged, sio);
 	});
 
 	//call when a player accepts the challenge
