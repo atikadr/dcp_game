@@ -40,8 +40,8 @@ game_server.challenge = function(sio, challengerSocket, challenger, challenged){
 	challengedSocket.join(gameID);
 	challengerSocket.join(gameID);
 
-	disconnect(challengerSocket, challenger, sio);
-	disconnect(challengedSocket, challenged, sio);
+	game_server.disconnect(challengerSocket, challenger, sio);
+	game_server.disconnect(challengedSocket, challenged, sio);
 
 	console.log('new game created ' + gameID);
 }
