@@ -1,5 +1,7 @@
 var playerName = Math.floor(Math.random()*10000); // for testing only
 
+var gameChallengeOverlay;
+var gameChallengeOverlayText;
 
 function clearScreen(){
 	var childrenArray = gameLayer.getChildren();
@@ -8,6 +10,12 @@ function clearScreen(){
 	}
 	console.log(childrenArray);
 }
+
+socket.on('new challenger',function(data){
+	var challengerName = data.username;
+	isChallenged = true;
+	addChallengeOverlay(data.username);
+});
 
 var gameScene = "startScreen";
 
@@ -18,7 +26,21 @@ var gamescene = cc.Scene.extend({
 		layer.init();
 		this.addChild(layer);
 	}
-})
+});
+
+function addChallengeOverlay(challengerName){
+	gameChallengeOverlay = cc.LayerColor.create(new cc.Color4B(0,0,0,160), canvasWidth, canvasHeight);
+	gameChallengeOverlayText = cc.LabelTTF.create("","HelveticaNeue",40,cc.size(650,36),cc.TEXT_ALIGNMENT_CENTER);
+	gameChallengeOverlayText.setString(challengerName + " challenged you.\n Accept?(Y/N)");
+	gameChallengeOverlayText.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2+50));
+	gameLayer.addChild(gameChallengeOverlay);
+	gameLayer.addChild(gameChallengeOverlayText);
+}
+
+function removeChallengeOverlay(){
+	gameLayer.removeChild(gameChallengeOverlay);
+	gameLayer.removeChild(gameChallengeOverlayText);
+}
 
 // global variables
 var gameLayer;
@@ -255,13 +277,22 @@ var gamesceneGame = cc.Layer.extend({
 				}
 				displayPlayers(currentPlayer);
 			}
-			if(event == 89 && isChallenged){
-				isChallenged = false;
-				socket.emit('accept challenge');
-			}
 			if(event == 32){
 				challengePlayer();
+				addChallengeWaitOverlay();
 			}
+		}
+
+		// others
+		if(event == 89 && isChallenged){
+			isChallenged = false;
+			socket.emit('accept challenge');
+			removeChallengeOverlay();
+		}
+		if(event == 78 && isChallenged){
+			isChallenged = false;
+			socket.emit('decline challenge');
+			removeChallengeOverlay();
 		}
 	}
 });

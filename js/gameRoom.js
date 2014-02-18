@@ -145,6 +145,23 @@ socket.on('player left room',function(data){
 	}
 });
 
+var waitOverlay;
+var waitOverlayText;
+
+function addChallengeWaitOverlay(){
+	waitOverlay = cc.LayerColor.create(new cc.Color4B(0,0,0,160), canvasWidth, canvasHeight);
+	waitOverlayText = cc.LabelTTF.create("","HelveticaNeue",40,cc.size(650,36),cc.TEXT_ALIGNMENT_CENTER);
+	waitOverlayText.setString("Waiting for opponent response");
+	waitOverlayText.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2+50));
+	gameLayer.addChild(waitOverlay);
+	gameLayer.addChild(waitOverlayText);
+}
+
+function removeWaitOverlay(){
+	gameLayer.removeChild(waitOverlay);
+	gameLayer.removeChild(waitOverlayText);
+}
+
 socket.on('get players',function(data){
 	playersArray = data.players;
 	displayPlayers(currentPlayer);
@@ -159,17 +176,9 @@ socket.on('new player joined room',function(data){
 
 socket.on('challenge not accepted',function(data){
 	console.log("You have no friends :(");
+	removeWaitOverlay();
 });
 
-socket.on('new challenger',function(data){
-	var challengerName = data.username;
-	// for testing purposes
-	isChallenged = true;
-	var tempLabel = cc.LabelTTF.create("Press y","HelveticaNeue-UltraLight",40,cc.size(250,36),cc.kCCTextAlignmentLeft);
-	tempLabel.setPosition(new cc.Point(300,300));
-	tempLabel.setString("You have been challenged by " + challengerName + ". Press Y to accept");
-	gameLayer.addChild(tempLabel);
-});
 
 socket.on('your game id',function(data){
 	console.log("your game id");
