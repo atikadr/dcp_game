@@ -113,9 +113,6 @@ BRUTE FORCE TESTING CODE
 
 console.log("listening");
 
-var playerCount = 0;
-var gameTimer;
-
 
 sio.sockets.on('connection', function(socket){
 
@@ -153,16 +150,14 @@ sio.sockets.on('connection', function(socket){
 	});
 
 	socket.on('get opponent name', function(){
-		game_server.sendOpponentName(socket, socket.game_id, socket.player);
+		game_server.sendOpponentName(socket, socket.game_id, socket.username);
 	});
 
 	//call when a player chooses his song
 	//player must emit {song: choice of music}
 	socket.on('set song', function(data){
-		var game_id = socket.game_id;
-		var player = socket.player;
-		game_server.setSong(game_id, player, data.song);
-		sio.sockets.in(game_id).emit('player set song', {player: socket.username, song: data.song});
+		game_server.setSong(sio, mysql, socket.game_id, socket.player, data.song);
+		sio.sockets.in(socket.game_id).emit('player set song', {player: socket.username, song: data.song});
 	});
 
 	//
@@ -181,7 +176,7 @@ sio.sockets.on('connection', function(socket){
 		playerCount = 0;
 		clearInterval(gameTimer);
 	});
-*/
+
 
 socket.on('test', function(data){
 	socket.broadcast.emit('test reply', {message: data});
@@ -191,48 +186,25 @@ socket.on('test join', function(data){
 	socket.join('testingGame');
 	game_server.joinGame(socket, 'testing username', 'testingGame');
 });
-
-socket.on('game ready',function(data){
-	playerCount++;
-	console.log(playerCount);
-	if(playerCount == 2){
-		var trackData = new Array();
-
-		//sio.sockets.emit('startGame');
-		/*
-		mysql.query('select * from Song where song = "let it go"', 
-			function(err, result, fields){
-				if (err) throw err;
-				else{
-					for (var i in result){
-						trackData = result[i].beats.split(";"); 
-					}
-				}
-			});
 */
 
+	socket.on('game ready first song', function(data){
+		//sio.sockets.emit('startGame');
+		if (game_server.readyFirstSong(socket.game_id, socket.player)){
+			game_server.startFirstSong(sio, socket.game_id);
+		}
 
-fs.readFile('beats/test.txt','utf8',function(err,data){
-	trackData = data.split("\n");
-	console.log(trackData);
-});
+/*
+	fs.readFile('beats/test.txt','utf8',function(err,data){
+		trackData = data.split("\n");
+		console.log(trackData);
+	});
+*/
+		
+	});
 
-var counter = 0;
-gameTimer = setInterval(function(){
-	counter++;
-
-	var beat = trackData[0].split(",")[1];
-	while(parseInt(beat) == counter){
-		sio.sockets.emit('beat',trackData[0].split(",")[0]);
-		trackData.splice(0,1);
-		beat = trackData[0].split(",")[1];
-	}
-},50/3);
-}
-});
-
-socket.on('playerSelectSong',function(data){
-	socket.broadcast.emit('song selected',data);
-});
+	socket.on('playerSelectSong',function(data){
+		socket.broadcast.emit('song selected',data);
+	});
 });
 
