@@ -30,6 +30,21 @@ var game_core = function(sio, gameID, player1x, player2x){
 		first_song : null,
 		second_song : null
 	};
+
+	this.tracks = {
+		first_song : null,
+		second_song : null
+	};
+
+	this.ready_first_song = {
+		player1 : false,
+		player2 : false
+	};
+
+	this.ready_second_song = {
+		player1 : false,
+		player2 : false
+	};
 }
 
 function playerReady(){

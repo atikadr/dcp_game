@@ -10,7 +10,7 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'a';
+var MYSQL_PASS = 'bubumint';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({

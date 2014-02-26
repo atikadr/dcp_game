@@ -4,7 +4,7 @@ var gc = require('./game.core.js');
 
 var UUID=require('node-uuid');
 
-var player_array = {}, gameArray = [];
+var player_array = {}, gameArray = [], gameTimer = [];
 
 
 game_server.addPlayer = function(sio, socket, username){
@@ -74,8 +74,7 @@ game_server.sendOpponentName = function(socket, gameID, thisPlayer){
 	
 }
 
-game_server.joinGame = function(socket, username, gameID){
-	
+game_server.joinGame = function(socket, username, gameID){	
 	socket.username = username;
 	var game_instance = gameArray[gameID];
 
@@ -100,12 +99,60 @@ game_server.joinGame = function(socket, username, gameID){
 
 }
 
-game_server.setSong = function(gameID, player, song){
+game_server.setSong = function(sio, mysql, gameID, player, song){
+	var trackData = new Array();
+	mysql.query('select * from Song where song = "' + song + '"', 
+		function(err, result, fields){
+			if (err) throw err;
+			else{
+				for (var i in result){
+					trackData = result[i].beats.split(";"); 
+				}
+			}
+	});
+
 	if (player == 'player1'){
 		gameArray[gameID].songs.first_song = song;
+		gameArray[gameID].tracks.first_song = trackData;
+
+	}
+	else {
+		gameArray[gameID].songs.second_song = song;
+		gameArray[gameID].tracks.second_song = trackData;
+	}
+
+	//if both songs are done, tell both players
+	if (gameArray[gameID].songs.first_song != null && gameArray[gameID].songs.second_song != null)
+		sio.sockets.in(gameID).emit('game ready');
+}
+
+game_server.readyFirstSong = function(gameID, player){
+	if (player == 'player1'){
+		gameArray[gameID].ready_first_song.player1 = true;
 	}
 	else{
-		gameArray[gameID].songs.second_song = song;
+		gameArray[gameID].ready_first_song.player2 = true;
+	}
+
+	if (gameArray[gameID].ready_first_song.player1 == true && gameArray[gameID].ready_first_song.player2 == true)
+		return true;
+	else
+		return false;
+}
+
+game_server.startFirstSong = function(sio, gameID){
+	var counter = 0;
+	gameTimer[gameID] = setInterval(game_server.sendBeat1(sio, counter, gameID),50/3);
+}
+
+game_server.sendBeat1 = function(sio, counter, gameID){
+	counter++;
+	
+	var beat = gameArray[gameID].tracks.first_song[0].split(",")[1];
+	while(parseInt(beat) == counter){
+		sio.sockets.in(gameID).emit('beat',gameArray[gameID].tracks.first_song[0].split(",")[0]);
+		gameArray[gameID].tracks.first_song.splice(0,1);
+		beat = gameArray[gameID].tracks.first_song[0].split(",")[1];
 	}
 }
 
