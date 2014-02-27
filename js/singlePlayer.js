@@ -116,6 +116,7 @@ function getSongNotes(){
 }
 
 function setupSingleGamePlay(){
+	prevScene = [];
 	gameScene = "singlePlayer";
 	clearScreen();
 

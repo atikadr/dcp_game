@@ -19,7 +19,7 @@ socket.on('new challenger',function(data){
 });
 
 var gameScene = "startScreen";
-var prevScene = "startScreen";
+var prevScene = new Array();
 
 var gamescene = cc.Scene.extend({
 	onEnter:function(){
@@ -205,12 +205,12 @@ var gamesceneGame = cc.Layer.extend({
 			}
 			if(event == 32){
 				if(modeSelected == "multiplayer"){
-					prevScene = gameScene;
+					prevScene.push(gameScene);
 					gameScene = "multiplayer";
 					setupGameRoom()
 				}
 				if(modeSelected == "singleplayer"){
-					prevScene = gameScene;
+					prevScene.push(gameScene);
 					setupSingleSongSelection();
 				}
 			}
@@ -292,7 +292,7 @@ var gamesceneGame = cc.Layer.extend({
 				singleSlot5.setColor(new cc.Color4B(172,172,172,255));
 
 				gameLayer.removeChild(mySelection);
-				prevScene = gameScene;
+				prevScene.push(gameScene);
 				setupSingleGamePlay();
 			}
 		}
@@ -417,11 +417,25 @@ var gamesceneGame = cc.Layer.extend({
 			socket.emit('decline challenge');
 			removeChallengeOverlay();
 		}
-		if(event == 13){
-			if(prevScene == "startScreen"){
-				prevScene = gameScene;
-				gameScene = "startScreen";
-				setupStartScreen();
+		if(event == 8){
+			console.log("Prev: " + prevScene[prevScene.length-1] + " This: " + gameScene);
+			if(prevScene.length > 0){
+				if(prevScene[prevScene.length-1] == "startScreen"){
+					prevScene.pop();
+					setupStartScreen();
+				}
+				if(prevScene[prevScene.length-1] == "singleSongSelection"){
+					prevScene.pop();
+					setupSingleSongSelection();
+				}
+				if(prevScene[prevScene.length-1] == "gameRoom"){
+					prevScene.pop();
+					setupGameRoom();
+				}
+				if(prevScene[prevScene.length-1] == "songSelection"){
+					prevScene.pop();
+					setupSongSelection();
+				}
 			}
 		}
 	}

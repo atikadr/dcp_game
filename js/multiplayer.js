@@ -302,6 +302,7 @@ function startMusicPlay(){
 }
 
 function setupGamePlay(){
+	prevScene = [];
 	gameScene = "multiplayer";
 	clearScreen();
 
