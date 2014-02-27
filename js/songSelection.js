@@ -29,6 +29,9 @@ var myCurrentSelection = 0;
 var selectedText;
 var opponentSelectedText;
 
+var mySelectedSong = false;
+var opponentSelectedSong = false;
+
 socket.on('song selected',function(data){
 	if(data.selectedSong == null){
 		var oppSong = data.currentSong;

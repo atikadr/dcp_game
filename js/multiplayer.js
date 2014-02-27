@@ -162,7 +162,6 @@ socket.on('beat',function(data){
 
 			var removeArrayOpp = new Array();
 			$.each(beatsArrayOpp,function(index,value){
-				value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
 				if(value.getPosition().y <= 0){
 					totalComboOpp = 0;
 					comboLabelOpp.setString(totalComboOpp);
@@ -182,7 +181,7 @@ socket.on('beat',function(data){
 				}
 			}
 		});
-}
+	}
 var notePath = "../images/note.png";
 var note = cc.Sprite.create(notePath);
 var notePosition;

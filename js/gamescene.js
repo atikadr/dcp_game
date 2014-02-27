@@ -11,6 +11,7 @@ function clearScreen(){
 	console.log(childrenArray);
 }
 
+
 socket.on('new challenger',function(data){
 	var challengerName = data.username;
 	isChallenged = true;
@@ -18,6 +19,7 @@ socket.on('new challenger',function(data){
 });
 
 var gameScene = "startScreen";
+var prevScene = "startScreen";
 
 var gamescene = cc.Scene.extend({
 	onEnter:function(){
@@ -172,8 +174,7 @@ var gamesceneGame = cc.Layer.extend({
 				socket.emit('test',{beat:"green",totalCombo:totalCombo,score:score});
 			}
 		}
-		if(gameScene == "startScreen"){
-			console.log(event);
+		else if(gameScene == "startScreen"){
 			if(event == 38){
 				switch(modeSelected){
 					case "multiplayer":
@@ -204,13 +205,18 @@ var gamesceneGame = cc.Layer.extend({
 			}
 			if(event == 32){
 				if(modeSelected == "multiplayer"){
+					prevScene = gameScene;
 					gameScene = "multiplayer";
 					setupGameRoom()
+				}
+				if(modeSelected == "singleplayer"){
+					prevScene = gameScene;
+					setupSingleSongSelection();
 				}
 			}
 			repositionDot();
 		}
-		if(gameScene == "songSelection"){
+		else if(gameScene == "songSelection"){
 			if(event == 40 && selected == false){
 				myCurrentSelection = (myCurrentSelection+1)%songsArray.length;
 				slot1.setString(songsArray[myCurrentSelection].song+"\n"+songsArray[myCurrentSelection].number_of_stars);
@@ -250,7 +256,47 @@ var gamesceneGame = cc.Layer.extend({
 				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:selection});
 			}
 		}
-		if(gameScene == "gameRoom"){
+		else if(gameScene == "singleSongSelection"){
+			if(event == 40 && selected == false){
+				myCurrentSelection = (myCurrentSelection+1)%singleSongsArray.length;
+				singleSlot1.setString(singleSongsArray[myCurrentSelection].song+"\n"+singleSongsArray[myCurrentSelection].number_of_stars);
+				singleSlot2.setString(singleSongsArray[(myCurrentSelection+1)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+1)%singleSongsArray.length].number_of_stars);
+				singleSlot3.setString(singleSongsArray[(myCurrentSelection+2)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+2)%singleSongsArray.length].number_of_stars);
+				singleSlot4.setString(singleSongsArray[(myCurrentSelection+3)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+3)%singleSongsArray.length].number_of_stars);
+				singleSlot5.setString(singleSongsArray[(myCurrentSelection+4)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+4)%singleSongsArray.length].number_of_stars);
+
+				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:null});
+			}
+			if(event == 38 && selected == false){
+				myCurrentSelection--;
+				if(myCurrentSelection < 0){
+					myCurrentSelection = singleSongsArray.length-1;
+				}
+				singleSlot1.setString(singleSongsArray[myCurrentSelection].song+"\n"+singleSongsArray[myCurrentSelection].number_of_stars);
+				singleSlot2.setString(singleSongsArray[(myCurrentSelection+1)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+1)%singleSongsArray.length].number_of_stars);
+				singleSlot3.setString(singleSongsArray[(myCurrentSelection+2)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+2)%singleSongsArray.length].number_of_stars);
+				singleSlot4.setString(singleSongsArray[(myCurrentSelection+3)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+3)%singleSongsArray.length].number_of_stars);
+				singleSlot5.setString(singleSongsArray[(myCurrentSelection+4)%singleSongsArray.length].song+"\n"+singleSongsArray[(myCurrentSelection+4)%singleSongsArray.length].number_of_stars);
+
+				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:null});
+			}
+			if(event == 32){
+				selected = true;
+				var selection = (myCurrentSelection+2)%singleSongsArray.length;
+				selectedText.setString(singleSongsArray[selection].song);
+
+				singleSlot1.setColor(new cc.Color4B(172,172,172,255));
+				singleSlot2.setColor(new cc.Color4B(172,172,172,255));
+				singleSlot3.setColor(new cc.Color4B(172,172,172,255));
+				singleSlot4.setColor(new cc.Color4B(172,172,172,255));
+				singleSlot5.setColor(new cc.Color4B(172,172,172,255));
+
+				gameLayer.removeChild(mySelection);
+				prevScene = gameScene;
+				setupSingleGamePlay();
+			}
+		}
+		else if(gameScene == "gameRoom"){
 			if(event == 39){ // right
 				currentPlayer += 5;
 				if(currentPlayer >= playersArray.length){
@@ -282,7 +328,84 @@ var gamesceneGame = cc.Layer.extend({
 				addChallengeWaitOverlay();
 			}
 		}
+		else if(gameScene == "singlePlayer"){
+			if(event == 32){ 
+				for(var i = 0 ; i < gameSpritesArray.length ; i++){
+					if(gameSpritesArray[i].tag == "playButton"){
+						gameLayer.removeChild(gameSpritesArray[i]);
+						getSongNotes();
+					}
+				}
+			}
+			if(event == 90){
+				hitBox1.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox1.getBoundingBox()) === true){
+						if(beatsArray[i].type == "red"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
 
+						}
+					}
+				}
+			}
+			if(event == 88){
+				hitBox2.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox2.getBoundingBox()) === true){
+						if(beatsArray[i].type == "blue"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
+
+						}
+					}
+				}
+			}
+			if(event == 188){
+				hitBox3.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox3.getBoundingBox()) === true){
+						if(beatsArray[i].type == "purple"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
+
+						}
+					}
+				}
+			}
+			if(event == 190){
+				hitBox4.setOpacity(255);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(cc.Rect.CCRectIntersectsRect(beatsArray[i].getBoundingBox(),whitebox4.getBoundingBox()) === true){
+						if(beatsArray[i].type == "green"){
+							gameLayer.removeChild(beatsArray[i]);
+							beatsArray.splice(i,1);
+							score += 100;
+							totalCombo++;
+							comboLabel.setString(totalCombo);
+							comboLabel.setOpacity(255);
+							scoreLabel.setString("Score: " + score);
+
+						}
+					}
+				}
+			}
+		}
 		// others
 		if(event == 89 && isChallenged){
 			isChallenged = false;
@@ -293,6 +416,13 @@ var gamesceneGame = cc.Layer.extend({
 			isChallenged = false;
 			socket.emit('decline challenge');
 			removeChallengeOverlay();
+		}
+		if(event == 13){
+			if(prevScene == "startScreen"){
+				prevScene = gameScene;
+				gameScene = "startScreen";
+				setupStartScreen();
+			}
 		}
 	}
 });
