@@ -100,6 +100,7 @@ game_server.joinGame = function(socket, username, gameID){
 }
 
 game_server.setSong = function(sio, mysql, gameID, player, song){
+	/*
 	var trackData = new Array();
 	mysql.query('select * from Song where song = "' + song + '"', 
 		function(err, result, fields){
@@ -110,15 +111,15 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 				}
 			}
 	});
-
+*/
 	if (player == 'player1'){
 		gameArray[gameID].songs.first_song = song;
-		gameArray[gameID].tracks.first_song = trackData;
+		//gameArray[gameID].tracks.first_song = trackData;
 
 	}
 	else {
 		gameArray[gameID].songs.second_song = song;
-		gameArray[gameID].tracks.second_song = trackData;
+		//gameArray[gameID].tracks.second_song = trackData;
 	}
 
 	//if both songs are done, tell both players
@@ -168,7 +169,7 @@ game_server.initialiseTimer = function(player, gameID, timer){
 
 game_server.sendBeat1 = function(sio, gameID){
 	gameArray[gameID].counter++;
-
+/*
 	var beat = gameArray[gameID].tracks.first_song[0].split(",")[1];
 	while(parseInt(beat) == counter){
 		//sio.sockets.in(gameID).emit('beat',gameArray[gameID].tracks.first_song[0].split(",")[0]);
@@ -179,6 +180,7 @@ game_server.sendBeat1 = function(sio, gameID){
 
 	//if (beat == null)
 	//	clearInterval(gameTimer[gameID]);
+	*/
 }
 
 game_server.setPlayerTimer = function(player, gameID, timer){
