@@ -28,18 +28,18 @@ var game_core = function(sio, gameID, player1x, player2x){
 	};
 
 	this.timers = {
-		player1 = null,
-		player2 = null
+		player1 : null,
+		player2 : null
 	};
 
 	this.offset = {
-		player1 = null,
-		player2 = null
+		player1 : null,
+		player2 : null
 	};
 
 	this.firstTimer = {
-		player = null,
-		timer = null
+		player : null,
+		timer : null
 	};
 
 	this.songs = {
