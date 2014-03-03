@@ -136,9 +136,10 @@ game_server.startFirstSong = function(sio, gameID){
 	gameTimer[gameID] = setInterval(function(){game_server.sendBeat1(sio, gameID)},50/3);
 }
 
-game_server.initialiseTimer = function(player, gameID, timer){
+game_server.adjustTimer = function(player, gameID, timer){
 	if (gameArray[gameID].firstTimer.player == null){
-		gameArray[gameID].firstTimer.timer = gameArray[gameID].counter;
+		gameArray[gameID].firstTimer.timer = timer;
+		gameArray[gameID].firstTimer.serverCounter = gameArray[gameID].counter;
 		if (player == 'player1'){
 			gameArray[gameID].firstTimer.player = 'player1';
 		}
@@ -147,18 +148,19 @@ game_server.initialiseTimer = function(player, gameID, timer){
 		}	
 	}
 	else {
-		var theNextTimer = gameArray[gameID].counter;
-		var wrong = timer - theNextTimer;
-		var average = (wrong + gameArray[gameID].firstTimer.timer) / 2;
+		var currentCounter = gameArray[gameID].counter;
+		var timeLapse = currentCounter - gameArray[gameID].firstTimer.serverCounter;
+		var realTimer = timer - timeLapse;
+		var average = (realTimer + gameArray[gameID].firstTimer.timer)/2;
 
 		if (gameArray[gameID].firstTimer.player == 'player1'){
-			gameArray[gameID].offset.player1 = average - gameArray[gameID].firstTimer.timer;
-			gameArray[gameID].offset.player2 = wrong - average;
+			gameArray[gameID].offset.player1 = gameArray[gameID].firstTimer.timer - average;
+			gameArray[gameID].offset.player2 = realTimer - average;
 			
 		}
 		else {
-			gameArray[gameID].offset.player2 = average - gameArray[gameID].firstTimer.timer;
-			gameArray[gameID].offset.player1 = wrong - average;
+			gameArray[gameID].offset.player2 = gameArray[gameID].firstTimer.timer - average;
+			gameArray[gameID].offset.player1 = realTimer - average;
 		}
 
 		gameArray[gameID].players.player1.emit('delta', {delta: gameArray[gameID].offset.player1});
@@ -186,17 +188,6 @@ game_server.sendBeat1 = function(sio, gameID){
 	*/
 }
 
-game_server.setPlayerTimer = function(player, gameID, timer){
-	if (player == 'player1')
-		gameArray[gameID].timers.player1 = timer;
-	else
-		gameArray[gameID].timers.player2 = timer;
-
-	if (gameArray[gameID].timers.player1 != null && gameArray[gameID].timers.player2 != null){
-		gameArray[gameID].timers.player1 = null;
-		gameArray[gameID].timers.player2 = null;
-	}
-}
 
 game_server.disconnect = function(socket, username, sio){
 	delete player_array[username];

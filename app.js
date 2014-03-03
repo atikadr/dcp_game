@@ -213,7 +213,7 @@ socket.on('test join', function(data){
 	});
 
 	socket.on('my timer', function(data){
-		game_server.initialiseTimer(socket.player, socket.game_id, data.myTimer);
+		game_server.adjustTimer(socket.player, socket.game_id, data.myTimer);
 	});
 
 	socket.on('power up', function(data){

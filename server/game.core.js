@@ -27,11 +27,6 @@ var game_core = function(sio, gameID, player1x, player2x){
 		player2 : player2x
 	};
 
-	this.timers = {
-		player1 : null,
-		player2 : null
-	};
-
 	this.offset = {
 		player1 : null,
 		player2 : null
@@ -39,7 +34,8 @@ var game_core = function(sio, gameID, player1x, player2x){
 
 	this.firstTimer = {
 		player : null,
-		timer : null
+		timer : null,
+		serverCounter:null
 	};
 
 	this.songs = {
