@@ -133,7 +133,7 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 game_server.startFirstSong = function(sio, gameID){
 	sio.sockets.in(gameID).emit('start first song');
 	gameArray[gameID].counter = 0;
-	gameTimer[gameID] = setInterval(game_server.sendBeat1(sio, gameID),50/3);
+	gameTimer[gameID] = setInterval(function(){game_server.sendBeat1(sio, gameID)},50/3);
 }
 
 game_server.initialiseTimer = function(player, gameID, timer){
@@ -163,6 +163,9 @@ game_server.initialiseTimer = function(player, gameID, timer){
 
 		gameArray[gameID].players.player1.emit('delta', {delta: gameArray[gameID].offset.player1});
 		gameArray[gameID].players.player2.emit('delta', {delta: gameArray[gameID].offset.player2});
+
+		gameArray[gameID].firstTimer.player = null;
+
 	}
 		
 }
