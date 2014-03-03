@@ -126,23 +126,26 @@ socket.on('get opponent name',function(data){
 	smallOpponent.setString(data.opponentName);
 });
 
+var loopCounter = 0;
+
 socket.on('game ready',function(data){
 	console.log("game ready");
 	myGameCounter = 0;
+	loopCounter = 0;
 	gameLayer.schedule(function(){
-		//if(myGameCounter%1000==0){
-		console.log(myGameCounter);
-		socket.emit('my timer',{myTimer:myGameCounter});
+		if(loopCounter==60){
+			loopCounter = 0;
+			socket.emit('my timer',{myTimer:myGameCounter});
 			//console.log(myGameCounter);
-		//}
+		}
 		myGameCounter++;
+		loopCounter++;
 	});
 });
 
 socket.on('delta',function(data){
-	console.log(data.delta);
-	//yGameCounter += data.delta;
-	//console.log("offset time: " + myGameCounter);
+	myGameCounter += data.delta;
+	console.log("counter: " + myGameCounter + " delta: " + data.delta);
 });
 
 function loadSongList(){

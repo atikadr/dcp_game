@@ -153,6 +153,8 @@ game_server.adjustTimer = function(player, gameID, timer){
 		var realTimer = timer - timeLapse;
 		var average = (realTimer + gameArray[gameID].firstTimer.timer)/2;
 
+		console.log("rt: " + realTimer + " timer: " + gameArray[gameID].firstTimer.timer);
+
 		if (gameArray[gameID].firstTimer.player == 'player1'){
 			gameArray[gameID].offset.player1 = gameArray[gameID].firstTimer.timer - average;
 			gameArray[gameID].offset.player2 = realTimer - average;
@@ -163,8 +165,8 @@ game_server.adjustTimer = function(player, gameID, timer){
 			gameArray[gameID].offset.player1 = realTimer - average;
 		}
 
-		gameArray[gameID].players.player1.emit('delta', {delta: gameArray[gameID].offset.player1});
-		gameArray[gameID].players.player2.emit('delta', {delta: gameArray[gameID].offset.player2});
+		gameArray[gameID].players.player1.emit('delta', {delta: gameArray[gameID].offset.player2});
+		gameArray[gameID].players.player2.emit('delta', {delta: gameArray[gameID].offset.player1});
 
 		gameArray[gameID].firstTimer.player = null;
 
