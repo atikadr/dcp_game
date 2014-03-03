@@ -153,9 +153,15 @@ game_server.initialiseTimer = function(player, gameID, timer){
 		if (gameArray[gameID].firstTimer.player == 'player1'){
 			gameArray[gameID].offset.player1 = average - gameArray[gameID].firstTimer.timer;
 			gameArray[gameID].offset.player2 = wrong - average;
-			gameArray[gameID].players.player1.emit('delta', {delta: gameArray[gameID].offset.player1});
-			gameArray[gameID].players.player2.emit('delta', {delta: gameArray[gameID].offset.player2});
+			
 		}
+		else {
+			gameArray[gameID].offset.player2 = average - gameArray[gameID].firstTimer.timer;
+			gameArray[gameID].offset.player1 = wrong - average;
+		}
+
+		gameArray[gameID].players.player1.emit('delta', {delta: gameArray[gameID].offset.player1});
+		gameArray[gameID].players.player2.emit('delta', {delta: gameArray[gameID].offset.player2});
 	}
 		
 }
