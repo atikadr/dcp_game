@@ -177,11 +177,12 @@ sio.sockets.on('connection', function(socket){
 		clearInterval(gameTimer);
 	});
 
+*/
+	socket.on('test', function(data){
+		socket.broadcast.emit('test reply', {message: data});
+	});
 
-socket.on('test', function(data){
-	socket.broadcast.emit('test reply', {message: data});
-});
-
+/*
 socket.on('test join', function(data){
 	socket.join('testingGame');
 	game_server.joinGame(socket, 'testing username', 'testingGame');
@@ -203,7 +204,25 @@ socket.on('test join', function(data){
 		
 	});
 
+	socket.on('send score', function(data){
+
+	});
+
+	socket.on('beat hit or miss', function(data){
+		//game_server.sendBeatHit(socket.game_id, socket.player);
+	});
+
+	socket.on('my timer', function(data){
+		game_server.initialiseTimer(socket.player, socket.game_id, data.myTimer);
+	});
+
+	socket.on('power up', function(data){
+		gameID = socket.game_id;
+
+	});
+
 	socket.on('playerSelectSong',function(data){
+		console.log("client selected song");
 		socket.broadcast.emit('song selected',data);
 	});
 });

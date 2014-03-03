@@ -20,10 +20,26 @@ var game_core = function(sio, gameID, player1x, player2x){
 
 	this.sio = sio;
 	this.game_id = gameID;
+	this.counter = 0;
 
 	this.players = {
 		player1 : player1x,
 		player2 : player2x
+	};
+
+	this.timers = {
+		player1 = null,
+		player2 = null
+	};
+
+	this.offset = {
+		player1 = null,
+		player2 = null
+	};
+
+	this.firstTimer = {
+		player = null,
+		timer = null
 	};
 
 	this.songs = {
