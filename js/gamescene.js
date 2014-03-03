@@ -96,7 +96,7 @@ var gamesceneGame = cc.Layer.extend({
 				for(var i = 0 ; i < gameSpritesArray.length ; i++){
 					if(gameSpritesArray[i].tag == "playButton"){
 						gameLayer.removeChild(gameSpritesArray[i]);
-						socket.emit('game ready');
+						//socket.emit('game ready first song');
 						startMusicPlay();
 					}
 				}
@@ -254,6 +254,7 @@ var gamesceneGame = cc.Layer.extend({
 				gameLayer.removeChild(mySelection);
 
 				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:selection});
+				socket.emit('set song',{song:selection});
 			}
 		}
 		else if(gameScene == "singleSongSelection"){

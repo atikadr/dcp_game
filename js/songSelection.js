@@ -54,7 +54,11 @@ socket.on('song selected',function(data){
 	}
 });
 
+var myGameCounter = 0;
+
 function setupSongSelection(){
+
+	myGameCounter = 0;
 	gameScene = "songSelection";
 	clearScreen();
 
@@ -120,6 +124,25 @@ function setupSongSelection(){
 socket.on('get opponent name',function(data){
 	smallPlayer.setString(playerName);
 	smallOpponent.setString(data.opponentName);
+});
+
+socket.on('game ready',function(data){
+	console.log("game ready");
+	myGameCounter = 0;
+	gameLayer.schedule(function(){
+		//if(myGameCounter%1000==0){
+		console.log(myGameCounter);
+		socket.emit('my timer',{myTimer:myGameCounter});
+			//console.log(myGameCounter);
+		//}
+		myGameCounter++;
+	});
+});
+
+socket.on('delta',function(data){
+	console.log(data.delta);
+	//yGameCounter += data.delta;
+	//console.log("offset time: " + myGameCounter);
 });
 
 function loadSongList(){
