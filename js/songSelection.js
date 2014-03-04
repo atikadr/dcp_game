@@ -127,11 +127,19 @@ socket.on('get opponent name',function(data){
 });
 
 var loopCounter = 0;
+var changeScreenTime = -1;
+var startSongTime = -1;
+
+var songStarted = false;
+
+var counterSet = false;
 
 socket.on('game ready',function(data){
 	console.log("game ready");
 	myGameCounter = 0;
 	loopCounter = 0;
+	counterSet = false;
+	songStarted = false;
 	gameLayer.schedule(function(){
 		if(loopCounter==60){
 			loopCounter = 0;
@@ -140,11 +148,25 @@ socket.on('game ready',function(data){
 		}
 		myGameCounter++;
 		loopCounter++;
+
+		if(myGameCounter > changeScreenTime && gameScene != "multiplayer" && changeScreenTime != -1){
+			console.log("mgc: " + myGameCounter + " gc: " + gameScene);
+			setupGamePlay();
+		}
+		if(myGameCounter > startSongTime && !songStarted && startSongTime != -1){
+			console.log("unschedule");
+			gameLayer.unscheduleAllCallbacks();
+		}
 	});
 });
 
 socket.on('delta',function(data){
 	myGameCounter += data.delta;
+	if(data.delta < 1 && !counterSet){
+		changeScreenTime = 60*3 + myGameCounter;
+		startSongTime = 60*5 + myGameCounter;
+		counterSet = true;
+	}
 	console.log("counter: " + myGameCounter + " delta: " + data.delta);
 });
 

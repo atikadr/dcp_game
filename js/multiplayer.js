@@ -135,6 +135,7 @@ socket.on('startGame',function(){
 });
 
 socket.on('beat',function(data){
+	console.log("beat");
 	if(noteCount == 0){
 		$("#testSound").get(0).play();
 		gameLayer.schedule(function(){
