@@ -254,7 +254,9 @@ var gamesceneGame = cc.Layer.extend({
 				gameLayer.removeChild(mySelection);
 
 				socket.emit("playerSelectSong",{currentSong:myCurrentSelection,selectedSong:selection});
-				socket.emit('set song',{song:selection});
+				var emitSelection = songsArray[selection].song;
+				console.log(emitSelection);
+				socket.emit('set song',{song:emitSelection});
 			}
 		}
 		else if(gameScene == "singleSongSelection"){
