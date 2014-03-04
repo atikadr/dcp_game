@@ -141,7 +141,7 @@ socket.on('game ready',function(data){
 	counterSet = false;
 	songStarted = false;
 	gameLayer.schedule(function(){
-		if(loopCounter==60){
+		if(loopCounter==10){
 			loopCounter = 0;
 			socket.emit('my timer',{myTimer:myGameCounter});
 			//console.log(myGameCounter);
@@ -155,6 +155,7 @@ socket.on('game ready',function(data){
 		}
 		if(myGameCounter > startSongTime && !songStarted && startSongTime != -1){
 			console.log("unschedule");
+			startMusicPlay(myGameCounter);
 			gameLayer.unscheduleAllCallbacks();
 		}
 	});

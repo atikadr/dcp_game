@@ -138,6 +138,7 @@ socket.on('beat',function(data){
 	console.log("beat");
 	if(noteCount == 0){
 		$("#testSound").get(0).play();
+		gameLayer.unscheduleAllCallbacks();
 		gameLayer.schedule(function(){
 			var removeArray = new Array();
 			$.each(beatsArray,function(index,value){
@@ -182,7 +183,7 @@ socket.on('beat',function(data){
 				}
 			}
 		});
-	}
+}
 var notePath = "../images/note.png";
 var note = cc.Sprite.create(notePath);
 var notePosition;
@@ -298,7 +299,8 @@ function makeSecondPlayer(){
 	});
 }
 
-function startMusicPlay(){
+function startMusicPlay(gc){
+	console.log("gameCounter = " + gc);
 	$("#testSound").get(0).play();
 }
 
