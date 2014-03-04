@@ -221,7 +221,7 @@ socket.on('test join', function(data){
 	});
 
 	socket.on('playerSelectSong',function(data){
-		console.log("client selected song");
+		//console.log("client selected song");
 		socket.broadcast.emit('song selected',data);
 	});
 });
