@@ -5,7 +5,14 @@ var gc = require('./game.core.js');
 var UUID=require('node-uuid');
 
 var player_array = {}, gameArray = [], gameTimer = [];
+var gameCounter = 0;
 
+
+setInterval(function(){game_server.updateCounter();}, 50/3);
+
+game_server.updateCounter = function(){
+	this.gameCounter++;
+}
 
 game_server.addPlayer = function(sio, socket, username){
 	socket.username = username;
@@ -100,7 +107,7 @@ game_server.joinGame = function(socket, username, gameID){
 }
 
 game_server.setSong = function(sio, mysql, gameID, player, song){
-	/*
+	
 	var trackData = new Array();
 	mysql.query('select * from Song where song = "' + song + '"', 
 		function(err, result, fields){
@@ -111,7 +118,7 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 				}
 			}
 	});
-*/
+
 	if (player == 'player1'){
 		gameArray[gameID].songs.first_song = song;
 		//gameArray[gameID].tracks.first_song = trackData;
@@ -125,21 +132,34 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 	//if both songs are done, tell both players
 	if (gameArray[gameID].songs.first_song != null && gameArray[gameID].songs.second_song != null){
 		sio.sockets.in(gameID).emit('game ready');
-		game_server.startFirstSong(sio, gameID);
 	}
 		
 }
 
+
+game_server.readyFirstSong = function(gameID, player){
+	if (player == 'player1'){
+		gameArray[gameID].ready_first_song.player1 = true;
+	}
+	else{
+		gameArray[gameID].ready_first_song.player2 = true;
+	}
+
+	if (gameArray[gameID].ready_first_song.player1 == true && gameArray[gameID].ready_first_song.player2 == true)
+		return true;
+	else
+		return false;
+}
+
+
 game_server.startFirstSong = function(sio, gameID){
-	sio.sockets.in(gameID).emit('start first song');
-	gameArray[gameID].counter = 0;
 	gameTimer[gameID] = setInterval(function(){game_server.sendBeat1(sio, gameID)},50/3);
 }
 
 game_server.adjustTimer = function(player, gameID, timer){
 	if (gameArray[gameID].firstTimer.player == null){
 		gameArray[gameID].firstTimer.timer = timer;
-		gameArray[gameID].firstTimer.serverCounter = gameArray[gameID].counter;
+		gameArray[gameID].firstTimer.serverCounter = this.gameCounter;
 		if (player == 'player1'){
 			gameArray[gameID].firstTimer.player = 'player1';
 		}
@@ -148,7 +168,7 @@ game_server.adjustTimer = function(player, gameID, timer){
 		}	
 	}
 	else {
-		var currentCounter = gameArray[gameID].counter;
+		var currentCounter = this.gameCounter;
 		var timeLapse = currentCounter - gameArray[gameID].firstTimer.serverCounter;
 		var realTimer = timer - timeLapse;
 		var average = (realTimer + gameArray[gameID].firstTimer.timer)/2;
@@ -175,8 +195,6 @@ game_server.adjustTimer = function(player, gameID, timer){
 }
 
 game_server.sendBeat1 = function(sio, gameID){
-	gameArray[gameID].counter++;
-/*
 	var beat = gameArray[gameID].tracks.first_song[0].split(",")[1];
 	while(parseInt(beat) == counter){
 		//sio.sockets.in(gameID).emit('beat',gameArray[gameID].tracks.first_song[0].split(",")[0]);
@@ -187,7 +205,7 @@ game_server.sendBeat1 = function(sio, gameID){
 
 	//if (beat == null)
 	//	clearInterval(gameTimer[gameID]);
-	*/
+	
 }
 
 
@@ -196,33 +214,3 @@ game_server.disconnect = function(socket, username, sio){
 	//socket.leave('gameroom');
 	sio.sockets.in('gameroom').emit('player left room', {player: username});
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-game_server.readyFirstSong = function(gameID, player){
-	if (player == 'player1'){
-		gameArray[gameID].ready_first_song.player1 = true;
-	}
-	else{
-		gameArray[gameID].ready_first_song.player2 = true;
-	}
-
-	if (gameArray[gameID].ready_first_song.player1 == true && gameArray[gameID].ready_first_song.player2 == true)
-		return true;
-	else
-		return false;
-}
-*/

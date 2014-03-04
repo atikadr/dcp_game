@@ -190,10 +190,9 @@ socket.on('test join', function(data){
 */
 
 	socket.on('game ready first song', function(data){
-		//sio.sockets.emit('startGame');
-		if (game_server.readyFirstSong(socket.game_id, socket.player)){
+		if (game_server.readyFirstSong(socket.game_id, socket.player))
 			game_server.startFirstSong(sio, socket.game_id);
-		}
+
 
 /*
 	fs.readFile('beats/test.txt','utf8',function(err,data){
