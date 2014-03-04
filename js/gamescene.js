@@ -96,7 +96,7 @@ var gamesceneGame = cc.Layer.extend({
 				for(var i = 0 ; i < gameSpritesArray.length ; i++){
 					if(gameSpritesArray[i].tag == "playButton"){
 						gameLayer.removeChild(gameSpritesArray[i]);
-						//socket.emit('game ready first song');
+						socket.emit('game ready first song');
 						startMusicPlay();
 					}
 				}
