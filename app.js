@@ -158,6 +158,23 @@ sio.sockets.on('connection', function(socket){
 	socket.on('set song', function(data){
 		game_server.setSong(sio, mysql, socket.game_id, socket.player, data.song);
 		sio.sockets.in(socket.game_id).emit('player set song', {player: socket.username, song: data.song});
+
+		var trackData = new Array();
+
+		console.log("client set song " + data.song);
+	mysql.query('select * from Song where song = "let it go";', 
+		function(err, result, fields){
+			if (err) throw err;
+			else{
+				for (var i in result){
+					trackData = result[i].beats; 
+					console.log("fetching beat from mysql");
+	console.log(trackData);				
+				}
+			}
+	});
+
+	
 	});
 
 	//

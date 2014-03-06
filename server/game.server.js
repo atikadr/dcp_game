@@ -11,7 +11,7 @@ var gameCounter = 0;
 setInterval(function(){game_server.updateCounter();}, 50/3);
 
 game_server.updateCounter = function(){
-	this.gameCounter++;
+	gameCounter++;
 }
 
 game_server.addPlayer = function(sio, socket, username){
@@ -111,17 +111,16 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 	var trackData = new Array();
 
 	console.log("client set song " + song);
-	mysql.query('select * from Song where song = "' + song + '"', 
+	mysql.query('select * from Song where song = "' + song + '";', 
 		function(err, result, fields){
 			if (err) throw err;
 			else{
 				for (var i in result){
-					trackData = result[i].beats.split(";"); 
-					console.log("fetching beat from mysql");
+					trackData = result[i].beats; 
+					console.log("fetching beat from mysql");			
 				}
 			}
 	});
-
 	if (player == 'player1'){
 		gameArray[gameID].songs.first_song = song;
 		gameArray[gameID].tracks.first_song = trackData;
@@ -163,7 +162,7 @@ game_server.startFirstSong = function(sio, gameID){
 game_server.adjustTimer = function(player, gameID, timer){
 	if (gameArray[gameID].firstTimer.player == null){
 		gameArray[gameID].firstTimer.timer = timer;
-		gameArray[gameID].firstTimer.serverCounter = this.gameCounter;
+		gameArray[gameID].firstTimer.serverCounter = gameCounter;
 		if (player == 'player1'){
 			gameArray[gameID].firstTimer.player = 'player1';
 		}
@@ -172,12 +171,12 @@ game_server.adjustTimer = function(player, gameID, timer){
 		}	
 	}
 	else {
-		var currentCounter = this.gameCounter;
+		var currentCounter = gameCounter;
 		var timeLapse = currentCounter - gameArray[gameID].firstTimer.serverCounter;
 		var realTimer = timer - timeLapse;
 		var average = (realTimer + gameArray[gameID].firstTimer.timer)/2;
 
-		console.log("rt: " + realTimer + " timer: " + gameArray[gameID].firstTimer.timer);
+		console.log("time lapse " + timeLapse + " this.gameCounter: " + gameCounter + " timer: " + gameArray[gameID].firstTimer.timer);
 
 		if (gameArray[gameID].firstTimer.player == 'player1'){
 			gameArray[gameID].offset.player1 = gameArray[gameID].firstTimer.timer - average;
