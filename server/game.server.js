@@ -108,34 +108,31 @@ game_server.joinGame = function(socket, username, gameID){
 
 game_server.setSong = function(sio, mysql, gameID, player, song){
 	
-	var trackData = new Array();
-
 	console.log("client set song " + song);
 	mysql.query('select * from Song where song = "' + song + '";', 
 		function(err, result, fields){
 			if (err) throw err;
 			else{
-				for (var i in result){
-					trackData = result[i].beats; 
-					console.log("fetching beat from mysql");			
+				if (player == 'player1'){
+					gameArray[gameID].songs.first_song = song;
+					gameArray[gameID].tracks.first_song = result[0].beats;
+
+					console.log("hey there this is player 1 " + gameArray[gameID].tracks.first_song);
+
+				}
+				else {
+					gameArray[gameID].songs.second_song = song;
+					gameArray[gameID].tracks.second_song = result[0].beats;
+
+					console.log("hey there this is player 2 " + gameArray[gameID].tracks.second_song);
+				}
+					//if both songs are done, tell both players
+				if (gameArray[gameID].tracks.first_song != null && gameArray[gameID].tracks.second_song != null){
+					sio.sockets.in(gameID).emit('game ready');
+					//console.log(gameArray[gameID].tracks.first_song + "#" + gameArray[gameID].tracks.second_song);
 				}
 			}
-	});
-	if (player == 'player1'){
-		gameArray[gameID].songs.first_song = song;
-		gameArray[gameID].tracks.first_song = trackData;
-
-	}
-	else {
-		gameArray[gameID].songs.second_song = song;
-		gameArray[gameID].tracks.second_song = trackData;
-	}
-
-	//if both songs are done, tell both players
-	if (gameArray[gameID].songs.first_song != null && gameArray[gameID].songs.second_song != null){
-		sio.sockets.in(gameID).emit('game ready');
-	}
-		
+	});		
 }
 
 
@@ -156,7 +153,7 @@ game_server.readyFirstSong = function(gameID, player){
 
 game_server.startFirstSong = function(sio, gameID){
 	//gameTimer[gameID] = setInterval(function(){game_server.sendBeat1(sio, gameID)},50/3);
-	sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.first_song + "#" + gameArray[gameID].tracks.second_song});
+	sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.first_song + "#" + gameArray[gameID].tracks.second_song});	
 }
 
 game_server.adjustTimer = function(player, gameID, timer){
