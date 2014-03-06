@@ -53,10 +53,6 @@ var socket = io.connect();
 
 var noteCount = 0;
 
-socket.on('game start',function(data){
-	startMusicPlay();
-});
-
 socket.on('test reply',function(data){
 	var beat = data.message.beat;
 	totalComboOpp = data.message.totalCombo;
@@ -130,108 +126,129 @@ socket.on('test reply',function(data){
 	}
 });
 
-socket.on('startGame',function(){
-	$("#testSound").get(0).play();
-});
+var preloadBeatsArray;
 
 socket.on('song beats',function(data){
-	console.log(data.beats);
+	console.log("song beats");
+	preloadBeatsArray = new Array();
+	var tempBeatsArray = data.beats.split("#")[0].split(";");
+	console.log(tempBeatsArray);
+	for(var i = 0 ; i < tempBeatsArray.length-1 ; i++){
+		var beatObject = {type:tempBeatsArray[i].split(",")[0],timing:tempBeatsArray[i].split(",")[1]};
+		preloadBeatsArray.push(beatObject);
+	}
+	console.log(preloadBeatsArray);
 });
 
-socket.on('beat',function(data){
-	console.log("beat");
-	if(noteCount == 0){
-		$("#testSound").get(0).play();
-		gameLayer.unscheduleAllCallbacks();
-		gameLayer.schedule(function(){
-			var removeArray = new Array();
-			$.each(beatsArray,function(index,value){
-				value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
-				if(value.getPosition().y <= 0){
-					totalCombo = 0;
-					comboLabel.setString(totalCombo);
-					for(var i = 0 ; i < beatsArray.length ; i++){
-						if(beatsArray[i].noteIndex == value.noteIndex){
-							removeArray.push(value.noteIndex);
-						}
-					}
-					gameLayer.removeChild(value); 
-				}
-			});
-			for(var i = 0 ; i < removeArray.length ; i++){
-				for(var j = 0 ; j < beatsArray.length ; j++){
-					if(beatsArray[j].noteIndex == removeArray[i]){
-						beatsArray.splice(j,1);
-					}
-				}
-			}
+var beatTimer;
 
-			var removeArrayOpp = new Array();
-			$.each(beatsArrayOpp,function(index,value){
-				if(value.getPosition().y <= 0){
-					totalComboOpp = 0;
-					comboLabelOpp.setString(totalComboOpp);
-					for(var i = 0 ; i < beatsArrayOpp.length ; i++){
-						if(beatsArrayOpp[i].noteIndex == value.noteIndex){
-							removeArrayOpp.push(value.noteIndex);
-						}
+function scheduleBeatTimer(){
+	console.log("scheduleBeatTimer");
+	gameLayer.unscheduleAllCallbacks();
+	beatTimer = 0;
+	console.log(gameSpeed);
+	
+	gameLayer.schedule(function(){
+		var removeArray = new Array();
+		$.each(beatsArray,function(index,value){
+			value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
+			
+			if(value.getPosition().y <= 0){
+				totalCombo = 0;
+				comboLabel.setString(totalCombo);
+				for(var i = 0 ; i < beatsArray.length ; i++){
+					if(beatsArray[i].noteIndex == value.noteIndex){
+						removeArray.push(value.noteIndex);
 					}
-					gameLayer.removeChild(value); 
 				}
-			});
-			for(var i = 0 ; i < removeArrayOpp.length ; i++){
-				for(var j = 0 ; j < beatsArrayOpp.length ; j++){
-					if(beatsArrayOpp[j].noteIndex == removeArrayOpp[i]){
-						beatsArrayOpp.splice(j,1);
-					}
-				}
+				gameLayer.removeChild(value); 
 			}
 		});
-}
-var notePath = "../images/note.png";
-var note = cc.Sprite.create(notePath);
-var notePosition;
+		for(var i = 0 ; i < removeArray.length ; i++){
+			for(var j = 0 ; j < beatsArray.length ; j++){
+				if(beatsArray[j].noteIndex == removeArray[i]){
+					beatsArray.splice(j,1);
+				}
+			}
+		}
 
-if(data == "red"){
-	notePosition = new cc.Point(canvasWidth/2-350-150,canvasHeight);
-}
-if(data == "blue"){
-	notePosition = new cc.Point(canvasWidth/2-350-50,canvasHeight);
-}
-if(data == "purple"){
-	notePosition = new cc.Point(canvasWidth/2-350+50,canvasHeight);
-}
-if(data == "green"){
-	notePosition = new cc.Point(canvasWidth/2-350+150,canvasHeight);
-}
-note.setPosition(notePosition);
-note.type = data;
-gameLayer.addChild(note);
-note.noteIndex = noteCount;
-beatsArray.push(note);
+		var removeArrayOpp = new Array();
+		$.each(beatsArrayOpp,function(index,value){
+			value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
+			if(value.getPosition().y <= 0){
+				totalComboOpp = 0;
+				comboLabelOpp.setString(totalComboOpp);
+				for(var i = 0 ; i < beatsArrayOpp.length ; i++){
+					if(beatsArrayOpp[i].noteIndex == value.noteIndex){
+						removeArrayOpp.push(value.noteIndex);
+					}
+				}
+				gameLayer.removeChild(value); 
+			}
+		});
+		for(var i = 0 ; i < removeArrayOpp.length ; i++){
+			for(var j = 0 ; j < beatsArrayOpp.length ; j++){
+				if(beatsArrayOpp[j].noteIndex == removeArrayOpp[i]){
+					beatsArrayOpp.splice(j,1);
+				}
+			}
+		}
 
-var noteOpp = cc.Sprite.create(notePath);
-var noteOppPosition;
-if(data == "red"){
-	noteOppPosition = new cc.Point(canvasWidth/2+350-150,canvasHeight);
-}
-if(data == "blue"){
-	noteOppPosition = new cc.Point(canvasWidth/2+350-50,canvasHeight);
-}
-if(data == "purple"){
-	noteOppPosition = new cc.Point(canvasWidth/2+350+50,canvasHeight);
-}
-if(data == "green"){
-	noteOppPosition = new cc.Point(canvasWidth/2+350+150,canvasHeight);
-}
-noteOpp.setPosition(noteOppPosition);
-noteOpp.type = data;
-gameLayer.addChild(noteOpp);
-noteOpp.noteIndex = noteCount;
-beatsArrayOpp.push(noteOpp);
+		// for adding to array
+		while(parseInt(preloadBeatsArray[0].timing) == beatTimer){ // might crash if overshot
+			addBeatToArray(preloadBeatsArray[i].type);
+			preloadBeatsArray.splice(0,1);
+		}
+		beatTimer++;
+	});
 
-noteCount++;
-});
+}
+
+function addBeatToArray(data){
+	var notePath = "../images/note.png";
+	var note = cc.Sprite.create(notePath);
+	var notePosition;
+
+	if(data == "red"){
+		notePosition = new cc.Point(canvasWidth/2-350-150,canvasHeight);
+	}
+	if(data == "blue"){
+		notePosition = new cc.Point(canvasWidth/2-350-50,canvasHeight);
+	}
+	if(data == "purple"){
+		notePosition = new cc.Point(canvasWidth/2-350+50,canvasHeight);
+	}
+	if(data == "green"){
+		notePosition = new cc.Point(canvasWidth/2-350+150,canvasHeight);
+	}
+	note.setPosition(notePosition);
+	note.type = data;
+	gameLayer.addChild(note);
+	note.noteIndex = noteCount;
+	beatsArray.push(note);
+
+	var noteOpp = cc.Sprite.create(notePath);
+	var noteOppPosition;
+	if(data == "red"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350-150,canvasHeight);
+	}
+	if(data == "blue"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350-50,canvasHeight);
+	}
+	if(data == "purple"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350+50,canvasHeight);
+	}
+	if(data == "green"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350+150,canvasHeight);
+	}
+	noteOpp.setPosition(noteOppPosition);
+	noteOpp.type = data;
+	gameLayer.addChild(noteOpp);
+	noteOpp.noteIndex = noteCount;
+	beatsArrayOpp.push(noteOpp);
+
+	noteCount++;
+}
 
 
 function makeSecondPlayer(){
@@ -305,6 +322,7 @@ function makeSecondPlayer(){
 
 function startMusicPlay(){
 	$("#testSound").get(0).play();
+	scheduleBeatTimer();
 }
 
 function setupGamePlay(){
@@ -317,14 +335,6 @@ function setupGamePlay(){
 	var separator = cc.Sprite.create("../images/separator.png");
 	separator.setPosition(new cc.Point(canvasWidth/2, 415));
 	gameLayer.addChild(separator);
-
-	/*
-	var playButton = cc.Sprite.create("../images/play.png");
-	playButton.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
-	playButton.tag = "playButton";
-	gameSpritesArray.push(playButton);
-	gameLayer.addChild(playButton);
-	*/
 
 	whitebox1 = cc.Sprite.create("../images/whitebox.png");
 	whitebox1.setPosition(canvasWidth/2-350-150,50);

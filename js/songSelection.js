@@ -155,7 +155,6 @@ socket.on('game ready',function(data){
 			if(startSongTime == 0){
 				console.log("unschedule");
 				startMusicPlay();
-				gameLayer.unscheduleAllCallbacks();
 			}
 		}
 
@@ -187,6 +186,7 @@ socket.on('delta',function(data){
 		counterSet = true;
 		makeCountdownScreen();
 	}
+	console.log("delta: " + data.delta);
 });
 
 function makeCountdownScreen(){

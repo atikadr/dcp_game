@@ -34,7 +34,7 @@ var scoreLabelOpp;
 
 var musicArray = new Array();
 
-var gameSpeed = 7;
+var singlegameSpeed = 7;
 
 var socket = io.connect();
 
@@ -45,8 +45,12 @@ var singleCounter = 0;
 function startSingleMusicPlay(){
 	singleCounter = 0;
 	$("#testSound").get(0).play();
+	console.log(musicArray);
 	gameLayer.schedule(function(){
-		while(musicArray[0].timing == singleCounter){
+		while(musicArray[0].timing == singleCounter){ // might crash if musicarray length = 0
+
+			//console.log("timing: " + musicArray[0].timing);
+
 			var notePath = "../images/note.png";
 			var note = cc.Sprite.create(notePath);
 			var notePosition;
@@ -73,9 +77,11 @@ function startSingleMusicPlay(){
 			musicArray.splice(0,1);
 		}
 
+		//console.log("sc: " + singleCounter);
+
 		var removeArray = new Array();
 		$.each(beatsArray,function(index,value){
-			value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
+			value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-singlegameSpeed));
 			if(value.getPosition().y <= 0){
 				totalCombo = 0;
 				comboLabel.setOpacity(255);
