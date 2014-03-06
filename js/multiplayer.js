@@ -134,6 +134,10 @@ socket.on('startGame',function(){
 	$("#testSound").get(0).play();
 });
 
+socket.on('song beats',function(data){
+	console.log(data.beats);
+});
+
 socket.on('beat',function(data){
 	console.log("beat");
 	if(noteCount == 0){
@@ -299,8 +303,7 @@ function makeSecondPlayer(){
 	});
 }
 
-function startMusicPlay(gc){
-	console.log("gameCounter = " + gc);
+function startMusicPlay(){
 	$("#testSound").get(0).play();
 }
 
@@ -309,15 +312,19 @@ function setupGamePlay(){
 	gameScene = "multiplayer";
 	clearScreen();
 
+	socket.emit("game ready first song");
+
 	var separator = cc.Sprite.create("../images/separator.png");
 	separator.setPosition(new cc.Point(canvasWidth/2, 415));
 	gameLayer.addChild(separator);
 
+	/*
 	var playButton = cc.Sprite.create("../images/play.png");
 	playButton.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2));
 	playButton.tag = "playButton";
 	gameSpritesArray.push(playButton);
 	gameLayer.addChild(playButton);
+	*/
 
 	whitebox1 = cc.Sprite.create("../images/whitebox.png");
 	whitebox1.setPosition(canvasWidth/2-350-150,50);

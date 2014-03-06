@@ -13,6 +13,7 @@ var isChallenged;
 
 function setupGameRoom(){
 	gameScene = "gameRoom";
+	//playerName = localStorage.username;
 	isChallenged = false;
 	playerNamesArray.splice(0,playerNamesArray.length);
 	playerBoxArray.splice(0,playerBoxArray.length);

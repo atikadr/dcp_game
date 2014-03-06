@@ -58,7 +58,9 @@ var myGameCounter = 0;
 
 function setupSongSelection(){
 
+	startSongSet = false;
 	myGameCounter = 0;
+	countdownTimer = 240;
 	gameScene = "songSelection";
 	clearScreen();
 
@@ -127,19 +129,18 @@ socket.on('get opponent name',function(data){
 });
 
 var loopCounter = 0;
-var changeScreenTime = -1;
 var startSongTime = -1;
-
-var songStarted = false;
+var startSongSet = false;
 
 var counterSet = false;
+
+var countdownOverlayText;
 
 socket.on('game ready',function(data){
 	console.log("game ready");
 	myGameCounter = 0;
 	loopCounter = 0;
 	counterSet = false;
-	songStarted = false;
 	gameLayer.schedule(function(){
 		if(loopCounter==10){
 			loopCounter = 0;
@@ -149,27 +150,53 @@ socket.on('game ready',function(data){
 		myGameCounter++;
 		loopCounter++;
 
-		if(myGameCounter > changeScreenTime && gameScene != "multiplayer" && changeScreenTime != -1){
-			console.log("mgc: " + myGameCounter + " gc: " + gameScene);
-			setupGamePlay();
+		if(startSongSet){
+			startSongTime--;
+			if(startSongTime == 0){
+				console.log("unschedule");
+				startMusicPlay();
+				gameLayer.unscheduleAllCallbacks();
+			}
 		}
-		if(myGameCounter > startSongTime && !songStarted && startSongTime != -1){
-			console.log("unschedule");
-			startMusicPlay(myGameCounter);
-			gameLayer.unscheduleAllCallbacks();
+
+		if(counterSet){
+			countdownTimer--;
+			if(countdownTimer < 60){
+				countdownOverlayText.setString("Game starting in 1");
+			}
+			else if(countdownTimer < 120){
+				countdownOverlayText.setString("Game starting in 2");
+			}
+			else if(countdownTimer < 180){
+				countdownOverlayText.setString("Game starting in 3");
+			}
+			if(countdownTimer == 0){
+				startSongSet = true;
+				startSongTime = 180;
+				setupGamePlay();
+			}
 		}
 	});
 });
 
+var countdownTimer = 240;
+
 socket.on('delta',function(data){
 	myGameCounter += data.delta;
 	if(data.delta < 1 && !counterSet){
-		changeScreenTime = 60*3 + myGameCounter;
-		startSongTime = 60*5 + myGameCounter;
 		counterSet = true;
+		makeCountdownScreen();
 	}
-	console.log("counter: " + myGameCounter + " delta: " + data.delta);
 });
+
+function makeCountdownScreen(){
+	var countdownOverlay = cc.LayerColor.create(new cc.Color4B(0,0,0,160), canvasWidth, canvasHeight);
+	countdownOverlayText = cc.LabelTTF.create("","HelveticaNeue",40,cc.size(650,36),cc.TEXT_ALIGNMENT_CENTER);
+	countdownOverlayText.setPosition(new cc.Point(canvasWidth/2,canvasHeight/2+50));
+
+	gameLayer.addChild(countdownOverlay);
+	gameLayer.addChild(countdownOverlayText);
+}
 
 function loadSongList(){
 	$.ajax({

@@ -92,15 +92,6 @@ var gamesceneGame = cc.Layer.extend({
 	onKeyDown:function(event){
 		console.log(event);
 		if(gameScene == "multiplayer"){
-			if(event == 32){ 
-				for(var i = 0 ; i < gameSpritesArray.length ; i++){
-					if(gameSpritesArray[i].tag == "playButton"){
-						gameLayer.removeChild(gameSpritesArray[i]);
-						socket.emit('game ready first song');
-						//startMusicPlay();
-					}
-				}
-			}
 			if(event == 90){
 				hitBox1.setOpacity(255);
 				for(var i = 0 ; i < beatsArray.length ; i++){
