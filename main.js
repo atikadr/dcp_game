@@ -25,8 +25,14 @@ var cocos2dApp = cc.Application.extend({
 			{type:"image",src:"../images/animation.png"},
 			{type:"image",src:"../images/play.png"},
 			{type:"image",src:"../images/gameRoomBox.png"},
-			{type:"image",src:"../images/boxBackground.png"}
+			{type:"image",src:"../images/boxBackground.png"},
+			{type:"sound",src:"../sounds/a.mp3"},
+			{type:"sound",src:"../sounds/b.mp3"},
+			{type:"sound",src:"../sounds/c.mp3"},
+			{type:"sound",src:"../sounds/d.mp3"},
+			{type:"sound",src:"../sounds/e.mp3"}
 		]);
+		cc.AudioEngine.getInstance().init("mp3");
 	},
 	applicationDidFinishLaunching:function () {
 		var director = cc.Director.getInstance();

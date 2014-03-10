@@ -150,6 +150,7 @@ var waitOverlay;
 var waitOverlayText;
 
 function addChallengeWaitOverlay(){
+	clickEnabled = false;
 	waitOverlay = cc.LayerColor.create(new cc.Color4B(0,0,0,160), canvasWidth, canvasHeight);
 	waitOverlayText = cc.LabelTTF.create("","HelveticaNeue",40,cc.size(650,36),cc.TEXT_ALIGNMENT_CENTER);
 	waitOverlayText.setString("Waiting for opponent response");
@@ -177,17 +178,21 @@ socket.on('new player joined room',function(data){
 
 socket.on('challenge not accepted',function(data){
 	console.log("You have no friends :(");
-	removeWaitOverlay();
-});
+		removeWaitOverlay();
+	});
 
 
 socket.on('your game id',function(data){
 	console.log("your game id");
+	clickEnabled = true;
 	gameID = data.game_id;
 	setupSongSelection();
 });
 
 function challengePlayer(){
 	console.log(currentPlayer);
-	socket.emit('challenge',{challenger:playerName,challenged:playersArray[currentPlayer]});
+	if(playersArray.length > 0){
+		addChallengeWaitOverlay();
+		socket.emit('challenge',{challenger:playerName,challenged:playersArray[currentPlayer]});
+	}
 }

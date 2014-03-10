@@ -142,8 +142,11 @@ socket.on('song beats',function(data){
 
 var beatTimer;
 
+var endSongCounter;
+
 function scheduleBeatTimer(){
 	console.log("scheduleBeatTimer");
+	endSongCounter = 0;
 	gameLayer.unscheduleAllCallbacks();
 	beatTimer = 0;
 	console.log(gameSpeed);
@@ -195,9 +198,15 @@ function scheduleBeatTimer(){
 		}
 
 		// for adding to array
-		while(parseInt(preloadBeatsArray[0].timing) == beatTimer){ // might crash if overshot
+		while(preloadBeatsArray.length > 0 && parseInt(preloadBeatsArray[0].timing) == beatTimer){ // might crash if overshot
 			addBeatToArray(preloadBeatsArray[i].type);
 			preloadBeatsArray.splice(0,1);
+		}
+		if(preloadBeatsArray.length == 0){
+			endSongCounter++;
+		}
+		if(endSongCounter == 300){
+			setupStartScreen();
 		}
 		beatTimer++;
 	});
@@ -320,8 +329,10 @@ function makeSecondPlayer(){
 	});
 }
 
-function startMusicPlay(){
-	$("#testSound").get(0).play();
+function startMusicPlay(songName){
+	//$("#testSound").get(0).play();
+	console.log(songName);
+	cc.AudioEngine.getInstance().playMusic("../sounds/"+songName+".mp3");
 	scheduleBeatTimer();
 }
 
