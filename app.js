@@ -151,6 +151,48 @@ app.get('./getPoints/:id', function(req, res){
 		});
 });
 
+
+
+/*
+	Returns	0 if user is not yet registered
+			1 if user has both display name and RFID
+			2 if user has no display name but has RFID
+			3 if user has display name but no RFID
+			4 if user has none
+*/
+
+app.get('./login/:id', function(req,res){
+	var fbid = req.params.id;
+	mysql.query('select * from Player WHERE fbid ="' + fbid + '";', function(err,result,fields){
+		if (err) throw err;
+		else{
+			if (result[0] == null) res.send(0);
+			else {
+				if (result[0].rfid != null){
+					if (result[0].display_name != null)
+						res.send(1);
+					else
+						res.send(2);
+				}
+				else{
+					if (result[0].display_name != null)
+						res.send(3);
+					else
+						res.send(4);
+				}
+			}
+		}
+	});
+});
+
+app.post('./register_game/:id', function(req,res){
+	var fbid = req.params.id;
+	var display_name = req.body.display_name;
+	var rfid = req.body.rfid;
+	mysql.query('insert into Player (fbid, display_name, rfid) values ("' + fbid + '", "' + display_name + '", "' + rfid + '");');
+});
+
+
 console.log("listening");
 
 
