@@ -59,7 +59,7 @@ app.post('/saveTrack/:id', function(req,res){
 	console.log(writeString);
 
 	var newsongid = UUID();
-	mysql.query('insert into Song (songid, song, beats) values ("' + newsongid + '","' + song + '","' + writeString + '")', 
+	mysql.query('insert into Song (song, beats) values ("' + song + '","' + writeString + '")', 
 		function(err, results, fields){
 			if (err) throw err;
 			else res.send('song stored in database');
@@ -190,6 +190,20 @@ app.post('./register_game/:id', function(req,res){
 	var display_name = req.body.display_name;
 	var rfid = req.body.rfid;
 	mysql.query('insert into Player (fbid, display_name, rfid) values ("' + fbid + '", "' + display_name + '", "' + rfid + '");');
+});
+
+app.post('./send_highscore/:id', function(req, res){
+	var fbid = req.params.id;
+	var song = req.body.song;
+	var score = req.body.score;
+	mysql.query('select highscore from Highscore where fbid = "' + fbid + '" and song ="' + song + '";', function(err, result, fields){
+		if (result[0].highscore != null){
+			if (result[0].highscore < score)
+				mysql.query('update Highscore set highscore = ' + score + ' where fbid = "' + fbid + '" and song = "' + song + '";');
+		}
+		else
+			mysql.query('update Highscore set highscore = ' + score + ' where fbid = "' + fbid + '" and song = "' + song + '";');
+	});
 });
 
 
