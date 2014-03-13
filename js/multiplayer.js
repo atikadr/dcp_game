@@ -210,6 +210,13 @@ function scheduleBeatTimer(){
 		}
 		beatTimer++;
 	});
+}
+
+function updateScore(){
+	
+}
+
+function makeScoreScreen(){
 
 }
 

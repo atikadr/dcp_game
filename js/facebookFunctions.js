@@ -33,13 +33,49 @@ function getFriends() {
 		});
 }
 
+var newwindow;
+
+function closePopupAndRedirect(){
+	newwindow.close();
+	window.location = "../html/gamePlay.html";
+}
+
+function makeRegisterPage(){
+	newwindow = window.open("../html/popup.html","hello!","height=500,width=800");
+}
+
+/*
+	Returns	0 if user is not yet registered
+			1 if user has both display name and RFID
+			2 if user has no display name but has RFID
+			3 if user has display name but no RFID
+			4 if user has none
+*/
+
+function serverLogin(facebookID){
+	$.ajax({
+		url:"../login/"+facebookID,
+		type:"GET",
+		success:function(data){
+			console.log(data);
+			if(parseInt(data) == 1){
+				window.location = "../html/gamePlay.html";
+			}
+			else{
+				makeRegisterPage();
+			}
+		}
+	});
+}
+
 function getMe(){
 	FB.api('/me', function(response) {
 		//loadNewPage(response.id,response.name,response.email);
 		localStorage.userID = response.id;
 		localStorage.username = response.name;
 		//postToWall(response.id);
-		window.location = "../html/gamePlay.html";
+		//window.location = "../html/gamePlay.html";
+		serverLogin(response.id);
 	});
 }
 

@@ -1,0 +1,56 @@
+<html>
+<head>
+	<script type="text/javascript" src="../js/jquery-1.11.0.min.js"></script>
+	<script type="text/javascript" src="../js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="../css/bootstrap.min.css" type="text/css"/>
+</head>
+<style type="text/css">
+body{
+	background-color: #efefef;
+}
+h1{
+	margin-top: 5%;
+	width: 90%;
+	margin-left: 5%;
+}
+h2{
+	width: 90%;
+	margin-left: 5%;
+}
+button{
+	margin-left: 5%;
+}
+</style>
+<script type="text/javascript">
+function registerUser(){
+	var dataString = {display_name:$("#displayName").val(),rfid:$("#rfid").val()};
+	$.ajax({
+		url:"../register_game/"+localStorage.userID,
+		type:"POST",
+		data:dataString,
+		success:function(){
+			window.opener.closePopupAndRedirect();
+		}
+	});
+}
+
+$(document).ready(function(){
+	console.log(localStorage.userID);
+	$("#skipButton").click(function(){
+		window.opener.closePopupAndRedirect();
+	});
+	$("#submitButton").click(function(){
+		registerUser();
+	});
+});
+</script>
+<body>
+	<h1>You seem new here...</h1>
+	<h2>Why not apply for a cool RFID card to track your points and get in-game upgrades? Find out more <a href="">here</a>.</h2>
+	<br>
+	<h2>Display Name:&nbsp;&nbsp;<input id="displayName"/><br><br>
+		RFID:&nbsp;&nbsp;<input id="rfid"/></h2>
+		<br><button id="submitButton" class="btn btn-default">Submit</button>
+		<button id="skipButton" class="btn btn-default">Skip</button>
+	</body>
+	</html>
