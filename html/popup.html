@@ -29,6 +29,7 @@ function registerUser(){
 		type:"POST",
 		data:dataString,
 		success:function(){
+			localStorage.displayName = $("#displayName");
 			window.opener.closePopupAndRedirect();
 		}
 	});

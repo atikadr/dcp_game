@@ -58,7 +58,8 @@ function serverLogin(facebookID){
 		type:"GET",
 		success:function(data){
 			console.log(data);
-			if(parseInt(data) == 1){
+			if(data.match(/\d+/g) == null){ // name
+				localStorage.displayName = data;
 				window.location = "../html/gamePlay.html";
 			}
 			else{
@@ -73,6 +74,7 @@ function getMe(){
 		//loadNewPage(response.id,response.name,response.email);
 		localStorage.userID = response.id;
 		localStorage.username = response.name;
+		localStorage.displayName = response.name;
 		//postToWall(response.id);
 		//window.location = "../html/gamePlay.html";
 		serverLogin(response.id);

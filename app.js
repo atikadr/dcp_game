@@ -175,7 +175,7 @@ app.get('/login/:id', function(req,res){
 				if (result[0].rfid != null){
 					if (result[0].display_name != null){
 						console.log("1");
-						res.send(200,'1');
+						res.send(200,result[0].display_name);
 					}
 					else{
 						console.log("2");
