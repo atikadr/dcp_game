@@ -163,11 +163,13 @@ app.get('./getPoints/:id', function(req, res){
 
 app.get('./login/:id', function(req,res){
 	var fbid = req.params.id;
+	var powerUpSwitch = req.body;
 	mysql.query('select * from Player WHERE fbid ="' + fbid + '";', function(err,result,fields){
 		if (err) throw err;
 		else{
 			if (result[0] == null) res.send(0);
 			else {
+				mysql.query();
 				if (result[0].rfid != null){
 					if (result[0].display_name != null)
 						res.send(1);
@@ -253,24 +255,7 @@ sio.sockets.on('connection', function(socket){
 	//player must emit {song: choice of music}
 	socket.on('set song', function(data){
 		game_server.setSong(sio, mysql, socket.game_id, socket.player, data.song);
-		sio.sockets.in(socket.game_id).emit('player set song', {player: socket.username, song: data.song});
-
-		var trackData = new Array();
-
-		console.log("client set song " + data.song);
-	mysql.query('select * from Song where song = "let it go";', 
-		function(err, result, fields){
-			if (err) throw err;
-			else{
-				for (var i in result){
-					trackData = result[i].beats; 
-					console.log("fetching beat from mysql");
-	console.log(trackData);				
-				}
-			}
-	});
-
-	
+		sio.sockets.in(socket.game_id).emit('player set song', {player: socket.username, song: data.song});	
 	});
 
 	//
@@ -284,36 +269,13 @@ sio.sockets.on('connection', function(socket){
 		game_server.disconnect(socket, socket.username, sio);
 	});
 
-/*
-	socket.on('disconnect',function(){
-		playerCount = 0;
-		clearInterval(gameTimer);
-	});
-
-*/
 	socket.on('test', function(data){
 		socket.broadcast.emit('test reply', {message: data});
 	});
 
-/*
-socket.on('test join', function(data){
-	socket.join('testingGame');
-	game_server.joinGame(socket, 'testing username', 'testingGame');
-});
-*/
-
 	socket.on('game ready first song', function(data){
 		if (game_server.readyFirstSong(socket.game_id, socket.player))
-			game_server.startFirstSong(sio, socket.game_id);
-
-
-/*
-	fs.readFile('beats/test.txt','utf8',function(err,data){
-		trackData = data.split("\n");
-		console.log(trackData);
-	});
-*/
-		
+			game_server.startFirstSong(sio, socket.game_id);		
 	});
 
 	socket.on('send score', function(data){
