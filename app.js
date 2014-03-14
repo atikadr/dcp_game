@@ -10,7 +10,7 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'bubumint';
+var MYSQL_PASS = 'a';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
@@ -161,40 +161,55 @@ app.get('./getPoints/:id', function(req, res){
 			4 if user has none
 */
 
-app.get('./login/:id', function(req,res){
+app.get('/login/:id', function(req,res){
 	var fbid = req.params.id;
 	var powerUpSwitch = req.body;
 	mysql.query('select * from Player WHERE fbid ="' + fbid + '";', function(err,result,fields){
 		if (err) throw err;
 		else{
-			if (result[0] == null) res.send(0);
+			if (result[0] == null){ 
+				console.log("0");
+				res.send(200,'0');
+			}
 			else {
 				mysql.query();
 				if (result[0].rfid != null){
-					if (result[0].display_name != null)
-						res.send(1);
-					else
-						res.send(2);
+					if (result[0].display_name != null){
+						console.log("1");
+						res.send(200,result[0].display_name);
+					}
+					else{
+						console.log("2");
+						res.send(200,'2');
+					}
 				}
 				else{
-					if (result[0].display_name != null)
-						res.send(3);
-					else
-						res.send(4);
+					if (result[0].display_name != null){
+						console.log("3");
+						res.send(200,'3');
+					}
+					else{
+						console.log("4");
+						res.send(200,'4');
+					}
 				}
 			}
 		}
 	});
 });
 
-app.post('./register_game/:id', function(req,res){
+// NOTE:  probably you will need to 'simulate' a table with RFID numbers given out. Cross check that table to see whether the RFID is valid or not. Then add if valid
+
+app.post('/register_game/:id', function(req,res){
 	var fbid = req.params.id;
 	var display_name = req.body.display_name;
 	var rfid = req.body.rfid;
+	console.log("fbid: "+fbid + "rfid: " + rfid);
 	mysql.query('insert into Player (fbid, display_name, rfid) values ("' + fbid + '", "' + display_name + '", "' + rfid + '");');
+	res.send(200);
 });
 
-app.post('./send_highscore/:id', function(req, res){
+app.post('/send_highscore/:id', function(req, res){
 	var fbid = req.params.id;
 	var song = req.body.song;
 	var score = req.body.score;
@@ -205,6 +220,18 @@ app.post('./send_highscore/:id', function(req, res){
 		}
 		else
 			mysql.query('update Highscore set highscore = ' + score + ' where fbid = "' + fbid + '" and song = "' + song + '";');
+	});
+	res.send(200);
+});
+
+app.get('/get_highscore/:id', function(req, res){
+	var fbid = req.params.id;
+	var song = req.body.song;
+	mysql.query('select highscore from Highscore where fbid = "' + fbid + '" and song ="' + song + '";', function(err, result, fields){
+		if (result[0].highscore != null)
+			res.send(200, result[0].highscore.toString());
+		else
+			res.send(200, "0");
 	});
 });
 
