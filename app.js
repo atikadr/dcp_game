@@ -10,7 +10,7 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'a';
+var MYSQL_PASS = 'bubumint';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
@@ -248,6 +248,10 @@ sio.sockets.on('connection', function(socket){
 	//not implemented with REST API becuase it is hard to detect users that disconnect?
 	socket.on('join room', function(data){
 		game_server.addPlayer(sio, socket, data.username);
+	});
+
+	socket.on('get players', function(data){
+		game_server.sendPlayers(socket);
 	});
 
 	//call when a player clicks to challenge another in the gameroom

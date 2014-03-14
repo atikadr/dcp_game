@@ -1,3 +1,5 @@
+
+
 function returnPowerUpType(points){
 	switch (points){
 		case 0: return null; break;
@@ -17,8 +19,15 @@ function manipulateBeat(powerUp, level, beatArray){
 
 }
 
-var computeTrack = function(track){
-
+var computeTrack = function(track, mysql){
+	/*
+	mysql.query('select points from Player where fbid = "' + fbid + '";', function(err, result, fields){
+		if (err) throw err;
+		else{
+			returnPowerUpType(result[0]);
+			}
+		});
+*/
 }
 
 exports.computeTrack = computeTrack;

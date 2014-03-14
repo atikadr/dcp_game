@@ -30,6 +30,15 @@ game_server.addPlayer = function(sio, socket, username){
 	socket.join('gameroom');
 }
 
+game_server.sendPlayer = function(socket){
+	var toSend = [];
+	for (var key in player_array){
+		toSend.push(player_array[key].username);
+	}
+	socket.emit('get players', {players: toSend});
+}
+
+
 game_server.challenge = function(sio, challengerSocket, challenger, challenged){
 	var challengedSocket = player_array[challenged];
 	challengedSocket.emit('new challenger', {username: challenger});
@@ -162,7 +171,7 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 				gameArray[gameID].track = result[0].beats;
 				sio.sockets.in(gameID).emit('game ready', {song: songName});
 				//compute the song powerup
-				power_up.computeTrack(gameArray[gameID].track);
+				//power_up.computeTrack(gameArray[gameID].track, mysql);
 			}	
 		});
 	}
@@ -183,7 +192,8 @@ game_server.readyFirstSong = function(gameID, player){
 
 
 game_server.startFirstSong = function(sio, gameID){
-	sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.first_song + "#" + gameArray[gameID].tracks.second_song});	
+	sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks});
+	console.log(gameArray[gameID].tracks);	
 }
 
 game_server.adjustTimer = function(player, gameID, timer){
