@@ -40,17 +40,17 @@ var game_core = function(sio, gameID, player1x, player2x){
 	};
 
 	this.tracks = {
-		first_song : null,
-		second_song : null
+		player1 : null,
+		player2 : null
 	};
 
 
-	//below for playing two songs
 	this.ready_first_song = {
 		player1 : false,
 		player2 : false
 	};
 
+	//below for playing two songs
 	this.ready_second_song = {
 		player1 : false,
 		player2 : false

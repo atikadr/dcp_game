@@ -30,6 +30,10 @@ game_server.addPlayer = function(sio, socket, username){
 	socket.join('gameroom');
 }
 
+
+game_server.addPlayerFinal = function(fbid, highscore){
+}
+
 game_server.sendPlayer = function(socket){
 	var toSend = [];
 	for (var key in player_array){
@@ -169,9 +173,26 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 			if (err) throw err;
 			else {
 				gameArray[gameID].track = result[0].beats;
-				sio.sockets.in(gameID).emit('game ready', {song: songName});
+				sio.sockets.in(gameID).emit('game ready', {song: songName}); //THIS MUST BE DONE IN THE INNERMOST MYSQL QUERY
 				//compute the song powerup
-				//power_up.computeTrack(gameArray[gameID].track, mysql);
+
+				mysql.query('select points from Player WHERE fbid ="' + gameArray[gameID].players.player1.username + '";', function(err, result, fields){
+					if (err) throw err;
+					else{
+						if (result[0] != null){
+							gameArray[gameID].tracks.player1 = power_up.computeTrack(gameArray[gameID].track, result[0]);
+						}
+					}
+				});
+
+				mysql.query('select points from Player WHERE fbid ="' + gameArray[gameID].players.player2.username + '";', function(err, result, fields){
+					if (err) throw err;
+					else{
+						if (result[0] != null){
+							gameArray[gameID].tracks.player2 = power_up.computeTrack(gameArray[gameID].track, result[0]);
+						}
+					}
+				});
 			}	
 		});
 	}
@@ -192,8 +213,11 @@ game_server.readyFirstSong = function(gameID, player){
 
 
 game_server.startFirstSong = function(sio, gameID){
-	sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks});
-	console.log(gameArray[gameID].tracks);	
+	//sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks});
+	if (gameArray[gameID].tracks.player1 != null && gameArray[gameID].tracks.player2 != null)
+		sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
+
+	console.log(gameArray[gameID].tracks);
 }
 
 game_server.adjustTimer = function(player, gameID, timer){

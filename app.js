@@ -172,7 +172,6 @@ app.get('/login/:id', function(req,res){
 				res.send(200,'0');
 			}
 			else {
-				mysql.query();
 				if (result[0].rfid != null){
 					if (result[0].display_name != null){
 						console.log("1");
@@ -193,6 +192,12 @@ app.get('/login/:id', function(req,res){
 						res.send(200,'4');
 					}
 				}
+
+/*
+				mysql.query('select highscore from Highscore where fbid ="' + fbid + '";', function(err, result, fields){
+					//call game server to add highscore to player
+				});
+*/
 			}
 		}
 	});
@@ -247,7 +252,7 @@ sio.sockets.on('connection', function(socket){
 	//function broadcasts 'new player joined room' {player: username}
 	//not implemented with REST API becuase it is hard to detect users that disconnect?
 	socket.on('join room', function(data){
-		game_server.addPlayer(sio, socket, data.username);
+		game_server.addPlayer(sio, socket, data.username); //username stores fbid here
 	});
 
 	socket.on('get players', function(data){
