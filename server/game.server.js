@@ -215,9 +215,12 @@ game_server.readyFirstSong = function(gameID, player){
 
 game_server.startFirstSong = function(sio, gameID){
 	//sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks});
-	if (gameArray[gameID].tracks.player1 != null && gameArray[gameID].tracks.player2 != null)
-		sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
-
+	if (gameArray[gameID].tracks.player1 != null && gameArray[gameID].tracks.player2 != null){
+		//sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
+		gameArray[gameID].players.player1.emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
+		gameArray[gameID].players.player2.emit('song beats', {beats: gameArray[gameID].tracks.player2 + '#' + gameArray[gameID].tracks.player1});
+	}
+		
 	console.log(gameArray[gameID].tracks);
 }
 

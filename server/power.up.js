@@ -38,6 +38,18 @@ var computeTrack = function(track, points){
 				if (multiplierType.level == 3)
 					aBeat[2] = aBeat[2] * 4;
 				break;
+			case "multiplier random":
+				var probability = Math.random();
+				if (multiplierType.level == 1)
+					if (probability < 0.3)
+						aBeat[2] = aBeat[2] * 2;
+				if (multiplierType.level == 2)
+					if (probability < 0.5)
+						aBeat[2] = aBeat[2] * 3;
+				if (multiplierType.level == 3)
+					if (probability < 0.8)
+						aBeat[2] = aBeat[2] * 4;
+				break;	
 		}
 
 		//concatenate the colour, time, and points back
