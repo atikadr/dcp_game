@@ -185,7 +185,7 @@ app.get('/login/:id', function(req,res){
 				else{
 					if (result[0].display_name != null){
 						console.log("3");
-						res.send(200,'3');
+						res.send(200,result[0].display_name);
 					}
 					else{
 						console.log("4");
@@ -210,8 +210,16 @@ app.post('/register_game/:id', function(req,res){
 	var display_name = req.body.display_name;
 	var rfid = req.body.rfid;
 	console.log("fbid: "+fbid + "rfid: " + rfid);
-	mysql.query('insert into Player (fbid, display_name, rfid) values ("' + fbid + '", "' + display_name + '", "' + rfid + '");');
-	res.send(200);
+	mysql.query('select * from Player where display_name = "' + display_name + '";', function(err, result, fields){
+		if (result[0] == null){
+			mysql.query('insert into Player (fbid, display_name, rfid) values ("' + fbid + '", "' + display_name + '", "' + rfid + '");');
+			res.send(200);
+		}
+		else {
+			res.send(200, "error");
+		}
+	});
+	
 });
 
 app.post('/send_highscore/:id', function(req, res){

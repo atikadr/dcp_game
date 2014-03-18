@@ -173,23 +173,24 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 			if (err) throw err;
 			else {
 				gameArray[gameID].track = result[0].beats;
-				sio.sockets.in(gameID).emit('game ready', {song: songName}); //THIS MUST BE DONE IN THE INNERMOST MYSQL QUERY
+				
 				//compute the song powerup
 
-				mysql.query('select points from Player WHERE fbid ="' + gameArray[gameID].players.player1.username + '";', function(err, result, fields){
+				mysql.query('select points from Player WHERE display_name ="' + gameArray[gameID].players.player1.username + '";', function(err, result, fields){
 					if (err) throw err;
 					else{
 						if (result[0] != null){
 							gameArray[gameID].tracks.player1 = power_up.computeTrack(gameArray[gameID].track, result[0]);
-						}
-					}
-				});
 
-				mysql.query('select points from Player WHERE fbid ="' + gameArray[gameID].players.player2.username + '";', function(err, result, fields){
-					if (err) throw err;
-					else{
-						if (result[0] != null){
-							gameArray[gameID].tracks.player2 = power_up.computeTrack(gameArray[gameID].track, result[0]);
+							mysql.query('select points from Player WHERE display_name ="' + gameArray[gameID].players.player2.username + '";', function(err, result, fields){
+								if (err) throw err;
+								else{
+									if (result[0] != null){
+										gameArray[gameID].tracks.player2 = power_up.computeTrack(gameArray[gameID].track, result[0]);
+										sio.sockets.in(gameID).emit('game ready', {song: songName}); //THIS MUST BE DONE IN THE INNERMOST MYSQL QUERY
+									}
+								}
+							});
 						}
 					}
 				});

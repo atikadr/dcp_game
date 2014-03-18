@@ -45,7 +45,7 @@ var computeTrack = function(track, points){
 	}
 
 	//concatenate the beats back into a string
-	var finalBeats;
+	var finalBeats = "";
 	for (var i = 0 ; i < beats.length ; i++)
 		finalBeats +=  beats[i] + ";";
 
