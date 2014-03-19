@@ -8,7 +8,6 @@ function clearScreen(){
 	while(childrenArray.length > 1){
 		gameLayer.removeChild(childrenArray[1]);
 	}
-	console.log(childrenArray);
 }
 
 

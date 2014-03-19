@@ -141,43 +141,112 @@ socket.on('game ready',function(data){
 	myGameCounter = 0;
 	loopCounter = 0;
 	counterSet = false;
+	var songHasStarted = false;
+	var endSongCounter = 0;
+	var songEnded = false;
 	gameLayer.schedule(function(){
-		if(loopCounter==10){
+		if(loopCounter==10 && !songEnded){
 			loopCounter = 0;
 			socket.emit('my timer',{myTimer:myGameCounter});
-			//console.log(myGameCounter);
 		}
-		myGameCounter++;
 		loopCounter++;
+		if(!songHasStarted){
+			myGameCounter++;
 
-		if(startSongSet){
-			console.log("sst: " + startSongTime);
-			startSongTime--;
-			if(startSongTime == 0){
-				console.log("unschedule");
-				//startMusicPlay(songsArray[(myCurrentSelection+2)%songsArray.length].song);
-				//startMusicPlay(data.song);
+			if(startSongSet){
+				startSongTime--;
+				if(startSongTime == 0){
+					startMusicPlay(data.song);
+					songHasStarted = true;
+					myGameCounter = 0;
+				}
+			}
+
+			if(counterSet){
+				countdownTimer--;
+				if(countdownTimer < 60){
+					countdownOverlayText.setString("Game starting in 1");
+				}
+				else if(countdownTimer < 120){
+					countdownOverlayText.setString("Game starting in 2");
+				}
+				else if(countdownTimer < 180){
+					countdownOverlayText.setString("Game starting in 3");
+				}
+				if(countdownTimer == 0){
+					startSongSet = true;
+					startSongTime = 180;
+					setupGamePlay();
+				}
 			}
 		}
+		else{
+			var removeArray = new Array();
+			$.each(beatsArray,function(index,value){
+				value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
 
-		if(counterSet){
-			countdownTimer--;
-			if(countdownTimer < 60){
-				countdownOverlayText.setString("Game starting in 1");
+				if(value.getPosition().y <= 0){
+					totalCombo = 0;
+					comboLabel.setString(totalCombo);
+					for(var i = 0 ; i < beatsArray.length ; i++){
+						if(beatsArray[i].noteIndex == value.noteIndex){
+							removeArray.push(value.noteIndex);
+						}
+					}
+					gameLayer.removeChild(value); 
+				}
+			});
+			for(var i = 0 ; i < removeArray.length ; i++){
+				for(var j = 0 ; j < beatsArray.length ; j++){
+					if(beatsArray[j].noteIndex == removeArray[i]){
+						beatsArray.splice(j,1);
+					}
+				}
 			}
-			else if(countdownTimer < 120){
-				countdownOverlayText.setString("Game starting in 2");
+
+			var removeArrayOpp = new Array();
+			$.each(beatsArrayOpp,function(index,value){
+				value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
+				if(value.getPosition().y <= 0){
+					totalComboOpp = 0;
+					comboLabelOpp.setString(totalComboOpp);
+					for(var i = 0 ; i < beatsArrayOpp.length ; i++){
+						if(beatsArrayOpp[i].noteIndex == value.noteIndex){
+							removeArrayOpp.push(value.noteIndex);
+						}
+					}
+					gameLayer.removeChild(value); 
+				}
+			});
+			for(var i = 0 ; i < removeArrayOpp.length ; i++){
+				for(var j = 0 ; j < beatsArrayOpp.length ; j++){
+					if(beatsArrayOpp[j].noteIndex == removeArrayOpp[i]){
+						beatsArrayOpp.splice(j,1);
+					}
+				}
 			}
-			else if(countdownTimer < 180){
-				countdownOverlayText.setString("Game starting in 3");
+
+			while(preloadBeatsArray.length > 0 && parseInt(preloadBeatsArray[0].timing) <= myGameCounter){
+				addBeatToArray({beat:preloadBeatsArray[0].type,points:preloadBeatsArray[0].points});
+				preloadBeatsArray.splice(0,1);
 			}
-			if(countdownTimer == 0){
-				//startSongSet = true;
-				//startSongTime = 180;
-				setupGamePlay();
+			while(oppPreloadBeatsArray.length > 0 && parseInt(oppPreloadBeatsArray[0].timing) <= myGameCounter){
+				addOppBeatToArray({beat:oppPreloadBeatsArray[0].type,points:oppPreloadBeatsArray[0].points});
+				oppPreloadBeatsArray.splice(0,1);
+			}
+			if(preloadBeatsArray.length == 0){
+				endSongCounter++;
+			}
+			if(endSongCounter == 280){
+				songEnded = true;
+				socket.emit('send score',{score:score});
+			}
+			if(endSongCounter == 300){
+				setupStartScreen();
 				gameLayer.unscheduleAllCallbacks();
-				socket.emit('send score',{score:parseInt(playerName)}); // testing purposes
 			}
+			myGameCounter++;
+			//console.log("gc: " + myGameCounter);
 		}
 	});
 });
@@ -190,7 +259,7 @@ socket.on('delta',function(data){
 		counterSet = true;
 		makeCountdownScreen();
 	}
-	console.log("delta: " + myGameCounter);
+	//console.log("delta: " + data.delta);
 });
 
 function makeCountdownScreen(){
