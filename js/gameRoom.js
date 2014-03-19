@@ -13,7 +13,7 @@ var isChallenged;
 
 function setupGameRoom(){
 	gameScene = "gameRoom";
-	playerName = localStorage.displayName;
+	//playerName = localStorage.displayName;
 	isChallenged = false;
 	playerNamesArray.splice(0,playerNamesArray.length);
 	playerBoxArray.splice(0,playerBoxArray.length);
@@ -23,6 +23,7 @@ function setupGameRoom(){
 }
 
 function joinRoom(){
+	//console.log(localStorage.displayName);
 	socket.emit('join room',{username:playerName});
 
 	// populate elements

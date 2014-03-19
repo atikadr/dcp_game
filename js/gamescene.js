@@ -1,4 +1,4 @@
-var playerName = Math.floor(Math.random()*10000); // for testing only
+var playerName = Math.floor(Math.random()*10); // for testing only
 
 var gameChallengeOverlay;
 var gameChallengeOverlayText;
@@ -95,7 +95,7 @@ var gamesceneGame = cc.Layer.extend({
 		}
 	},
 	onKeyDown:function(event){
-		console.log(event);
+		//console.log(event);
 		if(clickEnabled){
 			if(gameScene == "multiplayer"){
 				if(event == 90){
@@ -105,12 +105,11 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "red"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += 100;
+								score += beatsArray[i].points;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
 								scoreLabel.setString("Score: " + score);
-
 							}
 						}
 					}
@@ -123,7 +122,7 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "blue"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += 100;
+								score += beatsArray[i].points;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
@@ -141,7 +140,7 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "purple"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += 100;
+								score += beatsArray[i].points;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
@@ -159,7 +158,7 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "green"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += 100;
+								score += beatsArray[i].points;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
@@ -293,7 +292,7 @@ var gamesceneGame = cc.Layer.extend({
 
 					gameLayer.removeChild(mySelection);
 					prevScene.push(gameScene);
-					setupSingleGamePlay();
+					setupSingleGamePlay(singleSongsArray[selection].song);
 				}
 			}
 			else if(gameScene == "gameRoom"){
@@ -326,12 +325,13 @@ var gamesceneGame = cc.Layer.extend({
 			if(event == 32){
 				challengePlayer();
 			}
-			}
-			else if(gameScene == "singlePlayer"){
+		}
+		else if(gameScene == "singlePlayer"){
 			if(event == 32){ 
 				for(var i = 0 ; i < gameSpritesArray.length ; i++){
 					if(gameSpritesArray[i].tag == "playButton"){
 						gameLayer.removeChild(gameSpritesArray[i]);
+						gameSpritesArray.splice(i,1);
 						getSongNotes();
 					}
 				}
@@ -343,7 +343,7 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "red"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += 100;
+							score += beatsArray[i].points;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
@@ -360,7 +360,7 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "blue"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += 100;
+							score += beatsArray[i].points;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
@@ -377,7 +377,7 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "purple"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += 100;
+							score += beatsArray[i].points;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
@@ -394,7 +394,7 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "green"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += 100;
+							score += beatsArray[i].points;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
@@ -404,8 +404,8 @@ var gamesceneGame = cc.Layer.extend({
 					}
 				}
 			}
-			}
-			if(event == 8){
+		}
+		if(event == 8){
 			console.log("Prev: " + prevScene[prevScene.length-1] + " This: " + gameScene);
 			if(prevScene.length > 0){
 				if(prevScene[prevScene.length-1] == "startScreen"){
@@ -425,8 +425,8 @@ var gamesceneGame = cc.Layer.extend({
 					setupSongSelection();
 				}
 			}
-			}
 		}
+	}
 		// others
 		if(event == 89 && isChallenged){
 			isChallenged = false;

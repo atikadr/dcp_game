@@ -52,6 +52,7 @@ var gameSpeed = 7;
 var socket = io.connect();
 
 var noteCount = 0;
+var oppNoteCount = 0;
 
 socket.on('test reply',function(data){
 	var beat = data.message.beat;
@@ -127,17 +128,26 @@ socket.on('test reply',function(data){
 });
 
 var preloadBeatsArray;
+var oppPreloadBeatsArray;
 
 socket.on('song beats',function(data){
 	console.log("song beats");
 	preloadBeatsArray = new Array();
+	oppPreloadBeatsArray = new Array();
 	var tempBeatsArray = data.beats.split("#")[0].split(";");
-	console.log(tempBeatsArray);
+	var tempBeatsArrayOpp = data.beats.split("#")[1].split(";");
 	for(var i = 0 ; i < tempBeatsArray.length-1 ; i++){
-		var beatObject = {type:tempBeatsArray[i].split(",")[0],timing:tempBeatsArray[i].split(",")[1]};
-		preloadBeatsArray.push(beatObject);
+		if(tempBeatsArray[i].indexOf("undefined")==-1){
+			var beatObject = {type:tempBeatsArray[i].split(",")[0],timing:tempBeatsArray[i].split(",")[1],points:parseInt(tempBeatsArray[i].split(",")[2])};
+			preloadBeatsArray.push(beatObject);
+		}
 	}
-	console.log(preloadBeatsArray);
+	for(var i = 0 ; i < tempBeatsArrayOpp.length-1 ; i++){
+		if(tempBeatsArrayOpp[i].indexOf("undefined")==-1){
+			var beatObject = {type:tempBeatsArrayOpp[i].split(",")[0],timing:tempBeatsArrayOpp[i].split(",")[1],points:parseInt(tempBeatsArrayOpp[i].split(",")[2])};
+			oppPreloadBeatsArray.push(beatObject);
+		}
+	}
 });
 
 var beatTimer;
@@ -199,8 +209,12 @@ function scheduleBeatTimer(){
 
 		// for adding to array
 		while(preloadBeatsArray.length > 0 && parseInt(preloadBeatsArray[0].timing) == beatTimer){ // might crash if overshot
-			addBeatToArray(preloadBeatsArray[i].type);
+			addBeatToArray({beat:preloadBeatsArray[i].type,points:preloadBeatsArray[i].points});
 			preloadBeatsArray.splice(0,1);
+		}
+		while(oppPreloadBeatsArray.length > 0 && parseInt(oppPreloadBeatsArray[0].timing) == beatTimer){
+			addOppBeatToArray({beat:oppPreloadBeatsArray[i].type,points:oppPreloadBeatsArray[i].points});
+			oppPreloadBeatsArray.splice(0,1);
 		}
 		if(preloadBeatsArray.length == 0){
 			endSongCounter++;
@@ -220,48 +234,58 @@ function makeScoreScreen(){
 
 }
 
+function addOppBeatToArray(dataOpp){
+	var notePath = "../images/note.png";
+	var note = cc.Sprite.create(notePath);
+	var notePosition;
+	
+	var noteOpp = cc.Sprite.create(notePath);
+	var noteOppPosition;
+	if(dataOpp.beat == "red"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350-150,canvasHeight);
+	}
+	if(dataOpp.beat == "blue"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350-50,canvasHeight);
+	}
+	if(dataOpp.beat == "purple"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350+50,canvasHeight);
+	}
+	if(dataOpp.beat == "green"){
+		noteOppPosition = new cc.Point(canvasWidth/2+350+150,canvasHeight);
+	}
+	noteOpp.setPosition(noteOppPosition);
+	noteOpp.type = dataOpp.beat;
+	noteOpp.points = dataOpp.points;
+	gameLayer.addChild(noteOpp);
+	noteOpp.noteIndex = oppNoteCount;
+	beatsArrayOpp.push(noteOpp);
+
+	oppNoteCount++;
+}
+
 function addBeatToArray(data){
 	var notePath = "../images/note.png";
 	var note = cc.Sprite.create(notePath);
 	var notePosition;
 
-	if(data == "red"){
+	if(data.beat == "red"){
 		notePosition = new cc.Point(canvasWidth/2-350-150,canvasHeight);
 	}
-	if(data == "blue"){
+	if(data.beat == "blue"){
 		notePosition = new cc.Point(canvasWidth/2-350-50,canvasHeight);
 	}
-	if(data == "purple"){
+	if(data.beat == "purple"){
 		notePosition = new cc.Point(canvasWidth/2-350+50,canvasHeight);
 	}
-	if(data == "green"){
+	if(data.beat == "green"){
 		notePosition = new cc.Point(canvasWidth/2-350+150,canvasHeight);
 	}
 	note.setPosition(notePosition);
-	note.type = data;
+	note.type = data.beat;
+	note.points = data.points;
 	gameLayer.addChild(note);
 	note.noteIndex = noteCount;
 	beatsArray.push(note);
-
-	var noteOpp = cc.Sprite.create(notePath);
-	var noteOppPosition;
-	if(data == "red"){
-		noteOppPosition = new cc.Point(canvasWidth/2+350-150,canvasHeight);
-	}
-	if(data == "blue"){
-		noteOppPosition = new cc.Point(canvasWidth/2+350-50,canvasHeight);
-	}
-	if(data == "purple"){
-		noteOppPosition = new cc.Point(canvasWidth/2+350+50,canvasHeight);
-	}
-	if(data == "green"){
-		noteOppPosition = new cc.Point(canvasWidth/2+350+150,canvasHeight);
-	}
-	noteOpp.setPosition(noteOppPosition);
-	noteOpp.type = data;
-	gameLayer.addChild(noteOpp);
-	noteOpp.noteIndex = noteCount;
-	beatsArrayOpp.push(noteOpp);
 
 	noteCount++;
 }

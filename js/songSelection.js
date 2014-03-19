@@ -154,7 +154,8 @@ socket.on('game ready',function(data){
 			startSongTime--;
 			if(startSongTime == 0){
 				console.log("unschedule");
-				startMusicPlay(songsArray[(myCurrentSelection+2)%songsArray.length].song);
+				//startMusicPlay(songsArray[(myCurrentSelection+2)%songsArray.length].song);
+				startMusicPlay(data.song);
 			}
 		}
 

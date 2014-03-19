@@ -42,15 +42,14 @@ var noteCount = 0;
 
 var singleCounter = 0;
 
+var singleSongName;
+
 function startSingleMusicPlay(){
 	singleCounter = 0;
-	$("#testSound").get(0).play();
-	console.log(musicArray);
+	cc.AudioEngine.getInstance().playMusic("../sounds/"+singleSongName+".mp3");
+	gameLayer.unscheduleAllCallbacks();
 	gameLayer.schedule(function(){
-		while(musicArray[0].timing == singleCounter){ // might crash if musicarray length = 0
-
-			//console.log("timing: " + musicArray[0].timing);
-
+		while(musicArray.length > 0 && musicArray[0].timing == singleCounter){ // might crash if musicarray length = 0
 			var notePath = "../images/note.png";
 			var note = cc.Sprite.create(notePath);
 			var notePosition;
@@ -69,6 +68,7 @@ function startSingleMusicPlay(){
 			}
 			note.setPosition(notePosition);
 			note.type = musicArray[0].type;
+			note.points = parseInt(musicArray[0].points);
 			gameLayer.addChild(note);
 			note.noteIndex = noteCount;
 			beatsArray.push(note);
@@ -76,9 +76,6 @@ function startSingleMusicPlay(){
 
 			musicArray.splice(0,1);
 		}
-
-		//console.log("sc: " + singleCounter);
-
 		var removeArray = new Array();
 		$.each(beatsArray,function(index,value){
 			value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-singlegameSpeed));
@@ -106,22 +103,23 @@ function startSingleMusicPlay(){
 }
 
 function getSongNotes(){
+	console.log("getSongNotes");
 	$.ajax({
-		url: "/getTrack",
+		url: "../getTrack/"+singleSongName,
 		type: "GET",
 		success:function(data){
-			var tempArray = data.split("\n");
+			var tempArray = data.split(";");
 			for(var i = 0 ; i < tempArray.length-1 ; i++){
-				var tempObject = {type:tempArray[i].split(",")[0],timing:tempArray[i].split(",")[1]};
+				var tempObject = {type:tempArray[i].split(",")[0],timing:tempArray[i].split(",")[1],points:tempArray[i].split(",")[2]};
 				musicArray.push(tempObject);
 			}
-			console.log(musicArray);
 			startSingleMusicPlay();
 		}
 	});
 }
 
-function setupSingleGamePlay(){
+function setupSingleGamePlay(singlesong){
+	singleSongName = singlesong;
 	prevScene = [];
 	gameScene = "singlePlayer";
 	clearScreen();

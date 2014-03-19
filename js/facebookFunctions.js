@@ -74,7 +74,7 @@ function getMe(){
 		//loadNewPage(response.id,response.name,response.email);
 		localStorage.userID = response.id;
 		localStorage.username = response.name;
-		localStorage.displayName = response.name;
+		localStorage.displayName = response.id;
 		//postToWall(response.id);
 		//window.location = "../html/gamePlay.html";
 		serverLogin(response.id);
