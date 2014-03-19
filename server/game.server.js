@@ -31,7 +31,7 @@ game_server.addPlayer = function(mysql, sio, socket, username){
 	
 		player_array[username] = socket;
 
-		sio.sockets.in('gameroom').emit('new player joined room', {player: username, elo: result[0].ELO});
+		sio.sockets.in('gameroom').emit('new player joined room', {player: {username: username, elo: result[0].ELO}});
 		socket.join('gameroom');
 	});
 }
@@ -192,8 +192,11 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 								if (err) throw err;
 								else{
 									if (result[0] != null){
-										gameArray[gameID].tracks.player2 = power_up.computeTrack(gameArray[gameID].track, result[0]);
-										sio.sockets.in(gameID).emit('game ready', {song: songName}); //THIS MUST BE DONE IN THE INNERMOST MYSQL QUERY
+										gameArray[gameID].tracks.player2 = power_up.computeTrack(gameArray[gameID].track, result[0]);									
+										
+										sio.sockets.in(gameID).emit('game ready', {song: songName});
+										gameArray[gameID].players.player1.emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
+										gameArray[gameID].players.player2.emit('song beats', {beats: gameArray[gameID].tracks.player2 + '#' + gameArray[gameID].tracks.player1});
 									}
 								}
 							});
@@ -223,8 +226,7 @@ game_server.startFirstSong = function(sio, gameID){
 	//sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks});
 	if (gameArray[gameID].tracks.player1 != null && gameArray[gameID].tracks.player2 != null){
 		//sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
-		gameArray[gameID].players.player1.emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
-		gameArray[gameID].players.player2.emit('song beats', {beats: gameArray[gameID].tracks.player2 + '#' + gameArray[gameID].tracks.player1});
+		
 	}
 		
 	console.log(gameArray[gameID].tracks);
