@@ -10,7 +10,7 @@ app = express();
 var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'bubumint';
+var MYSQL_PASS = 'a';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
@@ -323,6 +323,7 @@ sio.sockets.on('connection', function(socket){
 	});
 
 	socket.on('send score', function(data){
+		console.log("score: " +data.score);
 		game_server.receiveScore(mysql, socket, data.score, sio);
 	});
 

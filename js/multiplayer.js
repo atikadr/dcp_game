@@ -219,6 +219,9 @@ function scheduleBeatTimer(){
 		if(preloadBeatsArray.length == 0){
 			endSongCounter++;
 		}
+		if(endSongCounter == 280){
+			socket.emit('send score',{score:score});
+		}
 		if(endSongCounter == 300){
 			setupStartScreen();
 		}
@@ -235,7 +238,32 @@ function makeScoreScreen(){
 }
 
 function addOppBeatToArray(dataOpp){
-	var notePath = "../images/note.png";
+	var notePath;
+	var extraPoints;
+	if(totalComboOpp < 10){
+		extraPoints = 0;
+		notePath = "../images/note.png";
+	}
+	else if(totalComboOpp < 20){
+		extraPoints = 1;
+		notePath = "../images/note2.png";
+	}
+	else if(totalComboOpp < 30){
+		extraPoints = 2;
+		notePath = "../images/note3.png";
+	}
+	else if(totalComboOpp < 50){
+		extraPoints = 3;
+		notePath = "../images/note4.png";
+	}
+	else if(totalComboOpp < 100){
+		extraPoints = 4;
+		notePath = "../images/note5.png";
+	}
+	else{
+		extraPoints = 5;
+		notePath = "../images/note6.png";
+	}
 	var note = cc.Sprite.create(notePath);
 	var notePosition;
 	
@@ -255,6 +283,7 @@ function addOppBeatToArray(dataOpp){
 	}
 	noteOpp.setPosition(noteOppPosition);
 	noteOpp.type = dataOpp.beat;
+	noteOpp.extraPoints = extraPoints;
 	noteOpp.points = dataOpp.points;
 	gameLayer.addChild(noteOpp);
 	noteOpp.noteIndex = oppNoteCount;
@@ -264,7 +293,32 @@ function addOppBeatToArray(dataOpp){
 }
 
 function addBeatToArray(data){
-	var notePath = "../images/note.png";
+	var notePath;
+	var extraPoints;
+	if(totalCombo < 10){
+		extraPoints = 0;
+		notePath = "../images/note.png";
+	}
+	else if(totalCombo < 20){
+		extraPoints = 1;
+		notePath = "../images/note2.png";
+	}
+	else if(totalCombo < 30){
+		extraPoints = 2;
+		notePath = "../images/note3.png";
+	}
+	else if(totalCombo < 50){
+		extraPoints = 3;
+		notePath = "../images/note4.png";
+	}
+	else if(totalCombo < 100){
+		extraPoints = 4;
+		notePath = "../images/note5.png";
+	}
+	else{
+		extraPoints = 5;
+		notePath = "../images/note6.png";
+	}
 	var note = cc.Sprite.create(notePath);
 	var notePosition;
 
@@ -282,6 +336,7 @@ function addBeatToArray(data){
 	}
 	note.setPosition(notePosition);
 	note.type = data.beat;
+	note.extraPoints = extraPoints;
 	note.points = data.points;
 	gameLayer.addChild(note);
 	note.noteIndex = noteCount;
@@ -361,7 +416,6 @@ function makeSecondPlayer(){
 }
 
 function startMusicPlay(songName){
-	//$("#testSound").get(0).play();
 	console.log(songName);
 	cc.AudioEngine.getInstance().playMusic("../sounds/"+songName+".mp3");
 	scheduleBeatTimer();
@@ -371,8 +425,6 @@ function setupGamePlay(){
 	prevScene = [];
 	gameScene = "multiplayer";
 	clearScreen();
-
-	socket.emit("game ready first song");
 
 	var separator = cc.Sprite.create("../images/separator.png");
 	separator.setPosition(new cc.Point(canvasWidth/2, 415));

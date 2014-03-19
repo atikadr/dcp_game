@@ -12,6 +12,7 @@ var pageNumber;
 var isChallenged;
 
 function setupGameRoom(){
+	console.log("player name: " + playerName);
 	gameScene = "gameRoom";
 	//playerName = localStorage.displayName;
 	isChallenged = false;
@@ -23,7 +24,6 @@ function setupGameRoom(){
 }
 
 function joinRoom(){
-	//console.log(localStorage.displayName);
 	socket.emit('join room',{username:playerName});
 
 	// populate elements
@@ -95,13 +95,11 @@ function joinRoom(){
 }
 
 function updateSelectedPlayer(){
-	console.log(currentPlayer);
 	var selectedPosition = currentPlayer%5;
 	for(var i = 0 ; i < playerNamesArray.length ; i++){
 		playerNamesArray[i].setColor(new cc.Color4B(255,255,255,255));
 	}
 	playerNamesArray[selectedPosition].setColor(new cc.Color4B(100,100,100,255));
-	console.log(playerNamesArray[selectedPosition]);
 }
 
 function updatePageNumber(currentPlayer){
@@ -126,7 +124,7 @@ function displayPlayers(startIndex){
 	}
 	var index = 0;
 	for(var i = startIndex ; i < endIndex ; i++){
-		playerNamesArray[index].setString(playersArray[i]);
+		playerNamesArray[index].setString(playersArray[i].username + " (ELO: " + playersArray[i].elo + ")");
 		playerNamesArray[index].setOpacity(255);
 		playerBoxArray[index].setOpacity(100);
 		index++;
@@ -135,9 +133,8 @@ function displayPlayers(startIndex){
 }
 
 socket.on('player left room',function(data){
-	console.log(data);
 	for(var i = 0 ; i < playersArray.length ; i++){
-		if(playersArray[i] == data.player){
+		if(playersArray[i].username == data.player){
 			if(playersArray[currentPlayer] == data.player && playersArray.length > 1){
 				currentPlayer--;
 			}
@@ -173,8 +170,10 @@ socket.on('get players',function(data){
 socket.on('new player joined room',function(data){
 	// check if new player is not me
 	console.log(data);
-	playersArray.push(data.player);
-	displayPlayers(currentPlayer);
+	if(data.player.username != playerName){
+		playersArray.push(data.player);
+		displayPlayers(currentPlayer);
+	}
 });
 
 socket.on('challenge not accepted',function(data){
@@ -194,6 +193,6 @@ function challengePlayer(){
 	console.log(currentPlayer);
 	if(playersArray.length > 0){
 		addChallengeWaitOverlay();
-		socket.emit('challenge',{challenger:playerName,challenged:playersArray[currentPlayer]});
+		socket.emit('challenge',{challenger:playerName,challenged:playersArray[currentPlayer].username});
 	}
 }

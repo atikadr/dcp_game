@@ -50,7 +50,32 @@ function startSingleMusicPlay(){
 	gameLayer.unscheduleAllCallbacks();
 	gameLayer.schedule(function(){
 		while(musicArray.length > 0 && musicArray[0].timing == singleCounter){ // might crash if musicarray length = 0
-			var notePath = "../images/note.png";
+			var notePath;
+			var extraPoints;
+			if(totalCombo < 10){
+				extraPoints = 0;
+				notePath = "../images/note.png";
+			}
+			else if(totalCombo < 20){
+				extraPoints = 1;
+				notePath = "../images/note2.png";
+			}
+			else if(totalCombo < 30){
+				extraPoints = 2;
+				notePath = "../images/note3.png";
+			}
+			else if(totalCombo < 50){
+				extraPoints = 3;
+				notePath = "../images/note4.png";
+			}
+			else if(totalCombo < 100){
+				extraPoints = 4;
+				notePath = "../images/note5.png";
+			}
+			else{
+				extraPoints = 5;
+				notePath = "../images/note6.png";
+			}
 			var note = cc.Sprite.create(notePath);
 			var notePosition;
 
@@ -69,6 +94,7 @@ function startSingleMusicPlay(){
 			note.setPosition(notePosition);
 			note.type = musicArray[0].type;
 			note.points = parseInt(musicArray[0].points);
+			note.extraPoints = extraPoints;
 			gameLayer.addChild(note);
 			note.noteIndex = noteCount;
 			beatsArray.push(note);

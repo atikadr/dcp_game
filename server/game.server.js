@@ -16,8 +16,10 @@ game_server.updateCounter = function(){
 }
 
 game_server.addPlayer = function(mysql, sio, socket, username){
+	console.log("username: " + username);
 	mysql.query('select ELO from Player WHERE display_name = "' + username + '";', function(err, result, fields){
 		socket.username = username;
+		console.log("result: " + result[0]);
 		socket.elo = result[0].ELO;
 
 		var toSend = [];
@@ -292,14 +294,17 @@ game_server.disconnect = function(socket, username, sio){
 }
 
 game_server.receiveScore = function(mysql, socket, score, sio){
+	var gameID = socket.game_id;
+
 	if (socket.player == "player1")
 		gameArray[gameID].score.player1 = score;
 	else
 		gameArray[gameID].score.player2 = score;
 
+
 	if (gameArray[gameID].score.player1 != null && gameArray[gameID].score.player2 != null){
-		var P1elo = gameArray[gameID].player1.elo;
-		var P2elo = gameArray[gameID].player2.elo;
+		var P1elo = gameArray[gameID].players.player1.elo;
+		var P2elo = gameArray[gameID].players.player2.elo;
 
 		var P1percent = calculateExpectedScore(P1elo, P2elo);
 		var P2percent = calculateExpectedScore(P2elo, P1elo);
@@ -320,10 +325,10 @@ game_server.receiveScore = function(mysql, socket, score, sio){
 		}
 
 		//update ELO points into database
-		mysql.query('update Player set ELO = ' + P1elo + ' where display_name = "' + gameArray[gameID].player1.username + '";', function(err, result, fields){
-			mysql.query('update Player set ELO = ' + P2elo + ' where display_name = "' + gameArray[gameID].player2.username + '";', function(err2, result2, fields2){
-				addPlayer(mysql, sio, gameArray[gameID].player1, gameArray[gameID].player1.username);
-				addPlayer(mysql, sio, gameArray[gameID].player2, gameArray[gameID].player2.username);
+		mysql.query('update Player set ELO = ' + P1elo + ' where display_name = "' + gameArray[gameID].players.player1.username + '";', function(err, result, fields){
+			mysql.query('update Player set ELO = ' + P2elo + ' where display_name = "' + gameArray[gameID].players.player2.username + '";', function(err2, result2, fields2){
+				game_server.addPlayer(mysql, sio, gameArray[gameID].players.player1, gameArray[gameID].players.player1.username);
+				game_server.addPlayer(mysql, sio, gameArray[gameID].players.player2, gameArray[gameID].players.player2.username);
 				delete gameArray[gameID];
 			});
 		});

@@ -105,7 +105,8 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "red"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += beatsArray[i].points;
+								var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+								score += beatsArray[i].points + extraPoints;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
@@ -122,7 +123,8 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "blue"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += beatsArray[i].points;
+								var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+								score += beatsArray[i].points + extraPoints;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
@@ -140,7 +142,8 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "purple"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += beatsArray[i].points;
+								var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+								score += beatsArray[i].points + extraPoints;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
@@ -158,7 +161,8 @@ var gamesceneGame = cc.Layer.extend({
 							if(beatsArray[i].type == "green"){
 								gameLayer.removeChild(beatsArray[i]);
 								beatsArray.splice(i,1);
-								score += beatsArray[i].points;
+								var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+								score += beatsArray[i].points + extraPoints;
 								totalCombo++;
 								comboLabel.setString(totalCombo);
 								comboLabel.setOpacity(255);
@@ -343,7 +347,8 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "red"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += beatsArray[i].points;
+							var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+							score += beatsArray[i].points + extraPoints;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
@@ -360,7 +365,8 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "blue"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += beatsArray[i].points;
+							var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+							score += beatsArray[i].points + extraPoints;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
@@ -377,7 +383,8 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "purple"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += beatsArray[i].points;
+							var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+							score += beatsArray[i].points + extraPoints;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);
@@ -394,7 +401,8 @@ var gamesceneGame = cc.Layer.extend({
 						if(beatsArray[i].type == "green"){
 							gameLayer.removeChild(beatsArray[i]);
 							beatsArray.splice(i,1);
-							score += beatsArray[i].points;
+							var extraPoints = parseInt(beatsArray[i].extraPoints)*100;
+							score += beatsArray[i].points + extraPoints;
 							totalCombo++;
 							comboLabel.setString(totalCombo);
 							comboLabel.setOpacity(255);

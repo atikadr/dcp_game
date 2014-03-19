@@ -151,11 +151,12 @@ socket.on('game ready',function(data){
 		loopCounter++;
 
 		if(startSongSet){
+			console.log("sst: " + startSongTime);
 			startSongTime--;
 			if(startSongTime == 0){
 				console.log("unschedule");
 				//startMusicPlay(songsArray[(myCurrentSelection+2)%songsArray.length].song);
-				startMusicPlay(data.song);
+				//startMusicPlay(data.song);
 			}
 		}
 
@@ -171,9 +172,11 @@ socket.on('game ready',function(data){
 				countdownOverlayText.setString("Game starting in 3");
 			}
 			if(countdownTimer == 0){
-				startSongSet = true;
-				startSongTime = 180;
+				//startSongSet = true;
+				//startSongTime = 180;
 				setupGamePlay();
+				gameLayer.unscheduleAllCallbacks();
+				socket.emit('send score',{score:parseInt(playerName)}); // testing purposes
 			}
 		}
 	});
@@ -187,7 +190,7 @@ socket.on('delta',function(data){
 		counterSet = true;
 		makeCountdownScreen();
 	}
-	console.log("delta: " + data.delta);
+	console.log("delta: " + myGameCounter);
 });
 
 function makeCountdownScreen(){
