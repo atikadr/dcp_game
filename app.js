@@ -76,7 +76,7 @@ app.get('/getTrack',function(req,res){
 
 app.get('/getTrack/:id',function(req,res){
 	var song = req.params.id;
-	mysql.query('select beats from Song where song = "' + song + '"', 
+	mysql.query('select beats from Song where song = "' + song + '";', 
 		function(err, result, fields){
 			if (err) throw err;
 			else{
@@ -212,7 +212,7 @@ app.post('/register_game/:id', function(req,res){
 	console.log("fbid: "+fbid + "rfid: " + rfid);
 	mysql.query('select * from Player where display_name = "' + display_name + '";', function(err, result, fields){
 		if (result[0] == null){
-			mysql.query('insert into Player (fbid, display_name, rfid, points) values ("' + fbid + '", "' + display_name + '", "' + rfid + '", 0);');
+			mysql.query('insert into Player (fbid, display_name, rfid, points, ELO) values ("' + fbid + '", "' + display_name + '", "' + rfid + '", 0, 1000);');
 			res.send(200);
 		}
 		else {
@@ -260,7 +260,7 @@ sio.sockets.on('connection', function(socket){
 	//function broadcasts 'new player joined room' {player: username}
 	//not implemented with REST API becuase it is hard to detect users that disconnect?
 	socket.on('join room', function(data){
-		game_server.addPlayer(sio, socket, data.username); //username stores fbid here
+		game_server.addPlayer(mysql, sio, socket, data.username); //username stores fbid here
 	});
 
 	socket.on('get players', function(data){
@@ -288,7 +288,7 @@ sio.sockets.on('connection', function(socket){
 	//player must emit {game_id: gameID}
 	//function emits 'challenge not accepted' to challenger
 	socket.on('decline challenge', function(){
-		game_server.declineChallenge(sio, socket.game_id);;
+		game_server.declineChallenge(mysql, sio, socket.game_id);;
 	});
 
 	socket.on('get opponent name', function(){
@@ -323,7 +323,7 @@ sio.sockets.on('connection', function(socket){
 	});
 
 	socket.on('send score', function(data){
-
+		game_server.receiveScore(mysql, socket, data.score, sio);
 	});
 
 	socket.on('beat hit or miss', function(data){

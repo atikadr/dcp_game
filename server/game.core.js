@@ -44,6 +44,11 @@ var game_core = function(sio, gameID, player1x, player2x){
 		player2 : null
 	};
 
+	this.score = {
+		player1 : null,
+		player2 : null
+	};
+
 
 	this.ready_first_song = {
 		player1 : false,

@@ -15,19 +15,25 @@ game_server.updateCounter = function(){
 	gameCounter++;
 }
 
-game_server.addPlayer = function(sio, socket, username){
-	socket.username = username;
+game_server.addPlayer = function(mysql, sio, socket, username){
+	mysql.query('select ELO from Player WHERE display_name = "' + username + '";', function(err, result, fields){
+		socket.username = username;
+		socket.elo = result[0].ELO;
 
-	var toSend = [];
-	for (var key in player_array){
-		toSend.push(player_array[key].username);
-	}
-	socket.emit('get players', {players: toSend});
+		var toSend = [];
+		for (var key in player_array){
+			var _username = player_array[key].username;
+			var _elo = player_array[key].elo;
+			toSend.push({username: _username, elo: _elo});
+		}
+		
+		socket.emit('get players', {players: toSend});
 	
-	player_array[username] = socket;
+		player_array[username] = socket;
 
-	sio.sockets.in('gameroom').emit('new player joined room', {player: username});
-	socket.join('gameroom');
+		sio.sockets.in('gameroom').emit('new player joined room', {player: username, elo: result[0].ELO});
+		socket.join('gameroom');
+	});
 }
 
 
@@ -73,14 +79,14 @@ game_server.acceptChallenge = function(sio, gameID){
 	sio.sockets.in(gameID).emit('your game id', {game_id: gameID});
 }
 
-game_server.declineChallenge = function(sio, gameID){
+game_server.declineChallenge = function(mysql, sio, gameID){
 	var challengerSocket = gameArray[gameID].players.player1;
 	var challengedSocket = gameArray[gameID].players.player2;
 	challengerSocket.emit('challenge not accepted');
 	//challengerSocket.leave(gameID);
 	//challengedSocket.leave(gameID);
-	game_server.addPlayer(sio, challengerSocket, challengerSocket.username);
-	game_server.addPlayer(sio, challengedSocket, challengedSocket.username);
+	game_server.addPlayer(mysql, sio, challengerSocket, challengerSocket.username);
+	game_server.addPlayer(mysql, sio, challengedSocket, challengedSocket.username);
 
 	delete gameArray[gameID];
 }
@@ -281,4 +287,61 @@ game_server.disconnect = function(socket, username, sio){
 	delete player_array[username];
 	//socket.leave('gameroom');
 	sio.sockets.in('gameroom').emit('player left room', {player: username});
+}
+
+game_server.receiveScore = function(mysql, socket, score, sio){
+	if (socket.player == "player1")
+		gameArray[gameID].score.player1 = score;
+	else
+		gameArray[gameID].score.player2 = score;
+
+	if (gameArray[gameID].score.player1 != null && gameArray[gameID].score.player2 != null){
+		var P1elo = gameArray[gameID].player1.elo;
+		var P2elo = gameArray[gameID].player2.elo;
+
+		var P1percent = calculateExpectedScore(P1elo, P2elo);
+		var P2percent = calculateExpectedScore(P2elo, P1elo);
+
+		if (gameArray[gameID].score.player1 > gameArray[gameID].score.player2){
+			P1elo = P1elo + calculateELOwin(P1percent);
+			P2elo = P2elo + calculateELOlost(P2percent);
+		}
+			
+		if (gameArray[gameID].score.player1 < gameArray[gameID].score.player2){
+			P1elo = P1elo + calculateELOlost(P1percent);
+			P2elo = P2elo + calculateELOwin(P2percent);
+		}
+
+		if (gameArray[gameID].score.player1 == gameArray[gameID].score.player2){
+			P1elo = P1elo + calculateELOdraw(P1percent);
+			P2elo = P2elo + calculateELOdraw(P2percent);
+		}
+
+		//update ELO points into database
+		mysql.query('update Player set ELO = ' + P1elo + ' where display_name = "' + gameArray[gameID].player1.username + '";', function(err, result, fields){
+			mysql.query('update Player set ELO = ' + P2elo + ' where display_name = "' + gameArray[gameID].player2.username + '";', function(err2, result2, fields2){
+				addPlayer(mysql, sio, gameArray[gameID].player1, gameArray[gameID].player1.username);
+				addPlayer(mysql, sio, gameArray[gameID].player2, gameArray[gameID].player2.username);
+				delete gameArray[gameID];
+			});
+		});
+
+	}
+}
+
+
+function calculateExpectedScore(this_elo, other_elo){
+	return 1 / (1 + 10 ^ ((other_elo - this_elo) / 400));
+}
+
+function calculateELOwin(percentage){
+	return Math.round(32 * (1 - percentage));
+}
+
+function calculateELOdraw(percentage){
+	return Math.round(32 * (0.5 - percentage));
+}
+
+function calculateELOlost(percentage){
+	return Math.round(32 * (0 - percentage));
 }
