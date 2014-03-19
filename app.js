@@ -76,12 +76,12 @@ app.get('/getTrack',function(req,res){
 
 app.get('/getTrack/:id',function(req,res){
 	var song = req.params.id;
-	mysql.query('select * from Song where song = "' + song + '"', 
+	mysql.query('select beats from Song where song = "' + song + '"', 
 		function(err, result, fields){
 			if (err) throw err;
 			else{
 				for (var i in result){
-					res.send(result[i].beats);
+					res.send(200, result[i].beats);
 				}
 			}
 		});
@@ -103,7 +103,7 @@ app.get('/songList', function(req,res){
 			}
 		});
 });
-
+/*
 app.post('./register/:id',function(req, res){
 	var fbid = req.params.id;
 	var rfid = req.body;
@@ -151,7 +151,7 @@ app.get('./getPoints/:id', function(req, res){
 		});
 });
 
-
+*/
 
 /*
 	Returns	0 if user is not yet registered
@@ -212,7 +212,7 @@ app.post('/register_game/:id', function(req,res){
 	console.log("fbid: "+fbid + "rfid: " + rfid);
 	mysql.query('select * from Player where display_name = "' + display_name + '";', function(err, result, fields){
 		if (result[0] == null){
-			mysql.query('insert into Player (fbid, display_name, rfid) values ("' + fbid + '", "' + display_name + '", "' + rfid + '");');
+			mysql.query('insert into Player (fbid, display_name, rfid, points) values ("' + fbid + '", "' + display_name + '", "' + rfid + '", 0);');
 			res.send(200);
 		}
 		else {
