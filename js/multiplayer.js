@@ -148,94 +148,12 @@ socket.on('song beats',function(data){
 			oppPreloadBeatsArray.push(beatObject);
 		}
 	}
+	console.log(preloadBeatsArray);
 });
 
 var beatTimer;
 
 var endSongCounter;
-
-function scheduleBeatTimer(){
-	console.log("scheduleBeatTimer");
-	endSongCounter = 0;
-	gameLayer.unscheduleAllCallbacks();
-	beatTimer = 0;
-	console.log(gameSpeed);
-	
-	gameLayer.schedule(function(){
-		var removeArray = new Array();
-		$.each(beatsArray,function(index,value){
-			value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
-			
-			if(value.getPosition().y <= 0){
-				totalCombo = 0;
-				comboLabel.setString(totalCombo);
-				for(var i = 0 ; i < beatsArray.length ; i++){
-					if(beatsArray[i].noteIndex == value.noteIndex){
-						removeArray.push(value.noteIndex);
-					}
-				}
-				gameLayer.removeChild(value); 
-			}
-		});
-		for(var i = 0 ; i < removeArray.length ; i++){
-			for(var j = 0 ; j < beatsArray.length ; j++){
-				if(beatsArray[j].noteIndex == removeArray[i]){
-					beatsArray.splice(j,1);
-				}
-			}
-		}
-
-		var removeArrayOpp = new Array();
-		$.each(beatsArrayOpp,function(index,value){
-			value.setPosition(new cc.Point(value.getPosition().x,value.getPosition().y-gameSpeed));
-			if(value.getPosition().y <= 0){
-				totalComboOpp = 0;
-				comboLabelOpp.setString(totalComboOpp);
-				for(var i = 0 ; i < beatsArrayOpp.length ; i++){
-					if(beatsArrayOpp[i].noteIndex == value.noteIndex){
-						removeArrayOpp.push(value.noteIndex);
-					}
-				}
-				gameLayer.removeChild(value); 
-			}
-		});
-		for(var i = 0 ; i < removeArrayOpp.length ; i++){
-			for(var j = 0 ; j < beatsArrayOpp.length ; j++){
-				if(beatsArrayOpp[j].noteIndex == removeArrayOpp[i]){
-					beatsArrayOpp.splice(j,1);
-				}
-			}
-		}
-
-		// for adding to array
-		while(preloadBeatsArray.length > 0 && parseInt(preloadBeatsArray[0].timing) == beatTimer){ // might crash if overshot
-			addBeatToArray({beat:preloadBeatsArray[i].type,points:preloadBeatsArray[i].points});
-			preloadBeatsArray.splice(0,1);
-		}
-		while(oppPreloadBeatsArray.length > 0 && parseInt(oppPreloadBeatsArray[0].timing) == beatTimer){
-			addOppBeatToArray({beat:oppPreloadBeatsArray[i].type,points:oppPreloadBeatsArray[i].points});
-			oppPreloadBeatsArray.splice(0,1);
-		}
-		if(preloadBeatsArray.length == 0){
-			endSongCounter++;
-		}
-		if(endSongCounter == 280){
-			socket.emit('send score',{score:score});
-		}
-		if(endSongCounter == 300){
-			setupStartScreen();
-		}
-		beatTimer++;
-	});
-}
-
-function updateScore(){
-	
-}
-
-function makeScoreScreen(){
-
-}
 
 function addOppBeatToArray(dataOpp){
 	var notePath;
@@ -418,7 +336,7 @@ function makeSecondPlayer(){
 function startMusicPlay(songName){
 	console.log(songName);
 	cc.AudioEngine.getInstance().playMusic("../sounds/"+songName+".mp3");
-	scheduleBeatTimer();
+	//scheduleBeatTimer();
 }
 
 function setupGamePlay(){
