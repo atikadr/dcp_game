@@ -248,6 +248,15 @@ app.get('/get_highscore/:id', function(req, res){
 	});
 });
 
+app.get('/leaderboard/', function(req, res){
+	mysql.query('select display_name, ELO from Player order by ELO desc limit 20;', function(err, result, fields){
+		var toSend = new Array();
+		for (var i = 0 ; i < 20 ; i++){
+			toSend.push(200, {username: result[i].display_name, elo: result[i].ELO});
+		}
+		res.send(200, toSend);
+	});
+});
 
 console.log("listening");
 

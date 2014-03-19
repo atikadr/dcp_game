@@ -338,7 +338,7 @@ game_server.receiveScore = function(mysql, socket, score, sio){
 
 
 function calculateExpectedScore(this_elo, other_elo){
-	return 1 / (1 + 10 ^ ((other_elo - this_elo) / 400));
+	return 1 / (1 + Math.pow(10, (other_elo - this_elo) / 400));
 }
 
 function calculateELOwin(percentage){
