@@ -179,11 +179,11 @@ var gamesceneGame = cc.Layer.extend({
 						case "multiplayer":
 						modeSelected = "singleplayer";
 						break;
-						case "jamsession":
+						case "leaderboard":
 						modeSelected = "multiplayer";
 						break;
 						case "settings":
-						modeSelected = "jamsession";
+						modeSelected = "leaderboard";
 						default:
 						break;
 					}
@@ -194,9 +194,9 @@ var gamesceneGame = cc.Layer.extend({
 						modeSelected = "multiplayer";
 						break;
 						case "multiplayer":
-						modeSelected = "jamsession";
+						modeSelected = "leaderboard";
 						break;
-						case "jamsession":
+						case "leaderboard":
 						modeSelected = "settings";
 						default:
 						break;
@@ -211,6 +211,10 @@ var gamesceneGame = cc.Layer.extend({
 					if(modeSelected == "singleplayer"){
 						prevScene.push(gameScene);
 						setupSingleSongSelection();
+					}
+					if(modeSelected == "leaderboard"){
+						prevScene.push(gameScene);
+						setupLeaderboard();
 					}
 				}
 				repositionDot();

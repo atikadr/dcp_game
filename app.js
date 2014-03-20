@@ -103,63 +103,7 @@ app.get('/songList', function(req,res){
 			}
 		});
 });
-/*
-app.post('./register/:id',function(req, res){
-	var fbid = req.params.id;
-	var rfid = req.body;
-	mysql.query('select fbid from Player WHERE fbid ="' + fbid + '";',
-		function(err, result, fields){
-			if (err) throw err;
-			else{
-				if (result[0] != null){
-					mysql.query('update Player set points = 0, rfid = "' + rfid + '" where fbid="' + fbid + '";');
-				}
-				else{
-					mysql.query('insert into Player(fbid, rfid, points) values ("' + fbid + '", "' + rfid + '" , 0);');
-				}
-			}
-		});
-});
 
-app.post('./updatePoints/:id', function(req,res){
-	var new_points = req.body;
-	var rfid = req.params.id;
-	mysql.query('update Player set points = points +' + new_points + ' where rfid = "' + rfid + '";');
-});
-
-app.get('./getPoints/:id', function(req, res){
-	var fbid = req.params.id;
-	mysql.query('select fbid from Player WHERE fbid ="' + fbid + '";',
-		function(err, result, fields){
-			if (err) throw err;
-			else{
-				if (result[0] != null){
-					mysql.query('select points from Player where fbid = "' + fbid + '";', function(err2, result2, fields2){
-						if (err2) throw err2;
-						else
-							res.send(result2[0]);
-					});
-				}
-				else{
-					mysql.query('insert into Player(fbid, rfid, points) values ("' + fbid + '", null , 0);', function(err2, result2, fields2){
-						if (err2) throw err2;
-						else
-							res.send(0);
-					});
-				}
-			}
-		});
-});
-
-*/
-
-/*
-	Returns	0 if user is not yet registered
-			1 if user has both display name and RFID
-			2 if user has no display name but has RFID
-			3 if user has display name but no RFID
-			4 if user has none
-*/
 
 app.get('/login/:id', function(req,res){
 	var fbid = req.params.id;
@@ -248,13 +192,17 @@ app.get('/get_highscore/:id', function(req, res){
 	});
 });
 
-app.get('/leaderboard/', function(req, res){
+app.get('/leaderboard', function(req, res){
 	mysql.query('select display_name, ELO from Player order by ELO desc limit 20;', function(err, result, fields){
 		var toSend = new Array();
-		for (var i = 0 ; i < 20 ; i++){
-			toSend.push(200, {username: result[i].display_name, elo: result[i].ELO});
+		var maxLimit = 10;
+		if(result.length < 10){
+			maxLimit = result.length;
 		}
-		res.send(200, toSend);
+		for (var i = 0 ; i < maxLimit ; i++){
+			toSend.push({username: result[i].display_name, elo: result[i].ELO});
+		}
+		res.send(200,toSend);
 	});
 });
 

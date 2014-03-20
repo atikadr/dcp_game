@@ -274,7 +274,7 @@ function makeCountdownScreen(){
 function loadSongList(){
 	$.ajax({
 		url:"/songList",
-		method:"GET",
+		type:"GET",
 		success:function(data){
 			songsArray = data;
 			console.log(data);
