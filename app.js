@@ -7,10 +7,10 @@ _mysql=require('mysql'),
 fs = require('fs'),
 app = express();
 
-var HOST = 'localhost';
+var HOST = 'dcpgame.ctgejyx0aqr2.ap-southeast-1.rds.amazonaws.com';
 var PORT = 3306;
 var MYSQL_USER = 'root';
-var MYSQL_PASS = 'a';
+var MYSQL_PASS = 'rootroot';
 var DATABASE = 'dcp_game';
 
 var mysql = _mysql.createConnection({
