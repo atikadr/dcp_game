@@ -28,8 +28,8 @@ function registerUser(){
 		url:"../register_game/"+localStorage.userID,
 		type:"POST",
 		data:dataString,
-		success:function(){
-			localStorage.displayName = $("#displayName");
+		success:function(data){
+			localStorage.displayName = $("#displayName").val();
 			window.opener.closePopupAndRedirect();
 		}
 	});
