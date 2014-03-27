@@ -35,53 +35,70 @@ $(document).ready(function() {
 		$(".pass-icon").css("left","0px");
 	});
 	$("#loginButton").click(function(){
-		login();
+		//login();
+
+		// for testing purposes
+		//localStorage.userID = "789";
+		//serverLogin("789");
+		window.location = "../html/gamePlay.html";
 	});
 });
 </script>
+<script type="text/javascript">
 
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-49333061-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+</script>
 </head>
 <body>
 
-<!--WRAPPER-->
-<div id="wrapper">
+	<!--WRAPPER-->
+	<div id="wrapper">
 
-	<!--SLIDE-IN ICONS-->
-    <div class="user-icon"></div>
-    <div class="pass-icon"></div>
-    <!--END SLIDE-IN ICONS-->
+		<!--SLIDE-IN ICONS-->
+		<div class="user-icon"></div>
+		<div class="pass-icon"></div>
+		<!--END SLIDE-IN ICONS-->
 
-<!--LOGIN FORM-->
-<form name="login-form" class="login-form">
+		<!--LOGIN FORM-->
+		<form name="login-form" class="login-form">
 
-	<!--HEADER-->
-    <div class="header">
-    <!--TITLE--><h1>Login Form</h1><!--END TITLE-->
-    <!--DESCRIPTION--><span>Fill out the form below to login to my super awesome imaginary control panel.</span><!--END DESCRIPTION-->
-    </div>
-    <!--END HEADER-->
-	
-	<!--CONTENT-->
-    <div class="content">
-	<!--USERNAME--><input name="username" type="text" class="input username" value="Username" onfocus="this.value=''" /><!--END USERNAME-->
-    <!--PASSWORD--><input name="password" type="password" class="input password" value="Password" onfocus="this.value=''" /><!--END PASSWORD-->
-    </div>
-    <!--END CONTENT-->
-    
-    <!--FOOTER-->
-    <div class="footer">
-    <!--LOGIN BUTTON--><input value="Login" class="button" id="loginButton"/><!--END LOGIN BUTTON-->
-    <!--REGISTER BUTTON--><input type="submit" name="submit" value="Register" class="register" /><!--END REGISTER BUTTON-->
-    </div>
-    <!--END FOOTER-->
+			<!--HEADER-->
+			<div class="header">
+				<!--TITLE--><h1>Login Form</h1><!--END TITLE-->
+				<!--DESCRIPTION--><span>Fill out the form below to login to my super awesome imaginary control panel.</span><!--END DESCRIPTION-->
+			</div>
+			<!--END HEADER-->
 
-</form>
-<!--END LOGIN FORM-->
+			<!--CONTENT-->
+			<div class="content">
+				<!--USERNAME--><input name="username" type="text" class="input username" value="Username" onfocus="this.value=''" /><!--END USERNAME-->
+				<!--PASSWORD--><input name="password" type="password" class="input password" value="Password" onfocus="this.value=''" /><!--END PASSWORD-->
+			</div>
+			<!--END CONTENT-->
 
-</div>
-<!--END WRAPPER-->
+			<!--FOOTER-->
+			<div class="footer">
+				<!--LOGIN BUTTON--><input value="Login" class="button" id="loginButton"/><!--END LOGIN BUTTON-->
+				<!--REGISTER BUTTON--><input type="submit" name="submit" value="Register" class="register" /><!--END REGISTER BUTTON-->
+			</div>
+			<!--END FOOTER-->
 
-<!--GRADIENT--><div class="gradient"></div><!--END GRADIENT-->
+		</form>
+		<!--END LOGIN FORM-->
+
+	</div>
+	<!--END WRAPPER-->
+
+	<!--GRADIENT--><div class="gradient"></div><!--END GRADIENT-->
 
 </body>
 </html>

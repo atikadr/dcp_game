@@ -15,6 +15,7 @@ var cocos2dApp = cc.Application.extend({
 		cc.Loader.getInstance().preload([
 			{type:"image",src:"../images/singlePlayer.png"},
 			{type:"image",src:"../images/multiplayer.png"},
+			{type:"image",src:"../images/leaderboard.png"},
 			{type:"image",src:"../images/settings.png"},
 			{type:"image",src:"../images/instructions.png"},
 			{type:"image",src:"../images/dot.png"},
@@ -25,11 +26,12 @@ var cocos2dApp = cc.Application.extend({
 			{type:"image",src:"../images/play.png"},
 			{type:"image",src:"../images/gameRoomBox.png"},
 			{type:"image",src:"../images/boxBackground.png"},
-			{type:"sound",src:"../sounds/a.mp3"},
-			{type:"sound",src:"../sounds/b.mp3"},
-			{type:"sound",src:"../sounds/c.mp3"},
-			{type:"sound",src:"../sounds/d.mp3"},
-			{type:"sound",src:"../sounds/e.mp3"}
+			{type:"sound",src:"../sounds/blah blah.mp3"}, // change these
+			{type:"sound",src:"../sounds/boboobobo.mp3"},
+			{type:"sound",src:"../sounds/lalalalal.mp3"},
+			{type:"sound",src:"../sounds/lastSong.mp3"},
+			{type:"sound",src:"../sounds/temp.mp3"},
+			{type:"sound",src:"../sounds/testsong.mp3"}
 		]);
 		cc.AudioEngine.getInstance().init("mp3");
 	},
