@@ -17,6 +17,7 @@ var game_core = function(sio, gameID, player1x, player2x){
 	this.game_id = gameID;
 	this.counter = 0;
 	this.track;
+	this.startTime = null;
 
 	this.players = {
 		player1 : player1x,
@@ -59,6 +60,11 @@ var game_core = function(sio, gameID, player1x, player2x){
 	this.ready_second_song = {
 		player1 : false,
 		player2 : false
+	};
+
+	this.timers = {
+		player1 : null,
+		player2 : null
 	};
 }
 

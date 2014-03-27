@@ -197,8 +197,9 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 										gameArray[gameID].tracks.player2 = power_up.computeTrack(gameArray[gameID].track, result[0]);									
 										
 										sio.sockets.in(gameID).emit('game ready', {song: songName});
-										gameArray[gameID].players.player1.emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
-										gameArray[gameID].players.player2.emit('song beats', {beats: gameArray[gameID].tracks.player2 + '#' + gameArray[gameID].tracks.player1});
+										//gameArray[gameID].players.player1.emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
+										//gameArray[gameID].players.player2.emit('song beats', {beats: gameArray[gameID].tracks.player2 + '#' + gameArray[gameID].tracks.player1});
+										setInterval(function(){sendBeat(gameID);}, 50/3);
 									}
 								}
 							});
@@ -351,4 +352,48 @@ function calculateELOdraw(percentage){
 
 function calculateELOlost(percentage){
 	return Math.round(32 * (0 - percentage));
+}
+
+function sendBeat(gameID){
+	var beat = gameArray[gameID].track.split(",")[1];
+	while(gameArray[gameID].startTime != null && parseInt(beat) == (gameCounter - gameArray[gameID].startTime)){
+		gameArray[gameID].players.player1.emit('song beats', {beats: gameArray[gameID].tracks.player1.split(";")[0] + '#' + gameArray[gameID].tracks.player2.split(";")[0]});
+		gameArray[gameID].players.player2.emit('song beats', {beats: gameArray[gameID].tracks.player2.split(";")[0] + '#' + gameArray[gameID].tracks.player1.split(";")[0]});
+		
+		var index = gameArray[gameID].track.indexOf(";");
+		var temp = gameArray[gameID].track.slice(index + 1);
+		gameArray[gameID].track = temp;
+
+		index = gameArray[gameID].tracks.player1.indexOf(";");
+		temp = gameArray[gameID].tracks.player1.slice(index + 1);
+		gameArray[gameID].tracks.player1 = temp;
+
+		index = gameArray[gameID].tracks.player2.indexOf(";");
+		temp = gameArray[gameID].tracks.player2.slice(index + 1);
+		gameArray[gameID].tracks.player2 = temp;
+
+		beat = gameArray[gameID].track.split(",")[1];
+	}
+
+}
+
+game_server.initiateTimer = function(client_timer, client_player, gameID){
+	if (client_player == 'player1')
+		gameArray[gameID].timers.player1 = client_timer;
+	else
+		gameArray[gameID].timers.player2 = client_timer;
+
+	//ONCE BOTH PLAYERS HAVE SENT THEIR TIMERS
+	if (gameArray[gameID].timers.player1 != null && gameArray[gameID].timers.player2 != null){
+		//do whatever logic you need here 
+
+		//store the starting time on server here
+		//gameArray[gameID].startTime = .............;
+		
+		//the current time in game server is stored as gameCounter
+		//e.g. gameArray[gameID].startTime = gameCounter;
+
+		//beats are sent by sendBeat() function that starts once you've given a value to startTime here
+		//so don't have to worry about that anymore 
+	}
 }

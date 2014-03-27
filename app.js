@@ -7,7 +7,7 @@ _mysql=require('mysql'),
 fs = require('fs'),
 app = express();
 
-var HOST = 'dcpgame.ctgejyx0aqr2.ap-southeast-1.rds.amazonaws.com';
+var HOST = 'localhost';
 var PORT = 3306;
 var MYSQL_USER = 'root';
 var MYSQL_PASS = 'bubumint';
@@ -272,6 +272,10 @@ sio.sockets.on('connection', function(socket){
 
 	socket.on('test', function(data){
 		socket.broadcast.emit('test reply', {message: data});
+	});
+
+	socket.on('game ready', function(data){
+		game_server.initiateTimer(data.timer, socket.player, socket.game_id);
 	});
 
 	socket.on('game ready first song', function(data){
