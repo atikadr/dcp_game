@@ -63,7 +63,7 @@ function setupSingleSongSelection(){
 function loadSingleSongList(){
 	$.ajax({
 		url:"/songList",
-		method:"GET",
+		type:"GET",
 		success:function(data){
 			singleSongsArray = data;
 			console.log(data);

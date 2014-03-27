@@ -1,6 +1,6 @@
 var singlePlayerImage;
 var multiplayerImage;
-var jamSessionImage;
+var leaderboardImage;
 var settingsImage;
 
 var dotImage;
@@ -13,8 +13,8 @@ function repositionDot(){
 	if(modeSelected == "multiplayer"){
 		dotImage.setPosition(new cc.Point(multiplayerImage.getPosition().x - multiplayerImage.getBoundingBox().size.width/2 - 20,multiplayerImage.getPosition().y));
 	}
-	if(modeSelected == "jamsession"){
-		dotImage.setPosition(new cc.Point(jamSessionImage.getPosition().x - jamSessionImage.getBoundingBox().size.width/2 - 20,jamSessionImage.getPosition().y));
+	if(modeSelected == "leaderboard"){
+		dotImage.setPosition(new cc.Point(leaderboardImage.getPosition().x - leaderboardImage.getBoundingBox().size.width/2 - 20,leaderboardImage.getPosition().y));
 	}
 	if(modeSelected == "settings"){
 		dotImage.setPosition(new cc.Point(settingsImage.getPosition().x - settingsImage.getBoundingBox().size.width/2 - 20,settingsImage.getPosition().y));
@@ -36,9 +36,9 @@ function setupStartScreen(){
 	multiplayerImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight - 455));
 	gameLayer.addChild(multiplayerImage);
 
-	jamSessionImage = cc.Sprite.create("../images/jamSession.png");
-	jamSessionImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight - 540));
-	gameLayer.addChild(jamSessionImage);
+	leaderboardImage = cc.Sprite.create("../images/leaderboard.png");
+	leaderboardImage.setPosition(new cc.Point(canvasWidth/2,canvasHeight - 540));
+	gameLayer.addChild(leaderboardImage);
 
 	settingsImage = cc.Sprite.create("../images/settings.png");
 	settingsImage.setPosition(new cc.Point(canvasWidth/2, canvasHeight - 625));

@@ -15,7 +15,6 @@ var cocos2dApp = cc.Application.extend({
 		cc.Loader.getInstance().preload([
 			{type:"image",src:"../images/singlePlayer.png"},
 			{type:"image",src:"../images/multiplayer.png"},
-			{type:"image",src:"../images/jamSession.png"},
 			{type:"image",src:"../images/settings.png"},
 			{type:"image",src:"../images/instructions.png"},
 			{type:"image",src:"../images/dot.png"},
