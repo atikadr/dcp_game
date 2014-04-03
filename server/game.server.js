@@ -30,7 +30,7 @@ game_server.addPlayer = function(mysql, sio, socket, username){
 		}
 		
 		socket.emit('get players', {players: toSend});
-	
+		
 		player_array[username] = socket;
 
 		sio.sockets.in('gameroom').emit('new player joined room', {player: {username: username, elo: result[0].ELO}});
@@ -162,26 +162,26 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 				}
 			}
 	});
-	*/
+*/
 
-	if (player == 'player1')
-		gameArray[gameID].songs.first_song = song;
-	else
-		gameArray[gameID].songs.second_song = song;
-				
+if (player == 'player1')
+	gameArray[gameID].songs.first_song = song;
+else
+	gameArray[gameID].songs.second_song = song;
+
 					//if both songs are done, tell both players
-	if (gameArray[gameID].songs.first_song != null && gameArray[gameID].songs.second_song != null){
-		var songName;
-		if (Math.random() > 0.5)
-			songName = gameArray[gameID].songs.first_song;
-		else
-			songName = gameArray[gameID].songs.second_song;
+					if (gameArray[gameID].songs.first_song != null && gameArray[gameID].songs.second_song != null){
+						var songName;
+						if (Math.random() > 0.5)
+							songName = gameArray[gameID].songs.first_song;
+						else
+							songName = gameArray[gameID].songs.second_song;
 
-		mysql.query('select * from Song where song = "' + songName + '";', function(err, result, fields){
-			if (err) throw err;
-			else {
-				gameArray[gameID].track = result[0].beats;
-				
+						mysql.query('select * from Song where song = "' + songName + '";', function(err, result, fields){
+							if (err) throw err;
+							else {
+								gameArray[gameID].track = result[0].beats;
+								
 				//compute the song powerup
 
 				mysql.query('select points from Player WHERE display_name ="' + gameArray[gameID].players.player1.username + '";', function(err, result, fields){
@@ -206,9 +206,9 @@ game_server.setSong = function(sio, mysql, gameID, player, song){
 						}
 					}
 				});
-			}	
-		});
-	}
+}	
+});
+}
 }
 
 
@@ -231,7 +231,7 @@ game_server.startFirstSong = function(sio, gameID){
 		//sio.sockets.in(gameID).emit('song beats', {beats: gameArray[gameID].tracks.player1 + '#' + gameArray[gameID].tracks.player2});
 		
 	}
-		
+	
 	console.log(gameArray[gameID].tracks);
 }
 
@@ -270,7 +270,7 @@ game_server.adjustTimer = function(player, gameID, timer){
 		gameArray[gameID].firstTimer.player = null;
 
 	}
-		
+	
 }
 
 game_server.sendBeat1 = function(sio, gameID){
@@ -314,7 +314,7 @@ game_server.receiveScore = function(mysql, socket, score, sio){
 			P1elo = P1elo + calculateELOwin(P1percent);
 			P2elo = P2elo + calculateELOlost(P2percent);
 		}
-			
+		
 		if (gameArray[gameID].score.player1 < gameArray[gameID].score.player2){
 			P1elo = P1elo + calculateELOlost(P1percent);
 			P2elo = P2elo + calculateELOwin(P2percent);
@@ -388,7 +388,7 @@ game_server.initiateTimer = function(client_timer, client_player, gameID){
 		//do whatever logic you need here 
 
 		//store the starting time on server here
-		//gameArray[gameID].startTime = .............;
+		gameArray[gameID].startTime = gameCounter;
 		
 		//the current time in game server is stored as gameCounter
 		//e.g. gameArray[gameID].startTime = gameCounter;

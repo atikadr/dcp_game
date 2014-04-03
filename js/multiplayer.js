@@ -131,7 +131,14 @@ var preloadBeatsArray;
 var oppPreloadBeatsArray;
 
 socket.on('song beats',function(data){
-	console.log("song beats");
+	console.log(data);
+	var myBeat = data.beats.split("#")[0];
+	var oppBeat = data.beats.split("#")[1];
+	var makeMyBeat = {beat:myBeat.split(",")[0],points:myBeat.split(",")[2]};
+	var makeOppBeat = {beat:oppBeat.split(",")[0],points:oppBeat.split(",")[2]};
+	addBeatToArray(makeMyBeat);
+	addOppBeatToArray(makeOppBeat);
+	/*
 	preloadBeatsArray = new Array();
 	oppPreloadBeatsArray = new Array();
 	var tempBeatsArray = data.beats.split("#")[0].split(";");
@@ -149,6 +156,7 @@ socket.on('song beats',function(data){
 		}
 	}
 	console.log(preloadBeatsArray);
+	*/
 });
 
 var beatTimer;

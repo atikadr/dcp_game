@@ -156,6 +156,7 @@ socket.on('game ready',function(data){
 			if(startSongSet){
 				startSongTime--;
 				if(startSongTime == 0){
+					socket.emit("game ready",{timer:myGameCounter});
 					startMusicPlay(data.song);
 					songHasStarted = true;
 					myGameCounter = 0;
@@ -226,6 +227,7 @@ socket.on('game ready',function(data){
 				}
 			}
 
+			/*
 			while(preloadBeatsArray.length > 0 && parseInt(preloadBeatsArray[0].timing) <= myGameCounter){
 				addBeatToArray({beat:preloadBeatsArray[0].type,points:preloadBeatsArray[0].points});
 				preloadBeatsArray.splice(0,1);
@@ -234,6 +236,7 @@ socket.on('game ready',function(data){
 				addOppBeatToArray({beat:oppPreloadBeatsArray[0].type,points:oppPreloadBeatsArray[0].points});
 				oppPreloadBeatsArray.splice(0,1);
 			}
+
 			if(preloadBeatsArray.length == 0){
 				endSongCounter++;
 			}
@@ -245,6 +248,8 @@ socket.on('game ready',function(data){
 				setupStartScreen();
 				gameLayer.unscheduleAllCallbacks();
 			}
+			*/
+
 			myGameCounter++;
 			//console.log("gc: " + myGameCounter);
 		}
