@@ -134,8 +134,8 @@ socket.on('song beats',function(data){
 	console.log(data);
 	var myBeat = data.beats.split("#")[0];
 	var oppBeat = data.beats.split("#")[1];
-	var makeMyBeat = {beat:myBeat.split(",")[0],points:myBeat.split(",")[2]};
-	var makeOppBeat = {beat:oppBeat.split(",")[0],points:oppBeat.split(",")[2]};
+	var makeMyBeat = {beat:myBeat.split(",")[0],points:parseInt(myBeat.split(",")[2])};
+	var makeOppBeat = {beat:oppBeat.split(",")[0],points:parseInt(oppBeat.split(",")[2])};
 	addBeatToArray(makeMyBeat);
 	addOppBeatToArray(makeOppBeat);
 	/*
@@ -210,7 +210,7 @@ function addOppBeatToArray(dataOpp){
 	noteOpp.setPosition(noteOppPosition);
 	noteOpp.type = dataOpp.beat;
 	noteOpp.extraPoints = extraPoints;
-	noteOpp.points = dataOpp.points;
+	noteOpp.points = parseInt(dataOpp.points);
 	gameLayer.addChild(noteOpp);
 	noteOpp.noteIndex = oppNoteCount;
 	beatsArrayOpp.push(noteOpp);
@@ -263,7 +263,7 @@ function addBeatToArray(data){
 	note.setPosition(notePosition);
 	note.type = data.beat;
 	note.extraPoints = extraPoints;
-	note.points = data.points;
+	note.points = parseInt(data.points);
 	gameLayer.addChild(note);
 	note.noteIndex = noteCount;
 	beatsArray.push(note);
